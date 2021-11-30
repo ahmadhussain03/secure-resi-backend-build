@@ -20,7 +20,7 @@ class UpdateCheckpointValidator {
             note: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             latitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             longitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
-            geofenceRadius: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
+            geofenceRadius: Validator_1.schema.number.optional([]),
             geocode: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             notificationAction: Validator_1.schema.enum.optional(['On Time', 'Before Time', 'Before Custom Time', 'After Custom Time']),
             hour: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(2)]),

@@ -60,7 +60,7 @@ __decorate([
 ], Checkpoint.prototype, "longitude", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], Checkpoint.prototype, "geofenceRadius", void 0);
 __decorate([
     (0, Orm_1.column)(),
