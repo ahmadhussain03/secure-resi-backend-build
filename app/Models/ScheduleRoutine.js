@@ -35,14 +35,12 @@ __decorate([
 ], ScheduleRoutine.prototype, "checkDate", void 0);
 __decorate([
     Orm_1.column.dateTime({
-        prepare: (value) => luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'Asia/Kuala_Lumpur' }).setZone('UTC').toFormat('HH:mm:ss'),
         serialize: (value) => value.toFormat('hh:mm a')
     }),
     __metadata("design:type", luxon_1.DateTime)
 ], ScheduleRoutine.prototype, "startTime", void 0);
 __decorate([
     Orm_1.column.dateTime({
-        prepare: (value) => luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'Asia/Kuala_Lumpur' }).setZone('UTC').toFormat('HH:mm:ss'),
         serialize: (value) => value.toFormat('hh:mm a')
     }),
     __metadata("design:type", luxon_1.DateTime)

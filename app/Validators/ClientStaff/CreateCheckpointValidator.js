@@ -15,7 +15,7 @@ class CreateCheckpointValidator {
                     table: 'checkpoints',
                     where: { project_id: this.refs.projectId }
                 })]),
-            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
+            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.unique({ table: 'checkpoints', column: 'phone_number' })]),
             note: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             latitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             longitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),

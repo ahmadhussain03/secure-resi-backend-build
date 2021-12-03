@@ -16,7 +16,7 @@ class UpdateCheckpointValidator {
                     where: { project_id: this.refs.projectId },
                     whereNot: { "id": this.ctx.params.id }
                 })]),
-            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
+            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.unique({ table: 'checkpoints', column: 'phone_number', whereNot: { "id": this.ctx.params.id }, where: { "project_id": this.refs.projectId } })]),
             note: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             latitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             longitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),

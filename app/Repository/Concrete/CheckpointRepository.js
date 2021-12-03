@@ -39,8 +39,12 @@ class CheckpointRepository {
             fs_1.default.mkdirSync(dir);
         }
         const image = await jimp_1.default.read(Application_1.default.makePath('uploads/default/checkpoint.png'));
-        const font = await jimp_1.default.loadFont(jimp_1.default.FONT_SANS_32_BLACK);
-        image.print(font, 250, 227, checkpointCode);
+        let font = await jimp_1.default.loadFont(jimp_1.default.FONT_SANS_32_BLACK);
+        let checkpointImageString = `${checkpoint.name}`;
+        image.print(font, 250, 215, checkpointImageString);
+        font = await jimp_1.default.loadFont(jimp_1.default.FONT_SANS_16_BLACK);
+        checkpointImageString = `${checkpoint.phoneNumber}`;
+        image.print(font, 265, 255, checkpointImageString);
         const qrBuffer = await qrcode_1.default.toBuffer(checkpointCode);
         const qrJimp = await jimp_1.default.read(qrBuffer);
         qrJimp.resize(415, 415).quality(100);
@@ -81,8 +85,7 @@ class CheckpointRepository {
         return checkpoint;
     }
     async findById(id, project) {
-        const idType = parseInt(id);
-        if (isNaN(idType)) {
+        if (isNaN(Number(id))) {
             const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where('code', decodeURI(id)).orWhere('nfc_code', decodeURI(id)).firstOrFail();
             return checkpoint;
         }
