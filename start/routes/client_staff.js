@@ -21,6 +21,7 @@ Route_1.default.group(() => {
     Route_1.default.get('upload/qr_code/images/:filename', 'ImagesController.qrCodeImage');
     Route_1.default.post('/login', 'LoginController.index');
     Route_1.default.post('face_recognition', 'FaceRecognitionsController.index');
+    Route_1.default.post('fingerprint_login', 'FingerprintsController.create');
     Route_1.default.group(() => {
         Route_1.default.any('/user', 'UsersController.index');
         Route_1.default.post('/logout', 'UsersController.logout');
@@ -239,6 +240,7 @@ Route_1.default.group(() => {
         Route_1.default.put('move/:id', 'MovesController.update').middleware('can:update-operation-type');
         Route_1.default.get('facilities', 'FacilitiesController.index').middleware('can:create-operation-type');
         Route_1.default.put('facilities/:id', 'FacilitiesController.update').middleware('can:update-operation-type');
+        Route_1.default.post('fingerprint', 'FingerprintsController.create');
     }).middleware('auth');
 }).namespace('App/Controllers/Http/ClientStaff').prefix('api/staff');
 //# sourceMappingURL=client_staff.js.map

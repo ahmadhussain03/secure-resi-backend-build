@@ -25,6 +25,7 @@ const Resident_1 = __importDefault(require("./Resident"));
 const FavouriteContactRequest_1 = __importDefault(require("./FavouriteContactRequest"));
 const FavouriteContact_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/FavouriteContact"));
 const ApiToken_1 = __importDefault(require("./ApiToken"));
+const Fingerprint_1 = __importDefault(require("./Fingerprint"));
 class User extends Orm_1.BaseModel {
     static async hashPassword(user) {
         if (user.$dirty.password) {
@@ -150,6 +151,10 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], User.prototype, "favouriteContacts", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Fingerprint_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "fingerprints", void 0);
 __decorate([
     (0, Orm_1.beforeSave)(),
     __metadata("design:type", Function),
