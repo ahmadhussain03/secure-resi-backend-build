@@ -4,21 +4,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
-const Fingerprint_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Fingerprint"));
+const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
+const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 class FingerprintsController {
-    async index({ response }) {
-        return response.json({ message: 'TODO' });
+    async index({ request, response, auth }) {
+        const fingerSchema = Validator_1.schema.create({
+            userId: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)])
+        });
+        const data = await request.validate({ schema: fingerSchema });
+        const user = await User_1.default.query().whereHas('clientStaff', (query) => {
+            query.where('staff_code', data.userId).orWhere('nfc_code', data.userId);
+        }).where('user_type', UserType_1.UserType.client_staff).firstOrFail();
+        await user.load('clientStaff', (query) => query.preload('project'));
+        await user.load('items');
+        await user.load('fingerprints');
+        const token = await auth.use('api').login(user);
+        return response.status(200).json({ token: token.toJSON(), user: user });
     }
     async create({ request, auth, response }) {
         const fingerSchema = Validator_1.schema.create({
-            fingerprint: Validator_1.schema.string({ trim: true })
+            fingerprints: Validator_1.schema.array().members(Validator_1.schema.string())
         });
         const data = await request.validate({ schema: fingerSchema });
         const user = auth.user;
-        const fingerprint = new Fingerprint_1.default();
-        fingerprint.fingerprint = data.fingerprint;
-        await user.related('fingerprints').save(fingerprint);
-        return response.json({ fingerprint });
+        await user.related('fingerprints').query().delete();
+        const fingerprints = data.fingerprints.map(fingerprint => ({ fingerprint }));
+        await user.related('fingerprints').createMany(fingerprints);
+        return response.json(fingerprints);
     }
 }
 exports.default = FingerprintsController;

@@ -30,6 +30,7 @@ Route_1.default.group(() => {
         Route_1.default.get('favourite_contact_request/:code/search', 'FavouriteContactRequestsController.search').middleware('can:view-panic-alert');
         Route_1.default.post('favourite_contact_request/:code', 'FavouriteContactRequestsController.create').middleware('can:view-panic-alert');
         Route_1.default.get('my_favourite_contact_request', 'FavouriteContactRequestsController.index').middleware('can:view-panic-alert');
+        Route_1.default.delete('my_favourite_contact_request/:id', 'FavouriteContactRequestsController.destroy').middleware('can:view-panic-alert');
         Route_1.default.get("favourite_contact", "FavouriteContactsController.index").middleware('can:view-panic-alert');
         Route_1.default.get("favourite_contact_request", "FavouriteContactsController.received").middleware('can:view-panic-alert');
         Route_1.default.post("favourite_contact/:id/accept", "FavouriteContactsController.accept").middleware('can:view-panic-alert');

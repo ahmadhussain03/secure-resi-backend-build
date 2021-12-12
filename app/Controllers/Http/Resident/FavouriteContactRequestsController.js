@@ -40,6 +40,13 @@ class FavouriteContactRequestsController {
         });
         return response.json({ message: 'Favourite Contact Request Sent!' });
     }
+    async destroy({ request, response, auth }) {
+        const { id } = request.params();
+        const authUser = auth.user;
+        const favRequest = await FavouriteContactRequest_1.default.query().where('id', id).where('user_id', authUser.id).firstOrFail();
+        await favRequest.delete();
+        return response.json({ message: 'Favourite Contact Request Cancel!' });
+    }
 }
 exports.default = FavouriteContactRequestsController;
 //# sourceMappingURL=FavouriteContactRequestsController.js.map
