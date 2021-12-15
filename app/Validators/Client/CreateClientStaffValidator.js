@@ -21,6 +21,10 @@ class CreateClientStaffValidator {
                 Rules_1.rules.maxLength(255),
                 Rules_1.rules.unique({ table: 'client_staffs', column: 'staff_code' })
             ]),
+            'staff_id': Validator_1.schema.string({ trim: true }, [
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'client_staffs', column: 'staff_id' })
+            ]),
             'nfc_code': Validator_1.schema.string({ trim: true }, [
                 Rules_1.rules.maxLength(255)
             ]),

@@ -32,7 +32,12 @@ class ItemRepository {
         const item = await this.findById(id, project);
         item.name = data.name ? data.name : item.name;
         item.description = data.description ? data.description : item.description;
-        item.image = data.image ? data.image : item.image;
+        if (data.remove_image && data.remove_image === true) {
+            item.image = null;
+        }
+        else {
+            item.image = data.image ? data.image : item.image;
+        }
         await item.save();
         return item;
     }

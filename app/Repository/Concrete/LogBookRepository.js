@@ -35,6 +35,7 @@ class LogBookRepository {
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
+        const search = query.search;
         if (startDate || endDate) {
             if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
                 throw new UserNotFoundException_1.default('Invalid Timezone!');
@@ -43,6 +44,9 @@ class LogBookRepository {
         const logQuery = LogBook_1.default.query().where('project_id', project.id).whereNotNull('dated').preload('logType').preload('user', (query) => query.preload('profile'));
         if (order) {
             logQuery.orderBy('created_at', order);
+        }
+        if (search) {
+            logQuery.where('status', 'like', `%${search}%`);
         }
         if (logTypeId) {
             logQuery.where('log_type_id', logTypeId);

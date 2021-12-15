@@ -13,6 +13,7 @@ class PatrolScheduleEntryRepository {
         const page = query.page | 1;
         const limit = query.limit | 15;
         const checkpointId = query.checkpointId;
+        const guard = query.guard;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
@@ -32,6 +33,9 @@ class PatrolScheduleEntryRepository {
         }
         if (checkpointId) {
             entriesQuery.where('checkpoint_id', checkpointId);
+        }
+        if (guard) {
+            entriesQuery.where('user_id', guard);
         }
         const entries = await entriesQuery.paginate(page, limit);
         return entries;
@@ -56,6 +60,7 @@ class PatrolScheduleEntryRepository {
         const page = query.page | 1;
         const limit = query.limit | 15;
         const patrolScheduleId = query.patrolScheduleId;
+        const guard = query.guard;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
@@ -75,6 +80,9 @@ class PatrolScheduleEntryRepository {
         if (endDate) {
             const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
             patrolEntryQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
+        }
+        if (guard) {
+            patrolEntryQuery.where('user_id', guard);
         }
         const patrolEntries = await patrolEntryQuery.paginate(page, limit);
         return patrolEntries;

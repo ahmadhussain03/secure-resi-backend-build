@@ -32,6 +32,7 @@ class ScheduleEntryRepository {
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
+        const guard = query.guard;
         if (startDate || endDate) {
             if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
                 throw new UserNotFoundException_1.default('Invalid Timezone!');
@@ -45,6 +46,9 @@ class ScheduleEntryRepository {
         }
         if (checkpointId) {
             entryQuery.where('checkpoint_id', checkpointId);
+        }
+        if (guard) {
+            entryQuery.where('user_id', guard);
         }
         if (startDate) {
             const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();

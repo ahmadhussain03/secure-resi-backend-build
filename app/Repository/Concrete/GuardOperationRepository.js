@@ -35,6 +35,7 @@ class GuardOperationRepository {
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
+        const search = query.search;
         if (startDate || endDate) {
             if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
                 throw new UserNotFoundException_1.default('Invalid Timezone!');
@@ -43,6 +44,9 @@ class GuardOperationRepository {
         const operationQuery = GuardOperation_1.default.query().where('project_id', project.id).whereNotNull('dated').preload('operationType').preload('user', (query) => query.preload('profile'));
         if (order) {
             operationQuery.orderBy('created_at', order);
+        }
+        if (search) {
+            operationQuery.where('status', 'like', `%${search}%`);
         }
         if (operationTypeId) {
             operationQuery.where('operation_type_id', operationTypeId);

@@ -25,6 +25,7 @@ class PatrolEntryRepository {
         const page = query.page | 1;
         const limit = query.limit | 15;
         const checkpointId = query.checkpointId;
+        const guard = query.guard;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const timezone = query.timezone;
@@ -36,6 +37,9 @@ class PatrolEntryRepository {
         const patrolEntryQuery = PatrolEntry_1.default.query().where('project_id', projectId).whereNotNull('dated');
         if (checkpointId) {
             patrolEntryQuery.where('checkpoint_id', checkpointId);
+        }
+        if (guard) {
+            patrolEntryQuery.where('user_id', guard);
         }
         if (startDate) {
             const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();

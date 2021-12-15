@@ -82,6 +82,20 @@ class CheckpointRepository {
         checkpoint.subject = data.subject ? data.subject : checkpoint.subject;
         checkpoint.notification = data.notification ? data.notification : checkpoint.notification;
         await checkpoint.save();
+        if (data.name || data.phoneNumber) {
+            const image = await jimp_1.default.read(Application_1.default.makePath('uploads/default/checkpoint.png'));
+            let font = await jimp_1.default.loadFont(jimp_1.default.FONT_SANS_32_BLACK);
+            let checkpointImageString = `${checkpoint.name}`;
+            image.print(font, 250, 215, checkpointImageString);
+            font = await jimp_1.default.loadFont(jimp_1.default.FONT_SANS_16_BLACK);
+            checkpointImageString = `${checkpoint.phoneNumber}`;
+            image.print(font, 265, 255, checkpointImageString);
+            const qrBuffer = await qrcode_1.default.toBuffer(checkpoint.code);
+            const qrJimp = await jimp_1.default.read(qrBuffer);
+            qrJimp.resize(415, 415).quality(100);
+            image.composite(qrJimp, 607, 57);
+            await Drive_1.default.put(`qr_code/${checkpoint.code}.jpg`, await image.getBufferAsync(jimp_1.default.MIME_JPEG));
+        }
         return checkpoint;
     }
     async findById(id, project) {

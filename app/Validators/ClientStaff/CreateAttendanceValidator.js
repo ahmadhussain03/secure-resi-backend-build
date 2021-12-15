@@ -8,7 +8,8 @@ class CreateAttendanceValidator {
             username: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
             password: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255)]),
             userId: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
-            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' })
+            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
+            attendance_through: Validator_1.schema.enum(['UAP', 'QRC', 'NFC', 'FR', 'FP'])
         });
         this.messages = {};
     }

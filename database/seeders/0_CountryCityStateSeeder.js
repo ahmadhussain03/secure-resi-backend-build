@@ -14,7 +14,7 @@ class CountryCityStateSeederSeeder extends Seeder_1.default {
         await State_1.default.query().delete();
         await City_1.default.query().delete();
         const countries = country_state_city_1.Country.getAllCountries();
-        for (let i = 0; i < countries.length; i++) {
+        for (let i = 0; i < 5; i++) {
             let country = countries[i];
             let countryObject = await Country_1.default.create({
                 code: country.isoCode,

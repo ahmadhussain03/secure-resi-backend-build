@@ -76,7 +76,7 @@ __decorate([
 __decorate([
     (0, Orm_1.belongsTo)(() => User_1.default, {
         localKey: 'id',
-        foreignKey: 'userIdw'
+        foreignKey: 'userId'
     }),
     __metadata("design:type", Object)
 ], PatrolScheduleEntry.prototype, "user", void 0);

@@ -34,40 +34,38 @@ class AttendancesController {
             const isValidPassword = await Hash_1.default.verify(user.password, data.password);
             if (!isValidPassword)
                 throw new InvalidCredentialException_1.default();
-            const attendance = await this.markAttendance(user.id, project.id);
+            const attendance = await this.markAttendance(user.id, project.id, data.attendance_through);
             return response.json(attendance);
         }
         else if (data.userId) {
             const user = await User_1.default.query().whereHas('clientStaff', (query) => {
                 query.where('project_id', project.id).where('staff_code', data.userId).orWhere('nfc_code', data.userId);
             }).where('user_type', UserType_1.UserType.client_staff).firstOrFail();
-            if (data.image) {
-                const image = data.image;
-                const fileName = `${(0, Helpers_1.cuid)()}.${image.extname}`;
-                await image.move(Application_1.default.tmpPath(`face/images`), {
-                    name: fileName
-                });
-                const uploadedImagePath = Application_1.default.tmpPath('face/images', fileName);
-                const isRecognized = await FaceRecognition_1.default.recognize(user.id, uploadedImagePath);
-                if (isRecognized) {
-                    fs_1.default.unlinkSync(uploadedImagePath);
-                    const attendance = await this.markAttendance(user.id, project.id);
-                    return response.json(attendance);
-                }
-                else {
-                    throw new InvalidCredentialException_1.default();
-                }
+            const attendance = await this.markAttendance(user.id, project.id, data.attendance_through);
+            return response.json(attendance);
+        }
+        else if (data.image) {
+            const image = data.image;
+            const fileName = `${(0, Helpers_1.cuid)()}.${image.extname}`;
+            await image.move(Application_1.default.tmpPath(`face/images`), {
+                name: fileName
+            });
+            const uploadedImagePath = Application_1.default.tmpPath('face/images', fileName);
+            const isRecognized = await FaceRecognition_1.default.detect(project, uploadedImagePath);
+            if (isRecognized) {
+                fs_1.default.unlinkSync(uploadedImagePath);
+                const attendance = await this.markAttendance(isRecognized.id, project.id, data.attendance_through);
+                return response.json(attendance);
             }
             else {
-                const attendance = await this.markAttendance(user.id, project.id);
-                return response.json(attendance);
+                throw new InvalidCredentialException_1.default();
             }
         }
         else {
             throw new InvalidCredentialException_1.default();
         }
     }
-    async markAttendance(userId, projectId) {
+    async markAttendance(userId, projectId, attendance_through) {
         let type;
         const lastAttendance = await Attendance_1.default.query().where('user_id', userId).orderBy('created_at', 'desc').first();
         if (lastAttendance && lastAttendance.type == 'In') {
@@ -79,7 +77,8 @@ class AttendancesController {
         const attendanceData = {
             projectId: projectId,
             userId: userId,
-            type: type
+            type: type,
+            attendanceThrough: attendance_through
         };
         return await AttendanceRepositoryContract_1.default.create(attendanceData);
     }

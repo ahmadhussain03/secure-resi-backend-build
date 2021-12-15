@@ -7,7 +7,8 @@ class UpdateGuardItemValidator {
         this.schema = Validator_1.schema.create({
             name: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
             description: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
-            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' })
+            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
+            remove_image: Validator_1.schema.boolean.optional()
         });
         this.messages = {};
     }

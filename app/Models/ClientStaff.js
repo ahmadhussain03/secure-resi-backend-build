@@ -13,9 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const luxon_1 = require("luxon");
-const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const Project_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Project"));
+const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
+const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 class ClientStaff extends Orm_1.BaseModel {
+    get qrImage() {
+        return `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/uploads/staff_code/${this.staffCode}.jpg`;
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
@@ -28,11 +32,20 @@ __decorate([
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
+], ClientStaff.prototype, "staffId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
 ], ClientStaff.prototype, "nfcCode", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
 ], ClientStaff.prototype, "userId", void 0);
+__decorate([
+    (0, Orm_1.computed)(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], ClientStaff.prototype, "qrImage", null);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Object)

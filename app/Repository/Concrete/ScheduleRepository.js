@@ -14,11 +14,25 @@ class ScheduleRepository {
         const limit = query.limit | 15;
         const order = query.order || 'asc';
         const filter = query.filter;
+        const nfc = query.nfc;
+        const scheduleId = query.scheduleId;
         const schedulesQuery = ScheduleRoutine_1.default.query().whereHas('schedule', (query) => {
             query.where('project_id', project.id);
         }).preload('checkpoint').preload('schedule');
+        schedulesQuery.whereHas('checkpoint', query => {
+            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
+            if (nfc) {
+                query.where('nfc_code', 'like', `%${nfc}%`);
+            }
+        });
+        schedulesQuery.whereHas('schedule', query => {
+            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
+            if (scheduleId) {
+                query.where('id', scheduleId);
+            }
+        });
         if (order) {
-            schedulesQuery.orderBy('checkDate', order);
+            schedulesQuery.orderBy('id', order);
         }
         if (filter) {
             const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
@@ -28,20 +42,20 @@ class ScheduleRepository {
             if (filter === 'today') {
                 schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.created_at) = '${todayDate}'`))
                     .where(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
+                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
                 }).orWhere(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
+                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
                 }).orWhere(query => {
-                    query.whereNull('checkDate').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
                 });
             }
             else if (filter === 'upcoming') {
                 schedulesQuery.where(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Monthly').where('startTime', '>=', currentTime).whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
+                    query.whereNotNull('check_date').where('repeat', 'Monthly').where('startTime', '>=', currentTime).whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
                 }).orWhere(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Yearly').where('startTime', '>=', currentTime).whereRaw('DATE(check_date) = ?', [todayDate]);
+                    query.whereNotNull('check_date').where('repeat', 'Yearly').where('startTime', '>=', currentTime).whereRaw('DATE(check_date) = ?', [todayDate]);
                 }).orWhere(query => {
-                    query.whereNull('checkDate').where('repeat', 'Daily').where('startTime', '>=', currentTime).whereRaw(`${today} = ?`, [true]);
+                    query.whereNull('check_date').where('repeat', 'Daily').where('startTime', '>=', currentTime).whereRaw(`${today} = ?`, [true]);
                 });
             }
             else if (filter === 'tomorrow') {
@@ -49,15 +63,12 @@ class ScheduleRepository {
                 const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
                 const tomorrow = luxon_1.DateTime.now().plus({ days: 1 }).weekdayLong.toLowerCase();
                 schedulesQuery.where(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
+                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
                 }).orWhere(query => {
-                    query.whereNotNull('checkDate').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [tomorrowDate]);
+                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [tomorrowDate]);
                 }).orWhere(query => {
-                    query.whereNull('checkDate').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
+                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
                 });
-            }
-            else {
-                schedulesQuery.orderByRaw('DATE(check_date) DESC').orderByRaw('DATE(created_at) DESC');
             }
         }
         const schedules = await schedulesQuery.paginate(page, limit);
@@ -83,7 +94,14 @@ class ScheduleRepository {
         const query = request.qs();
         const page = query.page | 1;
         const limit = query.limit | 15;
-        const schedules = await Schedule_1.default.query().where('project_id', project.id).preload('scheduleRoutine').paginate(page, limit);
+        const search = query.search ?? "";
+        const schedulesQuery = Schedule_1.default.query().where('project_id', project.id);
+        if (search) {
+            schedulesQuery.where((query) => {
+                query.where('name', 'like', `%${search}%`).orWhere('description', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
+            });
+        }
+        const schedules = await schedulesQuery.preload('scheduleRoutine').paginate(page, limit);
         return schedules;
     }
     async destroyById(id, project) {

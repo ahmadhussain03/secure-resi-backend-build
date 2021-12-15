@@ -11,6 +11,9 @@ const UpdateClientStaffValidator_1 = __importDefault(global[Symbol.for('ioc.use'
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
+const qrcode_1 = __importDefault(require("qrcode"));
+const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive"));
+const fs_1 = __importDefault(require("fs"));
 class ClientStaffsController {
     async index({ request, response, auth }) {
         const authUser = auth.user;
@@ -19,6 +22,7 @@ class ClientStaffsController {
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
         let role = query.role ? query.role.toLowerCase() : null;
+        let search = query.search ?? null;
         const usersQuery = User_1.default.query().where('user_type', UserType_1.UserType.client_staff).whereHas('clientStaff', (query) => {
             query.where('project_id', projectId);
         });
@@ -26,6 +30,13 @@ class ClientStaffsController {
             usersQuery.whereHas('role', (query) => {
                 query.where('name', role);
             }).preload('items');
+        }
+        if (search) {
+            usersQuery.where((query) => {
+                query.where('username', 'like', `%${search}%`).orWhereHas('clientStaff', (subQuery) => {
+                    subQuery.where('nfc_code', 'like', `%${search}%`).orWhere('staff_code', 'like', `%${search}%`);
+                });
+            });
         }
         const users = await usersQuery.preload('profile', query => query.preload('countryRelation').preload('stateRelation').preload('cityRelation')).preload('clientStaff').preload('role').paginate(page, limit);
         return response.json(users);
@@ -101,10 +112,24 @@ class ClientStaffsController {
         });
         await user.related('clientStaff').create({
             staffCode: data.staff_code,
+            staffId: data.staff_id,
             nfcCode: data.nfc_code,
             userId: user.id,
             projectId: authUser.clientStaff.projectId
         });
+        let dir = './tmp';
+        if (!fs_1.default.existsSync(dir)) {
+            fs_1.default.mkdirSync(dir);
+        }
+        dir = './tmp/staff_code';
+        if (!fs_1.default.existsSync(dir)) {
+            fs_1.default.mkdirSync(dir);
+        }
+        dir = './tmp/staff_code/images';
+        if (!fs_1.default.existsSync(dir)) {
+            fs_1.default.mkdirSync(dir);
+        }
+        await Drive_1.default.put(`staff_code/${data.staff_code}.jpg`, await qrcode_1.default.toBuffer(data.staff_code));
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         await user.load('clientStaff', (query) => query.preload('project'));
         await user.load('role');
@@ -121,7 +146,7 @@ class ClientStaffsController {
         const projectId = authUser.clientStaff.projectId;
         const user = await User_1.default.query().where('id', params.id).whereHas('clientStaff', (query) => {
             query.where('project_id', projectId);
-        }).where('user_type', UserType_1.UserType.client_staff).preload('clientStaff').preload('profile').preload('role').firstOrFail();
+        }).where('user_type', UserType_1.UserType.client_staff).preload('clientStaff', q => q.preload('project')).preload('profile').preload('role').firstOrFail();
         if (data.role_id && data.role_id != user.roleId) {
             let role = await Role_1.default.query().where('id', data.role_id).whereHas('user', (query) => {
                 query.whereHas('clientStaff', (q) => {
@@ -132,7 +157,10 @@ class ClientStaffsController {
             await user.load('role');
         }
         const image = request.file('image');
-        let imageName = "";
+        let imageName = user.image;
+        if (data.remove_image && data.remove_image === true) {
+            imageName = null;
+        }
         if (image) {
             const fileName = `${user.id.toString()}.${image.extname}`;
             await image.move(Application_1.default.tmpPath(`profile/images/${user.id}`), {
@@ -142,7 +170,7 @@ class ClientStaffsController {
         }
         user.username = data.username ? data.username : user.username;
         user.password = data.password ? data.password : user.password;
-        user.image = imageName ? imageName : user.image;
+        user.image = imageName;
         user.latitude = data.latitude ? data.latitude : user.latitude;
         user.longitude = data.longitude ? data.longitude : user.longitude;
         user.geofenceRadius = data.geofenceRadius ? data.geofenceRadius : user.geofenceRadius;
@@ -162,8 +190,12 @@ class ClientStaffsController {
         user.profile.postCode = data.post_code ? data.post_code : user.profile.postCode;
         await user.profile.save();
         user.clientStaff.staffCode = data.staff_code ? data.staff_code : user.clientStaff.staffCode;
+        user.clientStaff.staffId = data.staff_id ? data.staff_id : user.clientStaff.staffId;
         user.clientStaff.nfcCode = data.nfc_code ? data.nfc_code : user.clientStaff.nfcCode;
         await user.clientStaff.save();
+        if (data.staff_code) {
+            await Drive_1.default.put(`staff_code/${data.staff_code}.jpg`, await qrcode_1.default.toBuffer(data.staff_code));
+        }
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         if (image && user.image) {
             const personId = await FaceRecognition_1.default.train(user, user.clientStaff.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));

@@ -21,6 +21,10 @@ class UpdateClientStaffValidator {
                 Rules_1.rules.maxLength(255),
                 Rules_1.rules.unique({ table: 'client_staffs', column: 'staff_code', whereNot: { "user_id": this.ctx.params.id } })
             ]),
+            "staff_id": Validator_1.schema.string.optional({ trim: true }, [
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'client_staffs', column: 'staff_id', whereNot: { "user_id": this.ctx.params.id } })
+            ]),
             "nfc_code": Validator_1.schema.string.optional({ trim: true }, [
                 Rules_1.rules.maxLength(255)
             ]),
@@ -44,7 +48,8 @@ class UpdateClientStaffValidator {
             'latitude': Validator_1.schema.string.optional({ trim: true }, [Rules_1.rules.minLength(1), Rules_1.rules.maxLength(255)]),
             'longitude': Validator_1.schema.string.optional({ trim: true }, [Rules_1.rules.minLength(1), Rules_1.rules.maxLength(255)]),
             'geofenceRadius': Validator_1.schema.string.optional({ trim: true }, [Rules_1.rules.minLength(1), Rules_1.rules.maxLength(255)]),
-            'geocode': Validator_1.schema.string.optional({ trim: true }, [Rules_1.rules.minLength(1), Rules_1.rules.maxLength(255)])
+            'geocode': Validator_1.schema.string.optional({ trim: true }, [Rules_1.rules.minLength(1), Rules_1.rules.maxLength(255)]),
+            'remove_image': Validator_1.schema.boolean.optional()
         });
         this.messages = {
             'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.'
