@@ -26,7 +26,8 @@ class MoveRepository {
             userId: data.userId,
             projectId: data.projectId,
             unitId: data.unitId,
-            moAccountId: data.moAccountId
+            moAccountId: data.moAccountId,
+            chequeNo: data.chequeNo
         });
         if (move.moAccountId) {
             await move.load('moAccount');
@@ -73,6 +74,7 @@ class MoveRepository {
         move.transactionNumber = data.transactionNumber ?? move.transactionNumber;
         move.amount = data.amount ?? move.amount;
         move.moAccountId = data.moAccountId ?? move.moAccountId;
+        move.chequeNo = data.chequeNo ?? move.chequeNo;
         await move.save();
         if (move.moAccountId) {
             await move.load('moAccount');

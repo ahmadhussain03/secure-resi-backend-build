@@ -21,7 +21,8 @@ class FacilityRepository {
             userId: data.userId,
             projectId: data.projectId,
             unitId: data.unitId,
-            moAccountId: data.moAccountId
+            moAccountId: data.moAccountId,
+            chequeNo: data.chequeNo
         });
         if (facility.moAccountId) {
             await facility.load('moAccount');
@@ -64,6 +65,7 @@ class FacilityRepository {
         facility.transactionNumber = data.transactionNumber ?? facility.transactionNumber;
         facility.amount = data.amount ?? facility.amount;
         facility.moAccountId = data.moAccountId ?? facility.moAccountId;
+        facility.chequeNo = data.chequeNo ?? facility.chequeNo;
         await facility.save();
         if (facility.moAccountId) {
             await facility.load('moAccount');

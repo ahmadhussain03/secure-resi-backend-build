@@ -63,6 +63,10 @@ __decorate([
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
+], Move.prototype, "chequeNo", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
 ], Move.prototype, "status", void 0);
 __decorate([
     (0, Orm_1.column)(),

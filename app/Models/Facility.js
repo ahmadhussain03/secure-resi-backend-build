@@ -60,6 +60,10 @@ __decorate([
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
+], Facility.prototype, "chequeNo", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
 ], Facility.prototype, "gatheringDescription", void 0);
 __decorate([
     (0, Orm_1.column)(),
