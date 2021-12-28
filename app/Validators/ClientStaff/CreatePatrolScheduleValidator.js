@@ -9,7 +9,7 @@ class CreatePatrolScheduleValidator {
             name: Validator_1.schema.string({ trim: true }, [Validator_1.rules.minLength(1)]),
             description: Validator_1.schema.string.optional({ trim: true, escape: true }),
             routine: Validator_1.schema.object().members({
-                checkDate: Validator_1.schema.date.optional({ format: 'yyyy-mm-dd' }),
+                checkDate: Validator_1.schema.date.optional({ format: 'yyyy-mm-dd' }, [Validator_1.rules.shouldNullWhen('repeat', '=', 'Daily')]),
                 startTime: Validator_1.schema.date({ format: 'hh:mm a' }),
                 endTime: Validator_1.schema.date({ format: 'hh:mm a' }),
                 saturday: Validator_1.schema.boolean.optional(),
