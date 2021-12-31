@@ -18,48 +18,48 @@ const User_1 = __importDefault(require("./User"));
 const Project_1 = __importDefault(require("./Project"));
 const PatrolScheduleRoutine_1 = __importDefault(require("./PatrolScheduleRoutine"));
 const Checkpoint_1 = __importDefault(require("./Checkpoint"));
-class pPatrolSchedule extends Orm_1.BaseModel {
+class PatrolSchedule extends Orm_1.BaseModel {
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
     __metadata("design:type", Number)
-], pPatrolSchedule.prototype, "id", void 0);
+], PatrolSchedule.prototype, "id", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
-], pPatrolSchedule.prototype, "status", void 0);
+], PatrolSchedule.prototype, "status", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
-], pPatrolSchedule.prototype, "name", void 0);
+], PatrolSchedule.prototype, "name", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
-], pPatrolSchedule.prototype, "description", void 0);
+], PatrolSchedule.prototype, "description", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
-], pPatrolSchedule.prototype, "userId", void 0);
+], PatrolSchedule.prototype, "userId", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
-], pPatrolSchedule.prototype, "projectId", void 0);
+], PatrolSchedule.prototype, "projectId", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
-], pPatrolSchedule.prototype, "createdAt", void 0);
+], PatrolSchedule.prototype, "createdAt", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true, autoUpdate: true }),
     __metadata("design:type", luxon_1.DateTime)
-], pPatrolSchedule.prototype, "updatedAt", void 0);
+], PatrolSchedule.prototype, "updatedAt", void 0);
 __decorate([
     (0, Orm_1.belongsTo)(() => User_1.default),
     __metadata("design:type", Object)
-], pPatrolSchedule.prototype, "user", void 0);
+], PatrolSchedule.prototype, "user", void 0);
 __decorate([
     (0, Orm_1.belongsTo)(() => Project_1.default),
     __metadata("design:type", Object)
-], pPatrolSchedule.prototype, "project", void 0);
+], PatrolSchedule.prototype, "project", void 0);
 __decorate([
     (0, Orm_1.hasOne)(() => PatrolScheduleRoutine_1.default, {
         foreignKey: 'patrolScheduleId',
@@ -67,7 +67,7 @@ __decorate([
         serializeAs: 'routine'
     }),
     __metadata("design:type", Object)
-], pPatrolSchedule.prototype, "patrolScheduleRoutine", void 0);
+], PatrolSchedule.prototype, "patrolScheduleRoutine", void 0);
 __decorate([
     (0, Orm_1.manyToMany)(() => Checkpoint_1.default, {
         localKey: 'id',
@@ -78,6 +78,6 @@ __decorate([
         pivotColumns: ['priority', 'estimated_time'],
     }),
     __metadata("design:type", Object)
-], pPatrolSchedule.prototype, "checkpoints", void 0);
-exports.default = pPatrolSchedule;
+], PatrolSchedule.prototype, "checkpoints", void 0);
+exports.default = PatrolSchedule;
 //# sourceMappingURL=PatrolSchedule.js.map

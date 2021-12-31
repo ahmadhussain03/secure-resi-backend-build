@@ -11,7 +11,7 @@ class CreateVisitorValidator {
             gender: Validator_1.schema.enum(['male', 'female', 'other']),
             phone: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(20)]),
             dob: Validator_1.schema.date.optional({ format: 'yyyy-mm-dd' }),
-            email: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.email()]),
+            email: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.email(), Validator_1.rules.unique({ table: 'visitors', column: 'email' })]),
             nationality: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(50)]),
             image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             idCard: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
