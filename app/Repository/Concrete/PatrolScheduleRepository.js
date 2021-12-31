@@ -14,8 +14,7 @@ class PatrolScheduleRepository {
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";
-        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id).preload('patrolScheduleRoutine').preload('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']));
-        schedulesQuery.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
+        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id).preload('patrolScheduleRoutine').preload('checkpoints');
         if (order) {
             schedulesQuery.orderBy('created_at', order);
         }

@@ -33,6 +33,17 @@ class MembersController {
         resident.resident.save();
         return response.json(resident);
     }
+    async reject({ request, response, auth }) {
+        const authUser = auth.user;
+        const project = authUser.resident.project;
+        const verificationSchema = Validator_1.schema.create({
+            member: Validator_1.schema.number([Validator_1.rules.unsigned()])
+        });
+        const data = await request.validate({ schema: verificationSchema });
+        const resident = await ResidentRepositoryContract_1.default.findById(data.member, project);
+        await resident.delete();
+        return response.json({ message: "Request Rejected Successfully!" });
+    }
 }
 exports.default = MembersController;
 //# sourceMappingURL=MembersController.js.map

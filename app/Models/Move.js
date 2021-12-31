@@ -31,28 +31,28 @@ __decorate([
 __decorate([
     Orm_1.column.date({
         prepare: (value) => value.toFormat('yyyy-MM-dd'),
-        serialize: (value) => value ? value.setZone('Asia/Kuala_Lumpur').toFormat('yyyy-MM-dd') : value
+        serialize: (value) => value.setZone('Asia/Kuala_Lumpur').toFormat('yyyy-MM-dd')
     }),
     __metadata("design:type", luxon_1.DateTime)
 ], Move.prototype, "dateFrom", void 0);
 __decorate([
     Orm_1.column.date({
         prepare: (value) => value.toFormat('yyyy-MM-dd'),
-        serialize: (value) => value ? value.setZone('Asia/Kuala_Lumpur').toFormat('yyyy-MM-dd') : value
+        serialize: (value) => value.setZone('Asia/Kuala_Lumpur').toFormat('yyyy-MM-dd')
     }),
     __metadata("design:type", luxon_1.DateTime)
 ], Move.prototype, "dateTo", void 0);
 __decorate([
     Orm_1.column.dateTime({
         prepare: (value) => luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'Asia/Kuala_Lumpur' }).setZone('UTC').toFormat('HH:mm:ss'),
-        serialize: (value) => value ? value.toFormat('hh:mm a') : value
+        serialize: (value) => value.toFormat('hh:mm a')
     }),
     __metadata("design:type", luxon_1.DateTime)
 ], Move.prototype, "fromTime", void 0);
 __decorate([
     Orm_1.column.dateTime({
         prepare: (value) => luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'Asia/Kuala_Lumpur' }).setZone('UTC').toFormat('HH:mm:ss'),
-        serialize: (value) => value ? value.toFormat('hh:mm a') : value
+        serialize: (value) => value.toFormat('hh:mm a')
     }),
     __metadata("design:type", luxon_1.DateTime)
 ], Move.prototype, "toTime", void 0);
