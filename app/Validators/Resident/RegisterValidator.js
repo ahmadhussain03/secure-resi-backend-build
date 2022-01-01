@@ -17,6 +17,7 @@ class RegisterValidator {
             'email': Validator_1.schema.string({ trim: true }, [
                 Validator_1.rules.email(),
                 Validator_1.rules.unique({ table: 'profiles', column: 'email' }),
+                Validator_1.rules.unique({ table: 'users', column: 'username' }),
                 Validator_1.rules.maxLength(255)
             ]),
             'password': Validator_1.schema.string({}, [
@@ -31,10 +32,10 @@ class RegisterValidator {
             'race': Validator_1.schema.enum(['Malay', 'Indian', 'Chinese', 'Other']),
             'religion': Validator_1.schema.enum(['Hindu', 'Buddha', 'Islam', 'Other']),
             'country': Validator_1.schema.number([Validator_1.rules.unsigned()]),
-            'city': Validator_1.schema.number([Validator_1.rules.unsigned()]),
-            'state': Validator_1.schema.number([Validator_1.rules.unsigned()]),
-            'post_code': Validator_1.schema.string(),
-            'address': Validator_1.schema.string(),
+            'city': Validator_1.schema.number.optional([Validator_1.rules.unsigned()]),
+            'state': Validator_1.schema.number.optional([Validator_1.rules.unsigned()]),
+            'post_code': Validator_1.schema.string.optional(),
+            'address': Validator_1.schema.string.optional(),
             'image': Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             'idCard': Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             'sign': Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
