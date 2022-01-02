@@ -28,9 +28,9 @@ class ResidentRepository {
             email: data.email,
             name: data.name,
             mobileNo: data.mobileNo,
-            country: data.country.toString(),
-            state: data.state.toString(),
-            city: data.city.toString(),
+            country: data.country?.toString(),
+            state: data.state?.toString(),
+            city: data.city?.toString(),
             postCode: data.post_code,
             address: data.address,
             countryId: data.country,
@@ -122,12 +122,14 @@ class ResidentRepository {
         user.profile.email = data.email ? data.email : user.profile.email;
         user.profile.name = data.name ? data.name : user.profile.name;
         user.profile.mobileNo = data.mobileNo ? data.mobileNo : user.profile.mobileNo;
-        user.profile.country = data.country ? data.country.toString() : user.profile.country;
-        user.profile.state = data.state ? data.state.toString() : user.profile.state;
-        user.profile.city = data.city ? data.city.toString() : user.profile.city;
+        user.profile.country = data.country ? data.country?.toString() : user.profile.country;
+        user.profile.state = data.state ? data.state?.toString() : user.profile.state;
+        user.profile.city = data.city ? data.city?.toString() : user.profile.city;
         user.profile.countryId = data.country ? data.country : user.profile.countryId;
         user.profile.stateId = data.state ? data.state : user.profile.stateId;
         user.profile.cityId = data.city ? data.city : user.profile.cityId;
+        user.profile.postCode = data.post_code ? data.post_code : user.profile.postCode;
+        user.profile.address = data.address ? data.address : user.profile.address;
         await user.profile.save();
         user.resident.companyEmail = data.companyEmail ? data.companyEmail : user.resident.companyEmail;
         user.resident.companyName = data.companyName ? data.companyName : user.resident.companyName;

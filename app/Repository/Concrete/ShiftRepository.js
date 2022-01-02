@@ -48,8 +48,8 @@ class ShiftRepository {
     }
     async all(request, projectId) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const shiftQuery = Shift_1.default.query().where('project_id', projectId).preload('from', (query) => query.preload('profile')).preload('to', (query) => query.preload('profile')).orderBy('created_at', 'desc');

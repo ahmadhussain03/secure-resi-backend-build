@@ -30,8 +30,8 @@ class UnitRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const unitQuery = Unit_1.default.query().preload('block').preload('level').preload('owner').where('project_id', project.id);
         const levels = await unitQuery.orderBy('created_at', 'desc').paginate(page, limit);
         return levels;

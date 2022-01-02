@@ -23,6 +23,7 @@ class RegisterValidator {
             'password': Validator_1.schema.string({}, [
                 Validator_1.rules.confirmed(),
                 Validator_1.rules.maxLength(255),
+                Validator_1.rules.minLength(8),
                 Validator_1.rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,255}$/)
             ]),
             'nationality': Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)]),

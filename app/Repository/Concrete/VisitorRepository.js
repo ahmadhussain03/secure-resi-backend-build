@@ -60,7 +60,7 @@ class VisitorRepository {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const visitorsQuery = Visitor_1.default.query().where('unit_id', unit.id);
+        const visitorsQuery = Visitor_1.default.query().where('unit_id', unit.id).preload('city').preload('country').preload('state');
         const visitors = await visitorsQuery.paginate(page, limit);
         return visitors;
     }

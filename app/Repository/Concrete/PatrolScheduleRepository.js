@@ -9,8 +9,8 @@ const Database_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Lucid/D
 class PatrolScheduleRepository {
     async list(request, project, userId) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";
@@ -93,8 +93,8 @@ class PatrolScheduleRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";

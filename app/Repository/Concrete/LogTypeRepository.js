@@ -25,8 +25,8 @@ class LogTypeRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page;
-        const limit = query.limit;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         return await LogType_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {

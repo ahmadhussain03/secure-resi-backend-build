@@ -11,8 +11,8 @@ class EmergencyContactRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const contacts = await EmergencyContact_1.default.query().where('project_id', project.id).paginate(page, limit);
         return contacts;
     }

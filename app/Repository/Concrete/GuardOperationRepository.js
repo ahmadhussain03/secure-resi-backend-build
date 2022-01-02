@@ -28,8 +28,8 @@ class GuardOperationRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'desc';
         const operationTypeId = query.operationTypeId;
         const startDate = query.startDate;

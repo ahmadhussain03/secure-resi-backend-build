@@ -24,8 +24,8 @@ class ScheduleEntryRepository {
     }
     async all(request, projectId) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'desc';
         const scheduleId = query.scheduleId;
         const checkpointId = query.checkpointId;
