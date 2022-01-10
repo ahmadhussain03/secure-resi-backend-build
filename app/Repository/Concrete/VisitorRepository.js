@@ -18,7 +18,11 @@ class VisitorRepository {
             dob: data.dob,
             projectId: data.projectId,
             userId: data.userId,
-            unitId: data.unitId
+            unitId: data.unitId,
+            cityId: data.city,
+            stateId: data.state,
+            countryId: data.country,
+            address: data.address
         });
         const idCard = request.file('idCard');
         if (idCard) {
@@ -47,13 +51,16 @@ class VisitorRepository {
             visitor.document = fileName;
             await visitor.save();
         }
+        await visitor.load('city');
+        await visitor.load('country');
+        await visitor.load('state');
         return visitor;
     }
     async allByUnit(request, unit) {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const visitorsQuery = Visitor_1.default.query().where('unit_id', unit.id);
+        const visitorsQuery = Visitor_1.default.query().where('unit_id', unit.id).preload('city').preload('country').preload('state');
         const visitors = await visitorsQuery.paginate(page, limit);
         return visitors;
     }
@@ -72,7 +79,14 @@ class VisitorRepository {
         visitor.dob = data.dob ?? visitor.dob;
         visitor.phone = data.phone ?? visitor.phone;
         visitor.gender = data.gender ?? visitor.gender;
+        visitor.cityId = data.city ?? visitor.cityId;
+        visitor.stateId = data.state ?? visitor.stateId;
+        visitor.countryId = data.country ?? visitor.countryId;
+        visitor.address = data.address ?? visitor.address;
         await visitor.save();
+        await visitor.load('city');
+        await visitor.load('country');
+        await visitor.load('state');
         return visitor;
     }
     async findByIdByUnit(id, unit) {

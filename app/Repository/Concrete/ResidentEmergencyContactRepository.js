@@ -16,6 +16,13 @@ class ResidentEmergencyContactRepository {
         const contacts = await ResidentEmergencyContact_1.default.query().where('unit_id', unit.id).paginate(page, limit);
         return contacts;
     }
+    async allByProject(request, project) {
+        const query = request.qs();
+        const page = query.page || 1;
+        const limit = query.limit || 15;
+        const contacts = await ResidentEmergencyContact_1.default.query().where('project_id', project.id).paginate(page, limit);
+        return contacts;
+    }
     async destroyById(id, unit) {
         const contact = await this.findById(id, unit);
         await contact.delete();

@@ -10,8 +10,8 @@ const Database_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Lucid/D
 class ScheduleRepository {
     async list(request, project, userId) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'asc';
         const filter = query.filter;
         const nfc = query.nfc;
@@ -34,11 +34,11 @@ class ScheduleRepository {
         if (order) {
             schedulesQuery.orderBy('id', order);
         }
+        const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
+        const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
+        const todayDateNumber = luxon_1.DateTime.now().toFormat('dd');
+        const today = luxon_1.DateTime.now().weekdayLong.toLowerCase();
         if (filter) {
-            const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
-            const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
-            const todayDateNumber = luxon_1.DateTime.now().toFormat('dd');
-            const today = luxon_1.DateTime.now().weekdayLong.toLowerCase();
             if (filter === 'today') {
                 schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.created_at) = '${todayDate}'`))
                     .where(query => {
@@ -68,6 +68,19 @@ class ScheduleRepository {
                     query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [tomorrowDate]);
                 }).orWhere(query => {
                     query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
+                });
+            }
+            else {
+                const tomorrowDate = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
+                const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
+                const tomorrow = luxon_1.DateTime.now().plus({ days: 1 }).weekdayLong.toLowerCase();
+                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.created_at) = '${todayDate}'`))
+                    .where(query => {
+                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]).orWhereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
+                }).orWhere(query => {
+                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]).orWhereRaw('DATE(check_date) = ?', [tomorrowDate]);
+                }).orWhere(query => {
+                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]).orWhereRaw(`${tomorrow} = ?`, [true]);
                 });
             }
         }

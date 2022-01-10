@@ -11,8 +11,8 @@ class ItemRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const isNotAssigned = query.notAssigned ? query.notAssigned : null;
         const itemQuery = Item_1.default.query().where('project_id', project.id);
         if (isNotAssigned) {

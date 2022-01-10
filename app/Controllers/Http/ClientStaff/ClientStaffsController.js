@@ -10,7 +10,6 @@ const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 const UpdateClientStaffValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Client/UpdateClientStaffValidator"));
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
-const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive"));
 const fs_1 = __importDefault(require("fs"));
@@ -133,11 +132,6 @@ class ClientStaffsController {
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         await user.load('clientStaff', (query) => query.preload('project'));
         await user.load('role');
-        if (user.image) {
-            const personId = await FaceRecognition_1.default.train(user, user.clientStaff.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));
-            user.personId = personId;
-            await user.save();
-        }
         return response.json(user);
     }
     async update({ request, response, params, auth }) {
@@ -197,11 +191,6 @@ class ClientStaffsController {
             await Drive_1.default.put(`staff_code/${data.staff_code}.jpg`, await qrcode_1.default.toBuffer(data.staff_code));
         }
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
-        if (image && user.image) {
-            const personId = await FaceRecognition_1.default.train(user, user.clientStaff.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));
-            user.personId = personId;
-            await user.save();
-        }
         return response.json(user);
     }
     async destroy({ response, params, auth }) {

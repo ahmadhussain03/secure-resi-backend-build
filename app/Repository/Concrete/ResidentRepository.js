@@ -7,7 +7,6 @@ const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"))
 const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Unit_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Unit"));
-const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
 class ResidentRepository {
     async create(data, request) {
         const user = await User_1.default.create({
@@ -29,8 +28,14 @@ class ResidentRepository {
             email: data.email,
             name: data.name,
             mobileNo: data.mobileNo,
-            country: data.country.toString(),
-            countryId: data.country
+            country: data.country?.toString(),
+            state: data.state?.toString(),
+            city: data.city?.toString(),
+            postCode: data.post_code,
+            address: data.address,
+            countryId: data.country,
+            cityId: data.city,
+            stateId: data.state
         });
         const resident = await user.related('resident').create({
             companyEmail: data.companyEmail,
@@ -72,11 +77,6 @@ class ResidentRepository {
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         await user.load('resident', query => query.preload('project'));
         await user.load('role');
-        if (user.image) {
-            const personId = await FaceRecognition_1.default.train(user, user.resident.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));
-            user.personId = personId;
-            await user.save();
-        }
         if (data.unitId) {
             let unit = await Unit_1.default.query().where('project_id', data.projectId).preload('setting').where('id', data.unitId).firstOrFail();
             await user.resident.related('units').save(unit);
@@ -122,8 +122,14 @@ class ResidentRepository {
         user.profile.email = data.email ? data.email : user.profile.email;
         user.profile.name = data.name ? data.name : user.profile.name;
         user.profile.mobileNo = data.mobileNo ? data.mobileNo : user.profile.mobileNo;
-        user.profile.country = data.country ? data.country.toString() : user.profile.country;
+        user.profile.country = data.country ? data.country?.toString() : user.profile.country;
+        user.profile.state = data.state ? data.state?.toString() : user.profile.state;
+        user.profile.city = data.city ? data.city?.toString() : user.profile.city;
         user.profile.countryId = data.country ? data.country : user.profile.countryId;
+        user.profile.stateId = data.state ? data.state : user.profile.stateId;
+        user.profile.cityId = data.city ? data.city : user.profile.cityId;
+        user.profile.postCode = data.post_code ? data.post_code : user.profile.postCode;
+        user.profile.address = data.address ? data.address : user.profile.address;
         await user.profile.save();
         user.resident.companyEmail = data.companyEmail ? data.companyEmail : user.resident.companyEmail;
         user.resident.companyName = data.companyName ? data.companyName : user.resident.companyName;
@@ -153,6 +159,9 @@ class ResidentRepository {
     }
     async findById(id, project) {
         return User_1.default.query().preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident').whereHas('resident', (query) => query.where('project_id', project.id)).where('user_type', UserType_1.UserType.resident).where('id', id).firstOrFail();
+    }
+    async findByOwnerId(id, project) {
+        return User_1.default.query().preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident').whereHas('resident', (query) => query.where('project_id', project.id).where('type', 'owner')).where('user_type', UserType_1.UserType.resident).where('id', id).firstOrFail();
     }
     async allByUnitIds(ids, request) {
         const query = request.qs();

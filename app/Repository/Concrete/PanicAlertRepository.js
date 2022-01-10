@@ -17,8 +17,8 @@ class PanicAlertRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const filter = query.filter;

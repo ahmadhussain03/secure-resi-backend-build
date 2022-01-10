@@ -16,7 +16,11 @@ class CreateVisitorValidator {
             image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             idCard: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             document: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
-            unitId: Validator_1.schema.number([Validator_1.rules.unsigned()])
+            unitId: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            country: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            city: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            state: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            address: Validator_1.schema.string(),
         });
         this.messages = {};
     }

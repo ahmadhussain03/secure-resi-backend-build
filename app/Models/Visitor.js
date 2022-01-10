@@ -18,6 +18,9 @@ const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const User_1 = __importDefault(require("./User"));
 const Project_1 = __importDefault(require("./Project"));
 const Unit_1 = __importDefault(require("./Unit"));
+const Country_1 = __importDefault(require("./Country"));
+const State_1 = __importDefault(require("./State"));
+const City_1 = __importDefault(require("./City"));
 class Visitor extends Orm_1.BaseModel {
 }
 __decorate([
@@ -87,6 +90,22 @@ __decorate([
     __metadata("design:type", Number)
 ], Visitor.prototype, "unitId", void 0);
 __decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Visitor.prototype, "countryId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Visitor.prototype, "stateId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Visitor.prototype, "cityId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], Visitor.prototype, "address", void 0);
+__decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], Visitor.prototype, "createdAt", void 0);
@@ -106,5 +125,23 @@ __decorate([
     (0, Orm_1.belongsTo)(() => Unit_1.default),
     __metadata("design:type", Object)
 ], Visitor.prototype, "unit", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => Country_1.default, {
+        serializeAs: 'country'
+    }),
+    __metadata("design:type", Object)
+], Visitor.prototype, "country", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => State_1.default, {
+        serializeAs: 'state'
+    }),
+    __metadata("design:type", Object)
+], Visitor.prototype, "state", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => City_1.default, {
+        serializeAs: 'city'
+    }),
+    __metadata("design:type", Object)
+], Visitor.prototype, "city", void 0);
 exports.default = Visitor;
 //# sourceMappingURL=Visitor.js.map

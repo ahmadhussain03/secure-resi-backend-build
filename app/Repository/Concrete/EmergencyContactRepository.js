@@ -11,9 +11,16 @@ class EmergencyContactRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page | 1;
-        const limit = query.limit | 15;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const contacts = await EmergencyContact_1.default.query().where('project_id', project.id).paginate(page, limit);
+        return contacts;
+    }
+    async allForResident(request, project) {
+        const query = request.qs();
+        const page = query.page || 1;
+        const limit = query.limit || 15;
+        const contacts = await EmergencyContact_1.default.query().where('project_id', project.id).where('for_resident', true).paginate(page, limit);
         return contacts;
     }
     async destroyById(id, project) {
@@ -31,6 +38,10 @@ class EmergencyContactRepository {
     }
     async findById(id, project) {
         const contact = await EmergencyContact_1.default.query().where('project_id', project.id).where('id', id).firstOrFail();
+        return contact;
+    }
+    async findByIdResident(id, project) {
+        const contact = await EmergencyContact_1.default.query().where('project_id', project.id).where('for_resident', true).where('id', id).firstOrFail();
         return contact;
     }
 }

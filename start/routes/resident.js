@@ -66,13 +66,11 @@ Route_1.default.group(() => {
         Route_1.default.get('members', 'MembersController.index').middleware('can:create-panic-alert');
         Route_1.default.get('members_request', 'MembersController.request').middleware('can:create-panic-alert');
         Route_1.default.post('members_request', 'MembersController.approve').middleware('can:create-panic-alert');
+        Route_1.default.delete('members_request', 'MembersController.reject').middleware('can:create-panic-alert');
         Route_1.default.post('profile/update', 'ProfilesController.update').middleware('can:create-panic-alert');
-        Route_1.default.resource('emergency_contact', 'ResidentEmergencyContactsController').apiOnly().middleware({
+        Route_1.default.resource('emergency_contact', 'ResidentEmergencyContactsController').only(['index', 'show']).middleware({
             index: ['can:view-panic-alert'],
-            show: ['can:view-panic-alert'],
-            store: ['can:create-panic-alert'],
-            update: ['can:update-panic-alert'],
-            destroy: ['can:view-panic-alert'],
+            show: ['can:view-panic-alert']
         }).as('resident.emergency.contact');
         Route_1.default.resource('visitor_plan', 'VisitorPlansController').apiOnly().middleware({
             index: ['can:view-panic-alert'],

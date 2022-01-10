@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const ApiToken_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/ApiToken"));
-const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
 class ProfilesController {
     async update({ response, request, auth }) {
         const verificationSchema = Validator_1.schema.create({
@@ -31,11 +30,6 @@ class ProfilesController {
         authUser.password = data.password ? data.password : authUser.password;
         authUser.image = imageName ? imageName : authUser.image;
         await authUser.save();
-        if (image && authUser.image) {
-            const personId = await FaceRecognition_1.default.train(authUser, authUser.clientStaff.project, Application_1.default.tmpPath(`profile/images/${authUser.id}`, authUser.$original.image));
-            authUser.personId = personId;
-            await authUser.save();
-        }
         if (data.password) {
             await ApiToken_1.default.query().whereNot('id', auth.use('api').token?.meta?.id).where('user_id', authUser.id).delete();
         }
