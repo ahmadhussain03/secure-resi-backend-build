@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
-class LoginValidator {
+class ResidentLoginValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.cacheKey = this.ctx.routeKey;
@@ -13,7 +13,7 @@ class LoginValidator {
                 Validator_1.rules.minLength(6),
                 Validator_1.rules.maxLength(255)
             ]),
-            'project': Validator_1.schema.string.optional({ trim: true }),
+            'project': Validator_1.schema.number([Validator_1.rules.unsigned()]),
             'device_token': Validator_1.schema.string({ trim: true })
         });
         this.messages = {
@@ -25,5 +25,5 @@ class LoginValidator {
         };
     }
 }
-exports.default = LoginValidator;
-//# sourceMappingURL=LoginValidator.js.map
+exports.default = ResidentLoginValidator;
+//# sourceMappingURL=ResidentLoginValidator.js.map

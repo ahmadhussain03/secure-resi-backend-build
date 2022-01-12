@@ -103,6 +103,7 @@ __decorate([
             if (!query.isRelatedSubQuery) {
                 query.preload('user').where('type', 'owner').limit(1);
             }
+            query.where('is_approved', true);
         }
     }),
     __metadata("design:type", Object)

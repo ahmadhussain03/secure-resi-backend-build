@@ -188,6 +188,9 @@ Route_1.default.group(() => {
             update: ['can:update-owner'],
             destroy: ['can:delete-owner']
         });
+        Route_1.default.get('owner_request', 'OwnerRequestsController.index').middleware('can:view-owner');
+        Route_1.default.post('owner_request', 'OwnerRequestsController.approve').middleware('can:create-owner');
+        Route_1.default.delete('owner_request', 'OwnerRequestsController.reject').middleware('can:delete-owner');
         Route_1.default.resource('resident', 'ResidentsController').apiOnly().middleware({
             index: ['can:view-resident'],
             show: ['can:view-resident'],

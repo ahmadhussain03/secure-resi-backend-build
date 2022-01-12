@@ -6,27 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hash_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Hash"));
 const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
 const InvalidCredentialException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/InvalidCredentialException"));
-const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
-const LoginValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/LoginValidator"));
-const RegisterValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/RegisterValidator"));
-const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
 const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
 const Unit_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Unit"));
+const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
+const RegisterValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/RegisterValidator"));
+const ResidentLoginValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/ResidentLoginValidator"));
+const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
 class AuthController {
     async login({ request, response, auth }) {
-        const data = await request.validate(LoginValidator_1.default);
+        const data = await request.validate(ResidentLoginValidator_1.default);
         const query = User_1.default.query();
-        let user;
-        if (data.project) {
-            user = await query.where('username', data.username).where('user_type', UserType_1.UserType.resident).whereHas('resident', (query) => {
-                query.whereHas('project', (q) => {
-                    q.where('code', data.project);
-                });
-            }).preload('resident').first();
-        }
-        else {
-            user = await query.where('username', data.username).where('user_type', UserType_1.UserType.resident).preload('resident').first();
-        }
+        let user = await query.where('username', data.username).where('user_type', UserType_1.UserType.resident).whereHas('resident', (query) => {
+            query.where('project_id', data.project);
+        }).preload('resident').first();
         if (!user)
             throw new InvalidCredentialException_1.default();
         if (user.resident.isApproved === false) {

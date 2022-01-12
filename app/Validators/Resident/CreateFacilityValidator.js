@@ -5,10 +5,8 @@ class CreateFacilityValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
-            dateFrom: Validator_1.schema.date({ format: 'yyyy-MM-dd' }),
-            dateTo: Validator_1.schema.date({ format: 'yyyy-MM-dd' }),
-            fromTime: Validator_1.schema.date({ format: 'hh:mm a' }),
-            toTime: Validator_1.schema.date({ format: 'hh:mm a' }),
+            dateFrom: Validator_1.schema.date({ format: 'yyyy-MM-dd hh:mm a' }),
+            dateTo: Validator_1.schema.date({ format: 'yyyy-MM-dd hh:mm a' }),
             gatheringDescription: Validator_1.schema.string(),
             payment: Validator_1.schema.enum(['cash', 'bank']),
             bankName: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.requiredWhen('payment', '=', 'bank')]),

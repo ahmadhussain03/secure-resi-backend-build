@@ -185,6 +185,15 @@ class ResidentRepository {
         }).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units')).paginate(page, limit);
         return members;
     }
+    async requestByProject(project, request) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const members = await User_1.default.query().whereHas('resident', (query) => {
+            query.where('project_id', project.id).where('is_approved', false);
+        }).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units')).paginate(page, limit);
+        return members;
+    }
 }
 exports.default = ResidentRepository;
 //# sourceMappingURL=ResidentRepository.js.map

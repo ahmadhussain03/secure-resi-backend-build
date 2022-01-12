@@ -10,8 +10,8 @@ class FacilityRepository {
             facilityTypeId: data.facilityTypeId,
             dateFrom: data.dateFrom,
             dateTo: data.dateTo,
-            fromTime: data.fromTime,
-            toTime: data.toTime,
+            fromTime: data.dateFrom,
+            toTime: data.dateTo,
             bankOption: data.bankOption,
             gatheringDescription: data.gatheringDescription,
             payment: data.payment,
@@ -56,8 +56,8 @@ class FacilityRepository {
         facility.facilityTypeId = data.facilityTypeId ?? facility.facilityTypeId;
         facility.dateFrom = data.dateFrom ?? facility.dateFrom;
         facility.dateTo = data.dateTo ?? facility.dateTo;
-        facility.fromTime = data.fromTime ?? facility.fromTime;
-        facility.toTime = data.toTime ?? facility.toTime;
+        facility.fromTime = data.dateFrom ?? facility.fromTime;
+        facility.toTime = data.dateTo ?? facility.toTime;
         facility.bankOption = data.bankOption ?? facility.bankOption;
         facility.gatheringDescription = data.gatheringDescription ?? facility.gatheringDescription;
         facility.payment = data.payment ?? facility.payment;
