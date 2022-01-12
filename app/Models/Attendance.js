@@ -17,6 +17,11 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const Project_1 = __importDefault(require("./Project"));
 const User_1 = __importDefault(require("./User"));
 class Attendance extends Orm_1.BaseModel {
+    serializeExtras() {
+        return {
+            type_count: parseInt(this.$extras.type_count),
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),

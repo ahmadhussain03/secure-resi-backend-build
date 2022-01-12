@@ -48,8 +48,6 @@ class ShiftRepository {
     }
     async all(request, projectId) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const shiftQuery = Shift_1.default.query().where('project_id', projectId).preload('from', (query) => query.preload('profile')).preload('to', (query) => query.preload('profile')).orderBy('created_at', 'desc');
@@ -61,7 +59,7 @@ class ShiftRepository {
             const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toFormat('yyyy-MM-dd');
             shiftQuery.whereRaw('DATE(created_at) <= ?', [formattedEndDate]);
         }
-        const shifts = await shiftQuery.paginate(page, limit);
+        const shifts = await shiftQuery.exec();
         return shifts;
     }
     async findById(id, projectId) {

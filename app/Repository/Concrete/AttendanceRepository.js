@@ -12,8 +12,6 @@ class AttendanceRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const staff = query.staff || null;
@@ -31,7 +29,7 @@ class AttendanceRepository {
         if (endDate) {
             attendanceQuery.whereRaw('DATE(created_at) <= ?', [query.endDate]);
         }
-        const attendances = await attendanceQuery.paginate(page, limit);
+        const attendances = await attendanceQuery.exec();
         return attendances;
     }
 }

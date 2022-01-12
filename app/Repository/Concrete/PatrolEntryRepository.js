@@ -22,8 +22,6 @@ class PatrolEntryRepository {
     }
     async all(request, projectId) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const checkpointId = query.checkpointId;
         const guard = query.guard;
         const startDate = query.startDate;
@@ -49,7 +47,7 @@ class PatrolEntryRepository {
             const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
             patrolEntryQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
         }
-        const patrolEntries = await patrolEntryQuery.preload('checkpoint').preload('user', (query) => query.preload('profile')).orderBy('created_at', 'desc').paginate(page, limit);
+        const patrolEntries = await patrolEntryQuery.preload('checkpoint').preload('user', (query) => query.preload('profile')).orderBy('created_at', 'desc');
         return patrolEntries;
     }
     async findById(id, projectId) {

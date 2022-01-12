@@ -17,8 +17,6 @@ class PanicAlertRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const startDate = query.startDate;
         const endDate = query.endDate;
         const filter = query.filter;
@@ -52,7 +50,7 @@ class PanicAlertRepository {
         if (sort == 'desc') {
             alertQuery.orderBy('created_at', sort);
         }
-        const alerts = await alertQuery.preload('user', (query) => query.preload('profile').preload('role')).preload('project').paginate(page, limit);
+        const alerts = await alertQuery.preload('user', (query) => query.preload('profile').preload('role')).preload('project');
         return alerts;
     }
     async destroyById(id, project) {

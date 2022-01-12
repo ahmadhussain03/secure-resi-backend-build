@@ -20,6 +20,11 @@ const Checkpoint_1 = __importDefault(require("./Checkpoint"));
 const Project_1 = __importDefault(require("./Project"));
 const Schedule_1 = __importDefault(require("./Schedule"));
 class ScheduleEntry extends Orm_1.BaseModel {
+    serializeExtras() {
+        return {
+            count: parseInt(this.$extras.count),
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),

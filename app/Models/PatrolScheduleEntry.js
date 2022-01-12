@@ -20,6 +20,11 @@ const Project_1 = __importDefault(require("./Project"));
 const PatrolSchedule_1 = __importDefault(require("./PatrolSchedule"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 class PatrolScheduleEntry extends Orm_1.BaseModel {
+    serializeExtras() {
+        return {
+            count: parseInt(this.$extras.count),
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),

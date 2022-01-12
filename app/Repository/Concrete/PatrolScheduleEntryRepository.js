@@ -10,8 +10,6 @@ const luxon_1 = require("luxon");
 class PatrolScheduleEntryRepository {
     async searchByPatrolScheduleId(request, id, projectId) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const checkpointId = query.checkpointId;
         const guard = query.guard;
         const startDate = query.startDate;
@@ -37,7 +35,7 @@ class PatrolScheduleEntryRepository {
         if (guard) {
             entriesQuery.where('user_id', guard);
         }
-        const entries = await entriesQuery.paginate(page, limit);
+        const entries = await entriesQuery.exec();
         return entries;
     }
     async create(data) {
@@ -57,8 +55,6 @@ class PatrolScheduleEntryRepository {
     }
     async all(request, projectId) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const patrolScheduleId = query.patrolScheduleId;
         const guard = query.guard;
         const startDate = query.startDate;
@@ -84,7 +80,7 @@ class PatrolScheduleEntryRepository {
         if (guard) {
             patrolEntryQuery.where('user_id', guard);
         }
-        const patrolEntries = await patrolEntryQuery.paginate(page, limit);
+        const patrolEntries = await patrolEntryQuery.exec();
         return patrolEntries;
     }
     async findById(id, projectId) {

@@ -32,6 +32,11 @@ class User extends Orm_1.BaseModel {
             user.password = await Hash_1.default.make(user.password);
         }
     }
+    serializeExtras() {
+        return {
+            role_count: parseInt(this.$extras.role_count),
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),

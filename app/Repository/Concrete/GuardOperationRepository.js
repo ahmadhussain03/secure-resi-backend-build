@@ -28,8 +28,6 @@ class GuardOperationRepository {
     }
     async all(request, project) {
         const query = request.qs();
-        const page = query.page || 1;
-        const limit = query.limit || 15;
         const order = query.order || 'desc';
         const operationTypeId = query.operationTypeId;
         const startDate = query.startDate;
@@ -59,7 +57,7 @@ class GuardOperationRepository {
             const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
             operationQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
         }
-        const operations = await operationQuery.paginate(page, limit);
+        const operations = await operationQuery.exec();
         return operations;
     }
     async findById(id, project) {
