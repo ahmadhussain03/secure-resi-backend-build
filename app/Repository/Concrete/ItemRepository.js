@@ -14,11 +14,15 @@ class ItemRepository {
         const page = query.page || 1;
         const limit = query.limit || 15;
         const isNotAssigned = query.notAssigned ? query.notAssigned : null;
+        const search = query.search || null;
         const itemQuery = Item_1.default.query().where('project_id', project.id);
         if (isNotAssigned) {
             itemQuery.whereDoesntHave('users', (query) => {
                 query.whereColumn('item_id', 'items.id');
             });
+        }
+        if (search) {
+            itemQuery.where('name', 'like', `%${search}%`);
         }
         const items = await itemQuery.orderBy('created_at', 'desc').paginate(page, limit);
         return items;

@@ -44,7 +44,7 @@ class LogBookRepository {
             logQuery.orderBy('created_at', order);
         }
         if (search) {
-            logQuery.where('status', 'like', `%${search}%`);
+            logQuery.where('status', 'like', `%${search}%`).orWhere('log', 'like', `%${search}%`);
         }
         if (logTypeId) {
             logQuery.where('log_type_id', logTypeId);

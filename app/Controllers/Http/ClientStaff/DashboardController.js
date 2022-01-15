@@ -21,7 +21,7 @@ class DashboardController {
         if (filter === 'today') {
             const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
             const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`DATE(created_at) = ?`, [todayDate]).groupBy('role_id').count('id', 'role_count').preload('role');
-            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).pojo().count('id', 'total').first();
+            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
             const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`DATE(dated) = ?`, [todayDate]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
             const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [todayDate]).where('project_id', project.id).groupBy('status').count('id', 'count');
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`DATE(dated) = ?`, [todayDate]).pojo().count('id', 'total').first();
@@ -33,7 +33,7 @@ class DashboardController {
         else if (filter === 'yesterday') {
             const yesterdayDate = luxon_1.DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
             const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).groupBy('role_id').count('id', 'role_count').preload('role');
-            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).pojo().count('id', 'total').first();
+            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
             const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`DATE(dated) = ?`, [yesterdayDate]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
             const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).where('project_id', project.id).groupBy('status').count('id', 'count');
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`DATE(dated) = ?`, [yesterdayDate]).pojo().count('id', 'total').first();
@@ -45,7 +45,7 @@ class DashboardController {
         else {
             const monthNumber = luxon_1.DateTime.now().toFormat('MM');
             const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).groupBy('role_id').count('id', 'role_count').preload('role');
-            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).pojo().count('id', 'total').first();
+            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
             const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
             const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).where('project_id', project.id).groupBy('status').count('id', 'count');
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).pojo().count('id', 'total').first();

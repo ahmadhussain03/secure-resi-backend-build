@@ -17,7 +17,7 @@ class RolesController {
             query.whereHas('clientStaff', (q) => {
                 q.where('project_id', projectId);
             });
-        }).orWhere('user_id', authUser.parentId).paginate(page, limit);
+        }).orWhere('user_id', authUser.parentId).orWhereNull('user_id').paginate(page, limit);
         return response.json(roles);
     }
     async store({ request, response, auth }) {

@@ -132,6 +132,7 @@ Route_1.default.group(() => {
             destroy: ['can:delete-emergency-contact'],
         }).as('guard.emergency.contact');
         Route_1.default.post('nearby_checkpoint', 'NearByCheckpointsController.index').middleware('can:view-checkpoint').as('gaurd.neary.checkpoints');
+        Route_1.default.get('guard_supervisor', 'GuardSupervisorsController.index').middleware('can:view-staff');
         Route_1.default.post('profile/update', 'ProfilesController.update').middleware('can:update-profile').as('guard.profile.update');
     }).middleware('auth');
 }).namespace('App/Controllers/Http/ClientStaff').prefix('api/guard');

@@ -24,7 +24,12 @@ class PatrolPreDefinedRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
-        return await PatrolPreDefinedMessage_1.default.query().where('project_id', project.id).paginate(page, limit);
+        const search = query.search || null;
+        const messageQuery = PatrolPreDefinedMessage_1.default.query().where('project_id', project.id);
+        if (search) {
+            messageQuery.where('message', 'like', `%${search}%`);
+        }
+        return await messageQuery.paginate(page, limit);
     }
     async create(data) {
         return await PatrolPreDefinedMessage_1.default.create({

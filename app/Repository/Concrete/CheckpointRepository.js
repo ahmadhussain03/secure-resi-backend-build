@@ -56,7 +56,12 @@ class CheckpointRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
-        const checkpoints = await Checkpoint_1.default.query().where('project_id', project.id).paginate(page, limit);
+        const search = query.search || null;
+        const checkpointQuery = Checkpoint_1.default.query().where('project_id', project.id);
+        if (search) {
+            checkpointQuery.where('name', 'like', `%${search}%`).orWhere('nfc_code', 'like', `%${search}%`).orWhere('phone_number', 'like', `%${search}%`).orWhere('code', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
+        }
+        const checkpoints = await checkpointQuery.paginate(page, limit);
         return checkpoints;
     }
     async destroyById(id, project) {

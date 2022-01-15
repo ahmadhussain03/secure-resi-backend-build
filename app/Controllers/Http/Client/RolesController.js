@@ -12,7 +12,7 @@ class RolesController {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const roles = await Role_1.default.query().where('user_id', user.id).paginate(page, limit);
+        const roles = await Role_1.default.query().where('user_id', user.id).orWhereNull('user_id').paginate(page, limit);
         return response.json(roles);
     }
     async store({ request, response, auth }) {

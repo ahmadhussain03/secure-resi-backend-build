@@ -44,7 +44,7 @@ class GuardOperationRepository {
             operationQuery.orderBy('created_at', order);
         }
         if (search) {
-            operationQuery.where('status', 'like', `%${search}%`);
+            operationQuery.where('status', 'like', `%${search}%`).orWhere('operation', 'like', `%${search}%`);
         }
         if (operationTypeId) {
             operationQuery.where('operation_type_id', operationTypeId);

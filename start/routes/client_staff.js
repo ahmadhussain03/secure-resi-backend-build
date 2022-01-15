@@ -24,6 +24,7 @@ Route_1.default.group(() => {
     Route_1.default.post('fingerprint_login', 'FingerprintsController.index');
     Route_1.default.group(() => {
         Route_1.default.any('/user', 'UsersController.index');
+        Route_1.default.get('/dashboard', 'DashboardController.index').middleware('can:view-staff');
         Route_1.default.post('/logout', 'UsersController.logout');
         Route_1.default.get('/client_staff', 'ClientStaffsController.index').middleware('can:view-staff');
         Route_1.default.post('/client_staff', 'ClientStaffsController.create').middleware('can:create-staff');
@@ -237,6 +238,7 @@ Route_1.default.group(() => {
             update: ['can:update-operation-type'],
             destroy: ['can:delete-operation-type'],
         });
+        Route_1.default.get('guard_supervisor', 'GuardSupervisorsController.index');
         Route_1.default.get('improvement', 'ImprovementsController.index').middleware('can:create-operation-type');
         Route_1.default.put('improvement/:id', 'ImprovementsController.update').middleware('can:update-operation-type');
         Route_1.default.get('move', 'MovesController.index').middleware('can:create-operation-type');
