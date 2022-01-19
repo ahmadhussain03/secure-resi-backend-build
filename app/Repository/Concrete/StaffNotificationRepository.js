@@ -30,10 +30,10 @@ class StaffNotificationRepository {
             unread_count: unreadCount.total
         };
     }
-    async readNotificationByUser(recipientId, userId, notificationId) {
+    async readNotificationByUser(recipientId, userId, projectId, notificationId) {
         const unreadNotifications = await Database_1.default.from('staff_notifications').where('id', notificationId).where((query) => {
             query.where('role_id', recipientId).orWhereNull('role_id');
-        }).whereNotExists(Database_1.default.raw('select * from staff_notification_reads where staff_notification_reads.user_id = ' + userId + ' AND staff_notifications.id = staff_notification_reads.staff_notification_id'));
+        }).where('project_id', projectId).whereNotExists(Database_1.default.raw('select * from staff_notification_reads where staff_notification_reads.user_id = ' + userId + ' AND staff_notifications.id = staff_notification_reads.staff_notification_id'));
         unreadNotifications.forEach(async (notification) => {
             await StaffNotificationRead_1.default.create({
                 staffNotificationId: notification.id,

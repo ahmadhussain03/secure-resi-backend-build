@@ -26,7 +26,7 @@ class ScheduleRepository {
             }
         });
         schedulesQuery.whereHas('schedule', query => {
-            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
+            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id);
             if (scheduleId) {
                 query.where('id', scheduleId);
             }

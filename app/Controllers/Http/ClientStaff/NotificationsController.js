@@ -16,11 +16,12 @@ class NotificationsController {
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const recipientId = authUser.roleId;
+        const projectId = authUser.clientStaff.projectId;
         const readNotificationSchema = Validator_1.schema.create({
             notificationId: Validator_1.schema.number()
         });
         const data = await request.validate({ schema: readNotificationSchema });
-        await StaffNotificationRepositoryContract_1.default.readNotificationByUser(recipientId, authUser.id, data.notificationId);
+        await StaffNotificationRepositoryContract_1.default.readNotificationByUser(recipientId, authUser.id, projectId, data.notificationId);
         return response.json({ message: "Notification Read Successfully!" });
     }
 }
