@@ -15,9 +15,6 @@ class AlterUserIdInRoles extends Schema_1.default {
         });
     }
     async down() {
-        this.schema.alterTable(this.tableName, (table) => {
-            table.integer('user_id').unsigned().notNullable().alter();
-        });
     }
 }
 exports.default = AlterUserIdInRoles;

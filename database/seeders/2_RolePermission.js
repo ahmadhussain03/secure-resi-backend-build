@@ -841,6 +841,29 @@ class RolePermissionSeeder extends Seeder_1.default {
             geocode: "1",
             userId: 3
         });
+        const project2 = await Project_1.default.create({
+            name: "My Project 2",
+            code: "720e",
+            noOfCheckpoints: 10,
+            noOfGuards: 100,
+            noOfProjectStaff: 59,
+            noOfMembers: 200,
+            country: "PK",
+            city: "Gujranwala",
+            state: "Punjab",
+            address: "Address",
+            postCode: "55250",
+            contactPersonName: "Admin",
+            contactPersonEmail: "admin@secure.com",
+            contactPersonDesignation: "Admin",
+            contactPersonPhone: "03009900990",
+            contactPersonFax: "112233",
+            latitude: "98.99",
+            longitude: "34.81",
+            geofenceRadius: "177",
+            geocode: "1",
+            userId: 3
+        });
         const staff = await User_1.default.create({
             username: "client-staff@secure.com",
             password: "@Admin123",
@@ -871,11 +894,11 @@ class RolePermissionSeeder extends Seeder_1.default {
             userId: staff.id,
             projectId: project.id,
         });
-        await staff.related('clientStaff').create({
+        await staff2.related('clientStaff').create({
             staffCode: "11882",
             nfcCode: "123452",
             userId: staff2.id,
-            projectId: project.id,
+            projectId: project2.id,
         });
         await LogTypeRepositoryContract_1.default.create({
             name: 'log type',
