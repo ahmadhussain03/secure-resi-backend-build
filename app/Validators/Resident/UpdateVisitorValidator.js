@@ -20,6 +20,7 @@ class UpdateVisitorValidator {
             city: Validator_1.schema.number.optional([Validator_1.rules.unsigned()]),
             state: Validator_1.schema.number.optional([Validator_1.rules.unsigned()]),
             address: Validator_1.schema.string.optional(),
+            postCode: Validator_1.schema.string.optional()
         });
         this.messages = {};
     }

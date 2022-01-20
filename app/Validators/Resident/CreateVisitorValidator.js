@@ -21,6 +21,7 @@ class CreateVisitorValidator {
             city: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             state: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             address: Validator_1.schema.string(),
+            postCode: Validator_1.schema.string(),
         });
         this.messages = {};
     }

@@ -79,7 +79,7 @@ class ResidentPanicAlertsController {
         const alertCommentSchema = Validator_1.schema.create({
             image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
             audio: Validator_1.schema.file.optional({ size: '128mb' }),
-            comment: Validator_1.schema.string({ trim: true }),
+            comment: Validator_1.schema.string.optional({ trim: true }),
             unitId: Validator_1.schema.number([Validator_1.rules.unsigned()])
         });
         const data = await request.validate({ schema: alertCommentSchema });

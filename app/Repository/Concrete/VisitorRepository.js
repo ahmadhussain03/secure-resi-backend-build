@@ -22,7 +22,8 @@ class VisitorRepository {
             cityId: data.city,
             stateId: data.state,
             countryId: data.country,
-            address: data.address
+            address: data.address,
+            postCode: data.postCode
         });
         const idCard = request.file('idCard');
         if (idCard) {
@@ -83,6 +84,7 @@ class VisitorRepository {
         visitor.stateId = data.state ?? visitor.stateId;
         visitor.countryId = data.country ?? visitor.countryId;
         visitor.address = data.address ?? visitor.address;
+        visitor.postCode = data.postCode ?? visitor.postCode;
         await visitor.save();
         await visitor.load('city');
         await visitor.load('country');
