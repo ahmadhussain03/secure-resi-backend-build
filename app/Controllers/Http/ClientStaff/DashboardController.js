@@ -8,9 +8,10 @@ const Checkpoint_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/C
 const GuardOperation_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/GuardOperation"));
 const LogBook_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/LogBook"));
 const PatrolEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolEntry"));
+const PatrolSchedule_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolSchedule"));
 const PatrolScheduleEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolScheduleEntry"));
 const ScheduleEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/ScheduleEntry"));
-const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
+const ScheduleRoutine_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/ScheduleRoutine"));
 const luxon_1 = require("luxon");
 class DashboardController {
     async index({ request, auth, response }) {
@@ -20,39 +21,90 @@ class DashboardController {
         const filter = query.filter;
         if (filter === 'today') {
             const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
-            const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`DATE(created_at) = ?`, [todayDate]).groupBy('role_id').count('id', 'role_count').preload('role');
             const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
-            const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`DATE(dated) = ?`, [todayDate]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
-            const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [todayDate]).where('project_id', project.id).groupBy('status').count('id', 'count');
+            const scheduleRoutineCount = await ScheduleRoutine_1.default.query().whereHas('checkpoint', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).whereHas('schedule', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id)).pojo().count('id', 'total').first();
+            const patrolSchduleCount = await PatrolSchedule_1.default.query().whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).whereHas('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).where('project_id', project.id).pojo().count('id', 'total').first();
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`DATE(dated) = ?`, [todayDate]).pojo().count('id', 'total').first();
+            const schedulesEntryOnTime = await ScheduleEntry_1.default.query().whereRaw(`DATE(created_at) = ?`, [todayDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'On Time').pojo().count('id', 'total').first();
+            const schedulesEntryAfterTime = await ScheduleEntry_1.default.query().whereRaw(`DATE(created_at) = ?`, [todayDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'After Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryOnTime = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(created_at) = ?`, [todayDate]).where('project_id', project.id).where('status', 'On Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryAfterTime = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(created_at) = ?`, [todayDate]).where('project_id', project.id).where('status', 'After Time').pojo().count('id', 'total').first();
             const guardOperationCount = await GuardOperation_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).pojo().count('id', 'total').first();
             const logBookCount = await LogBook_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).pojo().count('id', 'total').first();
-            const checkCount = await Attendance_1.default.query().select(['type']).where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).groupBy('type').count('id', 'type_count');
-            return response.json({ staffPerRole, schedulesPerStatus, patrolSchedulePerStatus, checkCount, checkpointCount, patrolCount, guardOperationCount, logBookCount });
+            const checkInCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).where('type', 'In').pojo().count('id', 'total').first();
+            const checkOutCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [todayDate]).where('type', 'Out').pojo().count('id', 'total').first();
+            return response.json({
+                totalCheckpoints: checkpointCount?.total ?? 0,
+                totalPatrol: patrolCount?.total ?? 0,
+                totalScheduleRoutine: scheduleRoutineCount?.total ?? 0,
+                totalPatrolSchdule: patrolSchduleCount?.total ?? 0,
+                totalLogEntries: logBookCount?.total ?? 0,
+                totalOperationEntries: guardOperationCount?.total ?? 0,
+                attendanceIn: checkInCount?.total ?? 0,
+                attendanceOut: checkOutCount?.total ?? 0,
+                scheduleEntriesOnTime: schedulesEntryOnTime?.total ?? 0,
+                schedulesEntryAfterTime: schedulesEntryAfterTime?.total ?? 0,
+                patrolScheduleEntryOnTime: patrolScheduleEntryOnTime?.total ?? 0,
+                patrolScheduleEntryAfterTime: patrolScheduleEntryAfterTime?.total ?? 0
+            });
         }
         else if (filter === 'yesterday') {
             const yesterdayDate = luxon_1.DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
-            const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).groupBy('role_id').count('id', 'role_count').preload('role');
             const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
-            const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`DATE(dated) = ?`, [yesterdayDate]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
-            const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).where('project_id', project.id).groupBy('status').count('id', 'count');
+            const scheduleRoutineCount = await ScheduleRoutine_1.default.query().whereHas('checkpoint', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).whereHas('schedule', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id)).pojo().count('id', 'total').first();
+            const patrolSchduleCount = await PatrolSchedule_1.default.query().whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).whereHas('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).where('project_id', project.id).pojo().count('id', 'total').first();
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`DATE(dated) = ?`, [yesterdayDate]).pojo().count('id', 'total').first();
+            const schedulesEntryOnTime = await ScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'On Time').pojo().count('id', 'total').first();
+            const schedulesEntryAfterTime = await ScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'After Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryOnTime = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).where('project_id', project.id).where('status', 'On Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryAfterTime = await PatrolScheduleEntry_1.default.query().whereRaw(`DATE(dated) = ?`, [yesterdayDate]).where('project_id', project.id).where('status', 'After Time').pojo().count('id', 'total').first();
             const guardOperationCount = await GuardOperation_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).pojo().count('id', 'total').first();
             const logBookCount = await LogBook_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).pojo().count('id', 'total').first();
-            const checkCount = await Attendance_1.default.query().select(['type']).where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).groupBy('type').count('id', 'type_count');
-            return response.json({ staffPerRole, schedulesPerStatus, patrolSchedulePerStatus, checkCount, checkpointCount, patrolCount, guardOperationCount, logBookCount });
+            const checkInCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).where('type', 'In').pojo().count('id', 'total').first();
+            const checkOutCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`DATE(created_at) = ?`, [yesterdayDate]).where('type', 'Out').pojo().count('id', 'total').first();
+            return response.json({
+                totalCheckpoints: checkpointCount?.total ?? 0,
+                totalPatrol: patrolCount?.total ?? 0,
+                totalScheduleRoutine: scheduleRoutineCount?.total ?? 0,
+                totalPatrolSchdule: patrolSchduleCount?.total ?? 0,
+                totalLogEntries: logBookCount?.total ?? 0,
+                totalOperationEntries: guardOperationCount?.total ?? 0,
+                attendanceIn: checkInCount?.total ?? 0,
+                attendanceOut: checkOutCount?.total ?? 0,
+                scheduleEntriesOnTime: schedulesEntryOnTime?.total ?? 0,
+                schedulesEntryAfterTime: schedulesEntryAfterTime?.total ?? 0,
+                patrolScheduleEntryOnTime: patrolScheduleEntryOnTime?.total ?? 0,
+                patrolScheduleEntryAfterTime: patrolScheduleEntryAfterTime?.total ?? 0
+            });
         }
         else {
             const monthNumber = luxon_1.DateTime.now().toFormat('MM');
-            const staffPerRole = await User_1.default.query().select(['role_id']).whereNotNull('role_id').whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).groupBy('role_id').count('id', 'role_count').preload('role');
             const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
-            const schedulesPerStatus = await ScheduleEntry_1.default.query().select(['status']).whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).whereHas('schedule', query => query.where('project_id', project.id)).groupBy('status').count('id', 'count');
-            const patrolSchedulePerStatus = await PatrolScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).where('project_id', project.id).groupBy('status').count('id', 'count');
+            const scheduleRoutineCount = await ScheduleRoutine_1.default.query().whereHas('checkpoint', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).whereHas('schedule', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id)).pojo().count('id', 'total').first();
+            const patrolSchduleCount = await PatrolSchedule_1.default.query().whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).whereHas('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).where('project_id', project.id).pojo().count('id', 'total').first();
             const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).pojo().count('id', 'total').first();
+            const schedulesEntryOnTime = await ScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'On Time').pojo().count('id', 'total').first();
+            const schedulesEntryAfterTime = await ScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'After Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryOnTime = await PatrolScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).where('project_id', project.id).where('status', 'On Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryAfterTime = await PatrolScheduleEntry_1.default.query().whereRaw(`EXTRACT(MONTH FROM dated) = ?`, [monthNumber]).where('project_id', project.id).where('status', 'After Time').pojo().count('id', 'total').first();
             const guardOperationCount = await GuardOperation_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).pojo().count('id', 'total').first();
             const logBookCount = await LogBook_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).pojo().count('id', 'total').first();
-            const checkCount = await Attendance_1.default.query().select(['type']).where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).groupBy('type').count('id', 'type_count');
-            return response.json({ staffPerRole, schedulesPerStatus, patrolSchedulePerStatus, checkCount, checkpointCount, patrolCount, guardOperationCount, logBookCount });
+            const checkInCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).where('type', 'In').pojo().count('id', 'total').first();
+            const checkOutCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`EXTRACT(MONTH FROM created_at) = ?`, [monthNumber]).where('type', 'Out').pojo().count('id', 'total').first();
+            return response.json({
+                totalCheckpoints: checkpointCount?.total ?? 0,
+                totalPatrol: patrolCount?.total ?? 0,
+                totalScheduleRoutine: scheduleRoutineCount?.total ?? 0,
+                totalPatrolSchdule: patrolSchduleCount?.total ?? 0,
+                totalLogEntries: logBookCount?.total ?? 0,
+                totalOperationEntries: guardOperationCount?.total ?? 0,
+                attendanceIn: checkInCount?.total ?? 0,
+                attendanceOut: checkOutCount?.total ?? 0,
+                scheduleEntriesOnTime: schedulesEntryOnTime?.total ?? 0,
+                schedulesEntryAfterTime: schedulesEntryAfterTime?.total ?? 0,
+                patrolScheduleEntryOnTime: patrolScheduleEntryOnTime?.total ?? 0,
+                patrolScheduleEntryAfterTime: patrolScheduleEntryAfterTime?.total ?? 0
+            });
         }
     }
 }

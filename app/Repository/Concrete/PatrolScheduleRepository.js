@@ -14,7 +14,7 @@ class PatrolScheduleRepository {
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";
-        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id).preload('patrolScheduleRoutine').preload('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']));
+        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id);
         schedulesQuery.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
         if (order) {
             schedulesQuery.orderBy('created_at', order);
@@ -41,7 +41,7 @@ class PatrolScheduleRepository {
                 });
             }
             else if (filter == 'today') {
-                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.created_at) = '${todayDate}'`))
+                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.created_at) = '${todayDate}' AND patrol_schedule_entries.project_id = ${project.id}`))
                     .whereHas('patrolScheduleRoutine', (query) => {
                     query.where(q => {
                         q.whereNotNull('checkDate').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);

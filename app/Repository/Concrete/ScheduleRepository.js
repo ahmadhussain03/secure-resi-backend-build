@@ -16,7 +16,7 @@ class ScheduleRepository {
         const filter = query.filter;
         const nfc = query.nfc;
         const scheduleId = query.scheduleId;
-        const schedulesQuery = ScheduleRoutine_1.default.query().preload('checkpoint').preload('schedule');
+        const schedulesQuery = ScheduleRoutine_1.default.query().preload('schedule');
         schedulesQuery.whereHas('checkpoint', query => {
             query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
             if (nfc) {

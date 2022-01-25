@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Mail_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/Mail"));
 const UnitRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/UnitRepositoryContract"));
 const VisitorPlanRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/VisitorPlanRepositoryContract"));
 const CreateVisitorPlanValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/CreateVisitorPlanValidator"));
@@ -34,6 +35,17 @@ class VisitorPlansController {
         data.userId = authUser.id;
         data.unitId = unit.id;
         const visitorPlan = await VisitorPlanRepositoryContract_1.default.create(data);
+        visitorPlan.visitors.forEach(async (visitor) => {
+            if (visitor.email) {
+                await Mail_1.default.sendLater((message) => {
+                    message
+                        .from('forgot-password@secureresi.com')
+                        .to(visitor.email)
+                        .subject('Visit Plan!')
+                        .htmlView('visitors/plan', { visitor });
+                });
+            }
+        });
         return response.json(visitorPlan);
     }
     async update({ request, response, auth, params }) {

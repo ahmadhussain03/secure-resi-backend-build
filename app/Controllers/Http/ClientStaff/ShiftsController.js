@@ -22,6 +22,11 @@ class ShiftsController {
         const authUser = auth.user;
         await authUser.load('clientStaff');
         const data = await request.validate(CreateShiftValidator_1.default);
+        if (data.to === authUser.id) {
+            return response.unprocessableEntity({
+                message: 'Can not self assign the items'
+            });
+        }
         data.from = authUser.id;
         data.projectId = authUser.clientStaff.projectId;
         const shift = await ShiftRepositoryContract_1.default.create(data);

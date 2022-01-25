@@ -6,18 +6,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
 const ApiToken_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/ApiToken"));
+const Hash_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Hash"));
 class ProfilesController {
     async update({ response, request, auth }) {
         const verificationSchema = Validator_1.schema.create({
-            password: Validator_1.schema.string.optional({ trim: true }, [
+            password: Validator_1.schema.string.optional({}, [
                 Validator_1.rules.confirmed(),
                 Validator_1.rules.maxLength(255),
                 Validator_1.rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,255}$/)
             ]),
+            password_old: Validator_1.schema.string.optional({}, [Validator_1.rules.requiredIfExists('password')]),
             image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' })
         });
         const data = await request.validate({ schema: verificationSchema, messages: { 'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.' } });
         const authUser = auth.user;
+        if (data.password) {
+            const isValidPassword = await Hash_1.default.verify(authUser.password, data.password_old);
+            if (!isValidPassword)
+                return response.unprocessableEntity({
+                    "errors": [
+                        {
+                            field: "old_password",
+                            message: "Old Password Does Not Match!",
+                            rule: "oldPasswordMatch"
+                        }
+                    ]
+                });
+        }
         const image = request.file('image');
         let imageName = "";
         if (image) {

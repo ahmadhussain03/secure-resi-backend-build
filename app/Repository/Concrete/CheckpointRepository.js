@@ -61,6 +61,10 @@ class CheckpointRepository {
         if (search) {
             checkpointQuery.where('name', 'like', `%${search}%`).orWhere('nfc_code', 'like', `%${search}%`).orWhere('phone_number', 'like', `%${search}%`).orWhere('code', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
         }
+        const isGuardRequest = request.parsedUrl.path?.split('/')[2] === 'guard';
+        if (isGuardRequest) {
+            checkpointQuery.select(['id', 'name', 'code', 'phone_number', 'nfc_code', 'latitude', 'longitude', 'geofence_radius', 'status']);
+        }
         const checkpoints = await checkpointQuery.paginate(page, limit);
         return checkpoints;
     }

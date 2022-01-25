@@ -52,16 +52,18 @@ class AuthController {
     }
     async register({ request, response }) {
         const data = await request.validate(RegisterValidator_1.default);
-        const unit = await Unit_1.default.query().where('id', data.unitId).firstOrFail();
-        data.projectId = unit.projectId;
         data.username = data.email;
         data.userType = UserType_1.UserType.resident;
         data.isApproved = false;
         if (data.type === 'owner') {
+            const unit = await Unit_1.default.query().where('id', data.unitId).doesntHave('owner').firstOrFail();
+            data.projectId = unit.projectId;
             const role = await Role_1.default.query().where('name', 'owner').firstOrFail();
             data.roleId = role.id;
         }
         else {
+            const unit = await Unit_1.default.query().where('id', data.unitId).firstOrFail();
+            data.projectId = unit.projectId;
             const role = await Role_1.default.query().where('name', 'resident').firstOrFail();
             data.roleId = role.id;
         }
