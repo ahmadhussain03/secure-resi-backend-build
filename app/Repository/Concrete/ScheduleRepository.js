@@ -16,7 +16,7 @@ class ScheduleRepository {
         const filter = query.filter;
         const nfc = query.nfc;
         const scheduleId = query.scheduleId;
-        const schedulesQuery = ScheduleRoutine_1.default.query().preload('schedule');
+        const schedulesQuery = ScheduleRoutine_1.default.query().preload('schedule').preload('checkpoint');
         schedulesQuery.whereHas('checkpoint', query => {
             query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
             if (nfc) {
@@ -112,7 +112,7 @@ class ScheduleRepository {
                 query.where('name', 'like', `%${search}%`).orWhere('description', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
             });
         }
-        const schedules = await schedulesQuery.preload('scheduleRoutine').paginate(page, limit);
+        const schedules = await schedulesQuery.paginate(page, limit);
         return schedules;
     }
     async destroyById(id, project) {

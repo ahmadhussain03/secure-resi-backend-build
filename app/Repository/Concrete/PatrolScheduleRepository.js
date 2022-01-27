@@ -14,7 +14,8 @@ class PatrolScheduleRepository {
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";
-        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id);
+        const patrolScheduleId = query.patrolScheduleId;
+        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id).preload('patrolScheduleRoutine').preload('checkpoints');
         schedulesQuery.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
         if (order) {
             schedulesQuery.orderBy('created_at', order);
@@ -23,6 +24,9 @@ class PatrolScheduleRepository {
             schedulesQuery.where((query) => {
                 query.where('name', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`).orWhere('description', 'like', `%${search}%`);
             });
+        }
+        if (patrolScheduleId) {
+            schedulesQuery.where('id', patrolScheduleId);
         }
         if (filter) {
             const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
@@ -113,7 +117,7 @@ class PatrolScheduleRepository {
         const order = query.order || 'asc';
         const filter = query.filter;
         const search = query.search ?? "";
-        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id).preload('patrolScheduleRoutine').preload('checkpoints');
+        const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id);
         if (order) {
             schedulesQuery.orderBy('created_at', order);
         }
