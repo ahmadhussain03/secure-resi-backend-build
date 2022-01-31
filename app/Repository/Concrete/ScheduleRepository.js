@@ -26,19 +26,28 @@ class ScheduleRepository {
         if (order) {
             schedulesQuery.orderBy('id', order);
         }
+        schedulesQuery.whereHas('schedule', query => {
+            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id);
+            if (scheduleId) {
+                query.where('id', scheduleId);
+            }
+        });
         const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
         const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
         const todayDateNumber = luxon_1.DateTime.now().toFormat('dd');
         const today = luxon_1.DateTime.now().weekdayLong.toLowerCase();
+        console.log(todayDateNumber);
         if (filter) {
             if (filter === 'today') {
                 schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
                     .where(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
-                }).orWhere(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
-                }).orWhere(query => {
-                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                    query.where(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
+                    }).orWhere(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
+                    }).orWhere(query => {
+                        query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                    });
                 });
             }
             else if (filter === 'upcoming') {
@@ -76,12 +85,6 @@ class ScheduleRepository {
                 });
             }
         }
-        schedulesQuery.whereHas('schedule', query => {
-            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id);
-            if (scheduleId) {
-                query.where('id', scheduleId);
-            }
-        });
         const schedules = await schedulesQuery.paginate(page, limit);
         return schedules;
     }
@@ -107,6 +110,9 @@ class ScheduleRepository {
         const limit = query.limit | 15;
         const search = query.search ?? "";
         const schedulesQuery = Schedule_1.default.query().where('project_id', project.id);
+        if (request.url().split('/')[2] === 'guard') {
+            schedulesQuery.preload('scheduleRoutine', q => q.preload('checkpoint'));
+        }
         if (search) {
             schedulesQuery.where((query) => {
                 query.where('name', 'like', `%${search}%`).orWhere('description', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);

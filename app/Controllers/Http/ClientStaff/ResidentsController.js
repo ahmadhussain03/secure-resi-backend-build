@@ -39,7 +39,7 @@ class ResidentsController {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
         const data = await request.validate(UpdateResidentValidator_1.default);
-        const resident = await ResidentRepositoryContract_1.default.findByIdAndUpdate(params.id, project, data);
+        const resident = await ResidentRepositoryContract_1.default.findByIdAndUpdate(params.id, project, data, request);
         return response.json(resident);
     }
     async destroy({ response, auth, params }) {

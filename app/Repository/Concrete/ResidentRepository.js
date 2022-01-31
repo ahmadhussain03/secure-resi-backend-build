@@ -114,7 +114,7 @@ class ResidentRepository {
         await user.delete();
         return true;
     }
-    async findByIdAndUpdate(id, project, data) {
+    async findByIdAndUpdate(id, project, data, request) {
         const user = await this.findById(id, project);
         user.username = data.username ? data.username : user.username;
         user.password = data.password ? data.password : user.password;
@@ -147,6 +147,16 @@ class ResidentRepository {
         user.resident.status = data.status ? data.status : user.resident.status;
         user.resident.type = data.type ? data.type : user.resident.type;
         await user.resident.save();
+        const image = request.file('image');
+        if (image) {
+            const fileName = `${user.id.toString()}.${image.extname}`;
+            await image.move(Application_1.default.tmpPath(`profile/images/${user.id}`), {
+                name: fileName
+            });
+            user.image = fileName;
+            await user.save();
+            await user.refresh();
+        }
         if (data.unitId) {
             let unit = await Unit_1.default.query().where('project_id', user.resident.projectId).preload('setting').where('id', data.unitId).firstOrFail();
             await unit.related('residents').save(user.resident, true);

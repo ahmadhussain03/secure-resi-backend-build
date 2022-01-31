@@ -40,7 +40,7 @@ class OwnersController {
         const project = authUser?.clientStaff.project;
         const data = await request.validate(UpdateOwnerValidator_1.default);
         data.type = 'owner';
-        const owner = await ResidentRepositoryContract_1.default.findByIdAndUpdate(params.id, project, data);
+        const owner = await ResidentRepositoryContract_1.default.findByIdAndUpdate(params.id, project, data, request);
         return response.json(owner);
     }
     async destroy({ response, auth, params }) {

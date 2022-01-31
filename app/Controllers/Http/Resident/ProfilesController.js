@@ -10,7 +10,7 @@ class ProfilesController {
         const authUser = auth.user;
         const project = authUser.resident.project;
         const data = await request.validate(UpdateProfileValidator_1.default);
-        const resident = await ResidentRepositoryContract_1.default.findByIdAndUpdate(authUser.id, project, data);
+        const resident = await ResidentRepositoryContract_1.default.findByIdAndUpdate(authUser.id, project, data, request);
         return response.json(resident);
     }
 }
