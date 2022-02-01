@@ -26,17 +26,10 @@ class ScheduleRepository {
         if (order) {
             schedulesQuery.orderBy('id', order);
         }
-        schedulesQuery.whereHas('schedule', query => {
-            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id);
-            if (scheduleId) {
-                query.where('id', scheduleId);
-            }
-        });
         const currentTime = luxon_1.DateTime.now().toFormat('HH:mm:ss');
         const todayDate = luxon_1.DateTime.now().toFormat('yyyy-MM-dd');
         const todayDateNumber = luxon_1.DateTime.now().toFormat('dd');
         const today = luxon_1.DateTime.now().weekdayLong.toLowerCase();
-        console.log(todayDateNumber);
         if (filter) {
             if (filter === 'today') {
                 schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
@@ -85,6 +78,12 @@ class ScheduleRepository {
                 });
             }
         }
+        schedulesQuery.whereHas('schedule', query => {
+            query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id);
+            if (scheduleId) {
+                query.where('id', scheduleId);
+            }
+        });
         const schedules = await schedulesQuery.paginate(page, limit);
         return schedules;
     }
