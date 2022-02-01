@@ -109,6 +109,20 @@ __decorate([
     __metadata("design:type", Object)
 ], Unit.prototype, "owner", void 0);
 __decorate([
+    (0, Orm_1.manyToMany)(() => Resident_1.default, {
+        pivotTable: 'resident_units',
+        pivotRelatedForeignKey: 'resident_id',
+        pivotForeignKey: 'unit_id',
+        relatedKey: 'id',
+        onQuery: (query) => {
+            if (!query.isRelatedSubQuery) {
+                query.preload('user').where('type', 'owner').limit(1);
+            }
+        }
+    }),
+    __metadata("design:type", Object)
+], Unit.prototype, "allOwners", void 0);
+__decorate([
     (0, Orm_1.hasOne)(() => UnitSetting_1.default),
     __metadata("design:type", Object)
 ], Unit.prototype, "setting", void 0);

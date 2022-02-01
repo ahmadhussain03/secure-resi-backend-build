@@ -56,7 +56,7 @@ class AuthController {
         data.userType = UserType_1.UserType.resident;
         data.isApproved = false;
         if (data.type === 'owner') {
-            const unit = await Unit_1.default.query().where('id', data.unitId).doesntHave('owner').firstOrFail();
+            const unit = await Unit_1.default.query().where('id', data.unitId).doesntHave('allOwners').firstOrFail();
             data.projectId = unit.projectId;
             const role = await Role_1.default.query().where('name', 'owner').firstOrFail();
             data.roleId = role.id;

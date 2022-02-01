@@ -118,7 +118,7 @@ class PatrolScheduleRepository {
         const filter = query.filter;
         const search = query.search ?? "";
         const schedulesQuery = PatrolSchedule_1.default.query().where('project_id', project.id);
-        if (request.url().split('/')[2] === 'guard') {
+        if (request.url().split('/')[2] === 'staff') {
             schedulesQuery.preload('checkpoints').preload('patrolScheduleRoutine');
         }
         if (order) {

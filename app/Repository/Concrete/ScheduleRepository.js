@@ -109,7 +109,7 @@ class ScheduleRepository {
         const limit = query.limit | 15;
         const search = query.search ?? "";
         const schedulesQuery = Schedule_1.default.query().where('project_id', project.id);
-        if (request.url().split('/')[2] === 'guard') {
+        if (request.url().split('/')[2] === 'staff') {
             schedulesQuery.preload('scheduleRoutine', q => q.preload('checkpoint'));
         }
         if (search) {
