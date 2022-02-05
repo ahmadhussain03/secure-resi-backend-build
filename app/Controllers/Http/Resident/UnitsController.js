@@ -22,7 +22,7 @@ class UnitsController {
         const data = await request.validate({ schema: verificationSchema });
         const unitQuery = Unit_1.default.query().where('project_id', data.project).where('id', data.unit);
         if (data.type == 'owner') {
-            unitQuery.has('owner', '=', 0);
+            unitQuery.has('allOwners', '=', 0);
         }
         const unit = await unitQuery.firstOrFail();
         return response.json(unit);
