@@ -45,7 +45,7 @@ class PatrolScheduleRepository {
                 });
             }
             else if (filter == 'today') {
-                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.created_at) = '${todayDate}' AND patrol_schedule_entries.project_id = ${project.id}`))
+                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.dated) = '${todayDate}' AND patrol_schedule_entries.project_id = ${project.id}`))
                     .whereHas('patrolScheduleRoutine', (query) => {
                     query.where(q => {
                         q.whereNotNull('checkDate').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);

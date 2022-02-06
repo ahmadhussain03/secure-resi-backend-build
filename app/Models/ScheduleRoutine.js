@@ -27,10 +27,7 @@ __decorate([
     __metadata("design:type", String)
 ], ScheduleRoutine.prototype, "repeat", void 0);
 __decorate([
-    Orm_1.column.date({
-        prepare: (value) => value ? value.toFormat('yyyy-mm-dd') : null,
-        serialize: (value) => value ? value.toFormat('yyyy-MM-dd') : null
-    }),
+    Orm_1.column.date(),
     __metadata("design:type", luxon_1.DateTime)
 ], ScheduleRoutine.prototype, "checkDate", void 0);
 __decorate([

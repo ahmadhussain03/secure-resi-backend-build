@@ -6,14 +6,14 @@ class CreateMoveValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             type: Validator_1.schema.enum(['in', 'out']),
-            dateFrom: Validator_1.schema.date({ format: 'yyyy-MM-dd' }),
-            dateTo: Validator_1.schema.date({ format: 'yyyy-MM-dd' }),
+            dateFrom: Validator_1.schema.date({ format: 'yyyy-MM-dd' }, [Validator_1.rules.beforeField('dateTo')]),
+            dateTo: Validator_1.schema.date({ format: 'yyyy-MM-dd' }, [Validator_1.rules.afterField('dateFrom')]),
             fromTime: Validator_1.schema.date({ format: 'hh:mm a' }),
             toTime: Validator_1.schema.date({ format: 'hh:mm a' }),
             descriptionOfGoods: Validator_1.schema.string(),
             notes: Validator_1.schema.string.optional({ trim: true }),
             vehicleType: Validator_1.schema.string({ trim: true }),
-            vehicleNo: Validator_1.schema.string({ trim: true }),
+            vehicleNo: Validator_1.schema.string({ trim: true }, [Validator_1.rules.alpha({ allow: ['dash'] })]),
             driverName: Validator_1.schema.string({ trim: true }),
             driverContactNo: Validator_1.schema.string({ trim: true }),
             payment: Validator_1.schema.enum(['cash', 'bank']),

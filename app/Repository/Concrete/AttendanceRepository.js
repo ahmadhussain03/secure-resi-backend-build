@@ -14,14 +14,12 @@ class AttendanceRepository {
         const query = request.qs();
         const startDate = query.startDate;
         const endDate = query.endDate;
-        const staff = query.staff || null;
+        const guard = query.guard || null;
         const attendanceQuery = Attendance_1.default.query().where('project_id', project.id).preload('user', (query) => {
             query.preload('profile');
         });
-        if (staff) {
-            attendanceQuery.whereHas('user', query => {
-                query.where('id', staff);
-            });
+        if (guard) {
+            attendanceQuery.where('user_id', guard);
         }
         if (startDate) {
             attendanceQuery.whereRaw('DATE(created_at) >= ?', [query.startDate]);
