@@ -73,15 +73,14 @@ class PatrolScheduleRepository {
             else {
                 const tomorrowDate = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
                 const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
-                const tomorrow = luxon_1.DateTime.now().plus({ days: 1 }).weekdayLong.toLowerCase();
-                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.created_at) = '${todayDate}'`))
+                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM patrol_schedule_entries WHERE patrol_schedule_entries.patrol_schedule_id = patrol_schedules.id AND patrol_schedule_entries.user_id = ${userId} AND DATE(patrol_schedule_entries.created_at) = '${todayDate}' AND patrol_schedule_entries.project_id = ${project.id}`))
                     .whereHas('patrolScheduleRoutine', (query) => {
                     query.where(q => {
                         q.whereNotNull('checkDate').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]).orWhereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
                     }).orWhere(q => {
                         q.whereNotNull('checkDate').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]).orWhereRaw('DATE(check_date) = ?', [tomorrowDate]);
                     }).orWhere(q => {
-                        q.whereNull('checkDate').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]).orWhereRaw(`${tomorrow} = ?`, [true]);
+                        q.whereNull('checkDate').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
                     });
                 });
             }
