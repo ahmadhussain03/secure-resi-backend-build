@@ -27,7 +27,7 @@ __decorate([
     __metadata("design:type", String)
 ], Role.prototype, "name", void 0);
 __decorate([
-    (0, Orm_1.column)({ serializeAs: null }),
+    (0, Orm_1.column)(),
     __metadata("design:type", Number)
 ], Role.prototype, "userId", void 0);
 __decorate([

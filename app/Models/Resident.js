@@ -112,6 +112,14 @@ __decorate([
 ], Resident.prototype, "code", void 0);
 __decorate([
     (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], Resident.prototype, "registrationDocument", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], Resident.prototype, "registrationNo", void 0);
+__decorate([
+    (0, Orm_1.column)(),
     __metadata("design:type", Number)
 ], Resident.prototype, "userId", void 0);
 __decorate([

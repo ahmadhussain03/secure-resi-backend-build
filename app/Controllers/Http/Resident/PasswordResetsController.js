@@ -41,7 +41,7 @@ class PasswordResetsController {
             password: Validator_1.schema.string({ trim: true }, [
                 Validator_1.rules.confirmed(),
                 Validator_1.rules.maxLength(255),
-                Validator_1.rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,255}$/)
+                Validator_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
             ])
         });
         const data = await request.validate({ schema: verificationSchema, messages: { 'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.' } });

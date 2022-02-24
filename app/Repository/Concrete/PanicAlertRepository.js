@@ -21,6 +21,7 @@ class PanicAlertRepository {
         const endDate = query.endDate;
         const filter = query.filter;
         const sort = query.sort || 'desc';
+        const guard = query.guard;
         const alertQuery = PanicAlert_1.default.query().where('project_id', project.id);
         if (startDate) {
             const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toUTC().toFormat('yyyy-MM-dd');
@@ -46,6 +47,9 @@ class PanicAlertRepository {
                 alertQuery.whereRaw('DATE(created_at) >= ?', [weekStartDate.toFormat('yyyy-MM-dd')]);
                 alertQuery.whereRaw('DATE(created_at) <= ?', [weekEndDate.toFormat('yyyy-MM-dd')]);
             }
+        }
+        if (guard) {
+            alertQuery.where('user_id', guard);
         }
         if (sort == 'desc') {
             alertQuery.orderBy('created_at', sort);

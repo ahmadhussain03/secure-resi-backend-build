@@ -7,7 +7,8 @@ class CreateRoleValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             name: Validator_1.schema.string({}, [
-                Rules_1.rules.maxLength(255)
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'roles', column: 'name' })
             ]),
             permissions: Validator_1.schema.array([Rules_1.rules.minLength(1)]).members(Validator_1.schema.number())
         });

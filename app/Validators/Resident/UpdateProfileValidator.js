@@ -22,7 +22,7 @@ class UpdateProfileValidator {
             'password': Validator_1.schema.string.optional({ trim: true }, [
                 Validator_1.rules.confirmed(),
                 Validator_1.rules.maxLength(255),
-                Validator_1.rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,255}$/)
+                Validator_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
             ]),
             'nationality': Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
             'note': Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),

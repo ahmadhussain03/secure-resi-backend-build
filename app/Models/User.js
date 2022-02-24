@@ -149,6 +149,10 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "favouriteRequests", void 0);
 __decorate([
+    (0, Orm_1.hasMany)(() => Role_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "roles", void 0);
+__decorate([
     (0, Orm_1.hasMany)(() => FavouriteContact_1.default, {
         foreignKey: 'favouriteId',
         localKey: 'id',

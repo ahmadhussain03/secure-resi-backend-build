@@ -54,7 +54,9 @@ class ResidentRepository {
             phone: data.phone,
             status: data.status,
             isApproved: data.isApproved,
-            type: data.type
+            type: data.type,
+            registrationDocument: data.registration_document,
+            registrationNo: data.registration_no
         });
         const idCard = request.file('idCard');
         if (idCard) {
@@ -146,6 +148,8 @@ class ResidentRepository {
         user.resident.phone = data.phone ? data.phone : user.resident.phone;
         user.resident.status = data.status ? data.status : user.resident.status;
         user.resident.type = data.type ? data.type : user.resident.type;
+        user.resident.registrationDocument = data.registration_document ? data.registration_document : user.resident.registrationDocument;
+        user.resident.registrationNo = data.registration_no ? data.registration_no : user.resident.registrationNo;
         await user.resident.save();
         const image = request.file('image');
         if (image) {
@@ -201,7 +205,7 @@ class ResidentRepository {
         let limit = query.limit ? parseInt(query.limit) : 15;
         const members = await User_1.default.query().whereHas('resident', (query) => {
             query.where('project_id', project.id).where('is_approved', false);
-        }).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units')).paginate(page, limit);
+        }).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units')).whereHas('resident', query => query.where('type', 'owner')).paginate(page, limit);
         return members;
     }
 }

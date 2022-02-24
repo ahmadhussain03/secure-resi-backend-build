@@ -64,7 +64,7 @@ class ScheduleRepository {
                     query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
                 });
             }
-            else {
+            else if (filter === 'all') {
                 const tomorrowDate = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
                 const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
                 schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))

@@ -50,14 +50,22 @@ class ShiftRepository {
         const query = request.qs();
         const startDate = query.startDate;
         const endDate = query.endDate;
+        const from = query.from;
+        const to = query.to;
         const shiftQuery = Shift_1.default.query().where('project_id', projectId).preload('from', (query) => query.preload('profile')).preload('to', (query) => query.preload('profile')).orderBy('created_at', 'desc');
         if (startDate) {
-            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toFormat('yyyy-MM-dd');
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'utc' }).toSQL();
             shiftQuery.whereRaw('DATE(created_at) >= ?', [formattedStartDate]);
         }
         if (endDate) {
-            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toFormat('yyyy-MM-dd');
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'utc' }).toSQL();
             shiftQuery.whereRaw('DATE(created_at) <= ?', [formattedEndDate]);
+        }
+        if (from) {
+            shiftQuery.where('from_id', from);
+        }
+        if (to) {
+            shiftQuery.where('to_id', to);
         }
         const shifts = await shiftQuery.exec();
         return shifts;

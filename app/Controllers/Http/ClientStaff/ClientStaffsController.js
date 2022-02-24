@@ -34,6 +34,8 @@ class ClientStaffsController {
             usersQuery.where((query) => {
                 query.where('username', 'like', `%${search}%`).orWhereHas('clientStaff', (subQuery) => {
                     subQuery.where('nfc_code', 'like', `%${search}%`).orWhere('staff_code', 'like', `%${search}%`);
+                }).orWhereHas('profile', subQuery => {
+                    subQuery.where('name', 'like', `%${search}%`).orWhere('email', 'like', `%${search}%`);
                 });
             });
         }

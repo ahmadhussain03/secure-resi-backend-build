@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
+const ForbiddenException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/ForbiddenException"));
 class OwnerRequestsController {
     async index({ request, auth, response }) {
         const authUser = auth.user;
@@ -20,6 +21,9 @@ class OwnerRequestsController {
         });
         const data = await request.validate({ schema: verificationSchema });
         const resident = await ResidentRepositoryContract_1.default.findById(data.owner, project);
+        if (resident.resident.type !== 'owner') {
+            throw new ForbiddenException_1.default();
+        }
         resident.resident.isApproved = true;
         resident.resident.save();
         return response.json(resident);

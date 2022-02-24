@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const VisitorPlan_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/VisitorPlan"));
+const Visitor_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Visitor"));
 class VisitorPlanRepository {
     async create(data) {
         const planVisit = await VisitorPlan_1.default.create({
@@ -24,6 +25,7 @@ class VisitorPlanRepository {
             unitId: data.unitId
         });
         await planVisit.related('visitors').attach(data.visitors);
+        await Visitor_1.default.query().whereIn('id', data.visitors).update({ status: 'Planned' });
         await planVisit.load('visitors');
         return planVisit;
     }

@@ -13,11 +13,18 @@ class RolesController {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const roles = await Role_1.default.query().whereHas('user', (query) => {
-            query.whereHas('clientStaff', (q) => {
-                q.where('project_id', projectId);
-            });
-        }).orWhere('user_id', authUser.parentId).orWhereNull('user_id').paginate(page, limit);
+        const search = query.search;
+        const roleQuery = Role_1.default.query().where(query => {
+            query.whereHas('user', (query) => {
+                query.whereHas('clientStaff', (q) => {
+                    q.where('project_id', projectId);
+                });
+            }).orWhere('user_id', authUser.parentId).orWhereNull('user_id');
+        });
+        if (search) {
+            roleQuery.where('name', 'like', `%${query.search}%`);
+        }
+        const roles = await roleQuery.paginate(page, limit);
         return response.json(roles);
     }
     async store({ request, response, auth }) {

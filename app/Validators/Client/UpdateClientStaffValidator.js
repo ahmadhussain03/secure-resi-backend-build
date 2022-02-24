@@ -31,7 +31,7 @@ class UpdateClientStaffValidator {
             "password": Validator_1.schema.string.optional({}, [
                 Rules_1.rules.confirmed(),
                 Rules_1.rules.maxLength(255),
-                Rules_1.rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,255}$/)
+                Rules_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
             ]),
             "username": Validator_1.schema.string.optional({ trim: true }, [
                 Rules_1.rules.unique({ table: "users", column: "username", whereNot: { id: this.ctx.params.id } })

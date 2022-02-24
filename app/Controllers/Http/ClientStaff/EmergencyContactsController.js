@@ -41,14 +41,6 @@ class EmergencyContactsController {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;
         const data = await request.validate(UpdateEmergencyContactValidator_1.default);
-        const image = request.file('image');
-        if (image) {
-            const fileName = `${(0, Helpers_1.cuid)()}.${image.extname}`;
-            await image.move(Application_1.default.tmpPath('emergency_contact/images'), {
-                name: fileName
-            });
-            data.image = fileName;
-        }
         const contact = await EmergencyContactRepositoryContract_1.default.findByIdAndUpdate(params.id, project, data);
         return response.json(contact);
     }

@@ -7,7 +7,8 @@ class UpdateRoleValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             name: Validator_1.schema.string.optional({}, [
-                Rules_1.rules.maxLength(255)
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'roles', column: 'name', whereNot: { "id": this.ctx.params.id } })
             ]),
             permissions: Validator_1.schema.array.optional().members(Validator_1.schema.number())
         });

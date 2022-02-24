@@ -36,11 +36,11 @@ class FacilitiesController {
         if (data.moAccountId) {
             await MoAccount_1.default.query().where('id', data.moAccountId).where('project_id', project.id).firstOrFail();
         }
-        await FacilityType_1.default.query().where('id', data.facilityTypeId).where('project_id', project.id).firstOrFail();
+        const faciltiyType = await FacilityType_1.default.query().where('id', data.facilityTypeId).where('project_id', project.id).firstOrFail();
         data.projectId = project.id;
         data.userId = authUser.id;
         data.unitId = unit.id;
-        const exists = await Facility_1.default.query().where('unit_id', unit.id).whereNot('status', 'Completed').first();
+        const exists = await Facility_1.default.query().where('unit_id', unit.id).where('facility_type_id', faciltiyType.id).whereNot('status', 'Completed').first();
         if (exists) {
             return response.status(401).json({
                 errors: [

@@ -114,7 +114,8 @@ __decorate([
         pivotTable: 'visitor_plan_visitors',
         relatedKey: 'id',
         pivotForeignKey: 'visitor_plan_id',
-        pivotRelatedForeignKey: 'visitor_id'
+        pivotRelatedForeignKey: 'visitor_id',
+        pivotTimestamps: false
     }),
     __metadata("design:type", Object)
 ], VisitorPlan.prototype, "visitors", void 0);

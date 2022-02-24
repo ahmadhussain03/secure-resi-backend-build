@@ -5,7 +5,7 @@ class CreateVisitorPlanValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
-            visitorEntry: Validator_1.schema.enum(['single', 'multi']),
+            visitorEntry: Validator_1.schema.enum(['single', 'multi', 'multi_vehicle', 'single_vehicle']),
             visitorType: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)]),
             seniors: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             adults: Validator_1.schema.number([Validator_1.rules.unsigned()]),
