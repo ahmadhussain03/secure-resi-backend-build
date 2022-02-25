@@ -65,7 +65,7 @@ class PatrolScheduleEntryRepository {
                 throw new UserNotFoundException_1.default('Invalid Timezone!');
             }
         }
-        const patrolEntryQuery = PatrolScheduleEntry_1.default.query().select('patrol_schedule_id', Database_1.default.raw('DATE(dated) as created_at'), 'userId').where('project_id', projectId).groupBy(['patrol_schedule_id', 'user_id']).whereNotNull('dated').groupByRaw('DATE(dated)').orderByRaw("DATE(dated) DESC").preload('patrolSchedule').preload('user');
+        const patrolEntryQuery = PatrolScheduleEntry_1.default.query().select('patrol_schedule_id', Database_1.default.raw('DATE(dated) as created_at'), 'userId').where('project_id', projectId).groupBy(['patrol_schedule_id', 'user_id']).whereNotNull('dated').groupByRaw('DATE(dated)').orderByRaw("DATE(dated) DESC").preload('patrolSchedule').preload('user', query => query.preload('profile'));
         if (patrolScheduleId) {
             patrolEntryQuery.where('patrol_schedule_id', patrolScheduleId);
         }

@@ -71,7 +71,7 @@ __decorate([
     __metadata("design:type", luxon_1.DateTime)
 ], PatrolScheduleEntry.prototype, "dated", void 0);
 __decorate([
-    Orm_1.column.dateTime({ autoCreate: true, serializeAs: null }),
+    Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], PatrolScheduleEntry.prototype, "createdAt", void 0);
 __decorate([
