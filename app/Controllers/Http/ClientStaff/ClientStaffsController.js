@@ -49,7 +49,9 @@ class ClientStaffsController {
         });
         const data = await request.validate({ schema: verificationSchema });
         const user = await User_1.default.query().whereHas('clientStaff', (query) => {
-            query.where('project_id', data.project).where('staff_code', params.id).orWhere('nfc_code', params.id);
+            query.where('project_id', data.project).where(query => {
+                query.where('staff_code', params.id).orWhere('nfc_code', params.id);
+            });
         }).where('user_type', UserType_1.UserType.client_staff).preload('profile', query => query.preload('countryRelation').preload('stateRelation').preload('cityRelation')).preload('clientStaff').preload('role').firstOrFail();
         user.deviceToken = data.device_token;
         await user.save();

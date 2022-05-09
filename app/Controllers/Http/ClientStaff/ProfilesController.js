@@ -18,7 +18,7 @@ class ProfilesController {
             password_old: Validator_1.schema.string.optional({}, [Validator_1.rules.requiredIfExists('password')]),
             image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' })
         });
-        const data = await request.validate({ schema: verificationSchema, messages: { 'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.' } });
+        const data = await request.validate({ schema: verificationSchema, messages: { 'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.', 'password_old.requiredIfExists': 'Old Password is required.' } });
         const authUser = auth.user;
         if (data.password) {
             const isValidPassword = await Hash_1.default.verify(authUser.password, data.password_old);

@@ -21,7 +21,11 @@ class LevelRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
+        const blockId = query.block || null;
         const levelQuery = Level_1.default.query().preload('block').where('project_id', project.id);
+        if (blockId) {
+            levelQuery.where('block_id', blockId);
+        }
         const levels = await levelQuery.orderBy('created_at', 'desc').paginate(page, limit);
         return levels;
     }

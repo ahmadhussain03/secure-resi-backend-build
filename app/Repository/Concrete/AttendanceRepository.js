@@ -7,7 +7,7 @@ const Attendance_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/A
 class AttendanceRepository {
     async create(data) {
         const attendance = await Attendance_1.default.create(data);
-        await attendance.load('user');
+        await attendance.load('user', q => q.preload('clientStaff').preload('profile'));
         return attendance;
     }
     async all(request, project) {

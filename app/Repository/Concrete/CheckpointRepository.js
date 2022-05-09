@@ -57,6 +57,7 @@ class CheckpointRepository {
         const page = query.page || 1;
         const limit = query.limit || 15;
         const search = query.search || null;
+        const getAll = query.all || false;
         const checkpointQuery = Checkpoint_1.default.query().where('project_id', project.id);
         if (search) {
             checkpointQuery.where('name', 'like', `%${search}%`).orWhere('nfc_code', 'like', `%${search}%`).orWhere('phone_number', 'like', `%${search}%`).orWhere('code', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
@@ -65,8 +66,12 @@ class CheckpointRepository {
         if (isGuardRequest) {
             checkpointQuery.select(['id', 'name', 'code', 'phone_number', 'nfc_code', 'latitude', 'longitude', 'geofence_radius', 'status']);
         }
-        const checkpoints = await checkpointQuery.paginate(page, limit);
-        return checkpoints;
+        if (getAll) {
+            return await checkpointQuery;
+        }
+        else {
+            return await checkpointQuery.paginate(page, limit);
+        }
     }
     async destroyById(id, project) {
         const checkpoint = await this.findById(id, project);
@@ -109,7 +114,7 @@ class CheckpointRepository {
     }
     async findById(id, project) {
         if (isNaN(Number(id))) {
-            const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where('code', decodeURI(id)).orWhere('nfc_code', decodeURI(id)).firstOrFail();
+            const checkpoint = await Checkpoint_1.default.query().where(query => query.where('project_id', project.id).where('status', 'ACTIVE')).where(query => query.where('code', decodeURI(id)).orWhere('nfc_code', decodeURI(id))).firstOrFail();
             return checkpoint;
         }
         else {

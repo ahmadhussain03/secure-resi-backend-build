@@ -32,9 +32,17 @@ class UnitRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
+        const level = query.level || null;
+        const block = query.block || null;
         const unitQuery = Unit_1.default.query().preload('block').preload('level').preload('owner').where('project_id', project.id);
-        const levels = await unitQuery.orderBy('created_at', 'desc').paginate(page, limit);
-        return levels;
+        if (level) {
+            unitQuery.where('level_id', level);
+        }
+        if (block) {
+            unitQuery.where('block_id', block);
+        }
+        const units = await unitQuery.orderBy('created_at', 'desc').paginate(page, limit);
+        return units;
     }
     async destroyById(id, project) {
         const unit = await this.findById(id, project);

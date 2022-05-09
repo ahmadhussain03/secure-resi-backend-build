@@ -10,7 +10,17 @@ class UnitsController {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const units = await Unit_1.default.query().where('project_id', query.project ?? 0).preload('block').preload('level').paginate(page, limit);
+        const block = query.block || null;
+        const level = query.level || null;
+        const unitsQuery = Unit_1.default.query().where('project_id', query.project ?? 0);
+        if (block) {
+            unitsQuery.where('block_id', block);
+        }
+        console.log(query.level);
+        if (level) {
+            unitsQuery.where('level_id', level);
+        }
+        const units = await unitsQuery.preload('block').preload('level').paginate(page, limit);
         return response.json(units);
     }
     async verify({ request, response }) {

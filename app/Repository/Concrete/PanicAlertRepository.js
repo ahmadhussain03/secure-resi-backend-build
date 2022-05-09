@@ -54,8 +54,15 @@ class PanicAlertRepository {
         if (sort == 'desc') {
             alertQuery.orderBy('created_at', sort);
         }
-        const alerts = await alertQuery.preload('user', (query) => query.preload('profile').preload('role')).preload('project');
-        return alerts;
+        alertQuery.preload('user', (query) => query.preload('profile').preload('clientStaff').preload('role')).preload('project');
+        if (request.url().split('/')[2] === 'guard') {
+            let page = query.page ? parseInt(query.page) : 1;
+            let limit = query.limit ? parseInt(query.limit) : 15;
+            return await alertQuery.paginate(page, limit);
+        }
+        else {
+            return await alertQuery.exec();
+        }
     }
     async destroyById(id, project) {
         const alert = await this.findById(id, project);

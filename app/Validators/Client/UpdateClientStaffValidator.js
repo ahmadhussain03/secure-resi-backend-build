@@ -30,6 +30,7 @@ class UpdateClientStaffValidator {
             ]),
             "password": Validator_1.schema.string.optional({}, [
                 Rules_1.rules.confirmed(),
+                Rules_1.rules.minLength(8),
                 Rules_1.rules.maxLength(255),
                 Rules_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
             ]),

@@ -20,7 +20,7 @@ class ScheduleRepository {
         schedulesQuery.whereHas('checkpoint', query => {
             query.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']);
             if (nfc) {
-                query.where('nfc_code', 'like', `%${nfc}%`);
+                query.where('nfc_code', nfc);
             }
         });
         if (order) {
@@ -32,48 +32,56 @@ class ScheduleRepository {
         const today = luxon_1.DateTime.now().weekdayLong.toLowerCase();
         if (filter) {
             if (filter === 'today') {
-                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT schedule_entries.schedule_id FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
-                    .where(query => {
-                    query.where(query => {
-                        query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
-                    }).orWhere(query => {
-                        query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
-                    }).orWhere(query => {
-                        query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                schedulesQuery.where(subQuery => {
+                    subQuery.whereNotExists(Database_1.default.raw(`SELECT schedule_entries.schedule_id FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
+                        .where(query => {
+                        query.where(query => {
+                            query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
+                        }).orWhere(query => {
+                            query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]);
+                        }).orWhere(query => {
+                            query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                        });
                     });
                 });
             }
             else if (filter === 'upcoming') {
-                schedulesQuery.where(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Monthly').where('startTime', '>=', currentTime).whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
-                }).orWhere(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Yearly').where('startTime', '>=', currentTime).whereRaw('DATE(check_date) = ?', [todayDate]);
-                }).orWhere(query => {
-                    query.whereNull('check_date').where('repeat', 'Daily').where('startTime', '>=', currentTime).whereRaw(`${today} = ?`, [true]);
+                schedulesQuery.where(subQuery => {
+                    subQuery.where(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Monthly').where('startTime', '>=', currentTime).whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]);
+                    }).orWhere(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Yearly').where('startTime', '>=', currentTime).whereRaw('DATE(check_date) = ?', [todayDate]);
+                    }).orWhere(query => {
+                        query.whereNull('check_date').where('repeat', 'Daily').where('startTime', '>=', currentTime).whereRaw(`${today} = ?`, [true]);
+                    });
                 });
             }
             else if (filter === 'tomorrow') {
                 const tomorrowDate = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
                 const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
                 const tomorrow = luxon_1.DateTime.now().plus({ days: 1 }).weekdayLong.toLowerCase();
-                schedulesQuery.where(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
-                }).orWhere(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [tomorrowDate]);
-                }).orWhere(query => {
-                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
+                schedulesQuery.where(subQuery => {
+                    subQuery.where(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
+                    }).orWhere(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [tomorrowDate]);
+                    }).orWhere(query => {
+                        query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${tomorrow} = ?`, [true]);
+                    });
                 });
             }
             else if (filter === 'all') {
                 const tomorrowDate = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
                 const tomorrowDateNumber = luxon_1.DateTime.now().plus({ days: 1 }).toFormat('dd');
-                schedulesQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
-                    .where(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]).orWhereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
-                }).orWhere(query => {
-                    query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]).orWhereRaw('DATE(check_date) = ?', [tomorrowDate]);
-                }).orWhere(query => {
-                    query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                schedulesQuery.where(subQuery => {
+                    subQuery.whereNotExists(Database_1.default.raw(`SELECT * FROM schedule_entries WHERE schedule_entries.schedule_id = schedule_routines.schedule_id AND schedule_entries.user_id = ${userId} AND DATE(schedule_entries.dated) = '${todayDate}' AND schedule_entries.project_id = ${project.id}`))
+                        .where(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Monthly').whereRaw('EXTRACT(DAY FROM check_date) = ?', [todayDateNumber]).orWhereRaw('EXTRACT(DAY FROM check_date) = ?', [tomorrowDateNumber]);
+                    }).orWhere(query => {
+                        query.whereNotNull('check_date').where('repeat', 'Yearly').whereRaw('DATE(check_date) = ?', [todayDate]).orWhereRaw('DATE(check_date) = ?', [tomorrowDate]);
+                    }).orWhere(query => {
+                        query.whereNull('check_date').where('repeat', 'Daily').whereRaw(`${today} = ?`, [true]);
+                    });
                 });
             }
         }
