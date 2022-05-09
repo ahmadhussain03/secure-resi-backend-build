@@ -30,9 +30,9 @@ class CreateClientStaffValidator {
             ]),
             'password': Validator_1.schema.string({}, [
                 Rules_1.rules.confirmed(),
-                Rules_1.rules.maxLength(8),
+                Rules_1.rules.minLength(8),
                 Rules_1.rules.maxLength(255),
-                Rules_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
+                Rules_1.rules.regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&-])(?=.*[a-zA-Z]).{8,255}$/)
             ]),
             'username': Validator_1.schema.string({ trim: true }, [
                 Rules_1.rules.unique({ table: 'users', column: 'username' })
