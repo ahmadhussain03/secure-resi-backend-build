@@ -24,11 +24,11 @@ class PanicAlertRepository {
         const guard = query.guard;
         const alertQuery = PanicAlert_1.default.query().where('project_id', project.id);
         if (startDate) {
-            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toUTC().toFormat('yyyy-MM-dd');
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'UTC' }).toFormat('yyyy-MM-dd');
             alertQuery.whereRaw('DATE(created_at) >= ?', [formattedStartDate]);
         }
         if (endDate) {
-            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'Asia/Kuala_Lumpur' }).toUTC().toFormat('yyyy-MM-dd');
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'UTC' }).toFormat('yyyy-MM-dd');
             alertQuery.whereRaw('DATE(created_at) <= ?', [formattedEndDate]);
         }
         if (filter) {

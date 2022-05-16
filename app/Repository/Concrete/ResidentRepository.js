@@ -7,6 +7,7 @@ const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"))
 const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Unit_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Unit"));
+const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
 class ResidentRepository {
     async create(data, request) {
         const user = await User_1.default.create({
@@ -79,6 +80,11 @@ class ResidentRepository {
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         await user.load('resident', query => query.preload('project'));
         await user.load('role');
+        if (user.image) {
+            const personId = await FaceRecognition_1.default.train(user, user.resident.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));
+            user.personId = personId;
+            await user.save();
+        }
         if (data.unitId) {
             let unit = await Unit_1.default.query().where('project_id', data.projectId).preload('setting').where('id', data.unitId).firstOrFail();
             await user.resident.related('units').save(unit);
