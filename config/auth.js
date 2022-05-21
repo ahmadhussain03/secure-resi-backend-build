@@ -25,8 +25,9 @@ const authConfig = {
         api: {
             driver: 'oat',
             tokenProvider: {
-                driver: 'database',
-                table: 'api_tokens',
+                type: 'api',
+                driver: 'redis',
+                redisConnection: 'local',
                 foreignKey: 'user_id',
             },
             provider: {

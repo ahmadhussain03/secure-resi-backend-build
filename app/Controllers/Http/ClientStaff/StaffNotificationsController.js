@@ -53,18 +53,17 @@ class StaffNotificationsController {
                 query.where('project_id', projectId);
             });
         }
-        users.forEach(async (user) => {
-            await Fcm_1.default.sendNotification(user.deviceToken, {
-                payload: {
-                    notification: {
-                        title: 'Premises Notification',
-                        body: notification.subject
-                    },
-                    data: {
-                        type: 'premises_notification'
-                    }
+        const userTokens = users.map(user => user.deviceToken);
+        Fcm_1.default.sendNotifications(userTokens, {
+            payload: {
+                notification: {
+                    title: 'Premises Notification',
+                    body: notification.subject
                 },
-            });
+                data: {
+                    type: 'premises_notification'
+                }
+            },
         });
         return response.json(notification);
     }

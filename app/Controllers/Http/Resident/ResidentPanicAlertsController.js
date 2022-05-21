@@ -44,34 +44,32 @@ class ResidentPanicAlertsController {
         };
         const alert = await ResidentPanicAlertRepositoryContract_1.default.create(data);
         const favouriteContacts = await FavouriteContact_1.default.query().where('user_id', authUser.id).preload('favourite', query => query.whereNotNull('device_token').whereNot('id', authUser.id));
-        favouriteContacts.forEach(contact => {
-            Fcm_1.default.sendNotification(contact?.favourite?.deviceToken, {
-                payload: {
-                    notification: {
-                        title: 'Panic Alert',
-                        body: `${authUser?.username} has generated a panic alert`
-                    },
-                    data: {
-                        type: 'panic'
-                    }
+        const favouriteTokens = favouriteContacts.map(contact => contact.favourite.deviceToken);
+        Fcm_1.default.sendNotifications(favouriteTokens, {
+            payload: {
+                notification: {
+                    title: 'Panic Alert',
+                    body: `${authUser?.username} has generated a panic alert`
+                },
+                data: {
+                    type: 'panic'
                 }
-            });
+            }
         });
         const unitMembers = await User_1.default.query().whereHas('resident', query => {
             query.whereHas('units', q => q.where('id', data.unitId)).where(query => query.where('type', 'resident').orWhere('type', 'member'));
         });
-        unitMembers.forEach(member => {
-            Fcm_1.default.sendNotification(member?.deviceToken, {
-                payload: {
-                    notification: {
-                        title: 'Panic Alert',
-                        body: `${authUser?.username} has generated a panic alert`
-                    },
-                    data: {
-                        type: 'panic'
-                    }
+        const unitMemberTokens = unitMembers.map(member => member.deviceToken);
+        Fcm_1.default.sendNotifications(unitMemberTokens, {
+            payload: {
+                notification: {
+                    title: 'Panic Alert',
+                    body: `${authUser?.username} has generated a panic alert`
+                },
+                data: {
+                    type: 'panic'
                 }
-            });
+            }
         });
         return response.json(alert);
     }

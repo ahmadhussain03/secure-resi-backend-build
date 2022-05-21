@@ -22,10 +22,17 @@ class Fcm {
             };
         }
     }
-    async sendNotification(tokens, message) {
+    async sendNotification(token, message) {
         try {
-            const result = await this.admin.messaging().sendToDevice(tokens, message, this.options);
-            console.log(result.results);
+            await this.admin.messaging().sendToDevice(token, message.payload, this.options);
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }
+    async sendNotifications(tokens, message) {
+        try {
+            await this.admin.messaging().sendToDevice(tokens, message.payload, this.options);
         }
         catch (e) {
             throw new Error(e);

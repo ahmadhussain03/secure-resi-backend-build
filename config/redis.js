@@ -12,7 +12,7 @@ const redisConfig = {
             port: Env_1.default.get('REDIS_PORT'),
             password: Env_1.default.get('REDIS_PASSWORD', ''),
             db: 0,
-            keyPrefix: '',
+            keyPrefix: 'app-',
         },
     },
 };

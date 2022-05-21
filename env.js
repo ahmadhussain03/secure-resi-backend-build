@@ -19,5 +19,13 @@ exports.default = Env_1.default.rules({
     SMTP_PORT: Env_1.default.schema.number(),
     SMTP_USERNAME: Env_1.default.schema.string(),
     SMTP_PASSWORD: Env_1.default.schema.string(),
+    REDIS_CONNECTION: Env_1.default.schema.enum(['local']),
+    REDIS_HOST: Env_1.default.schema.string({ format: 'host' }),
+    REDIS_PORT: Env_1.default.schema.number(),
+    REDIS_PASSWORD: Env_1.default.schema.string.optional(),
+    BULL_CONNECTION: Env_1.default.schema.enum(['local']),
+    BULL_REDIS_HOST: Env_1.default.schema.string({ format: 'host' }),
+    BULL_REDIS_PORT: Env_1.default.schema.number(),
+    BULL_REDIS_PASSWORD: Env_1.default.schema.string.optional(),
 });
 //# sourceMappingURL=env.js.map
