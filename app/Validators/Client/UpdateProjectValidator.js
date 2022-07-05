@@ -16,9 +16,9 @@ class UpdateProjectValidator {
             "no_of_gaurds": Validator_1.schema.number.optional(),
             "no_of_members": Validator_1.schema.number.optional(),
             "no_of_project_staff": Validator_1.schema.number.optional(),
-            "country": Validator_1.schema.string.optional(),
-            "city": Validator_1.schema.string.optional(),
-            "state": Validator_1.schema.string.optional(),
+            'country': Validator_1.schema.number.optional([Rules_1.rules.unsigned()]),
+            'city': Validator_1.schema.number.optional([Rules_1.rules.unsigned()]),
+            'state': Validator_1.schema.number.optional([Rules_1.rules.unsigned()]),
             "post_code": Validator_1.schema.string.optional(),
             "address": Validator_1.schema.string.optional(),
             "contact_person_name": Validator_1.schema.string.optional(),
@@ -32,6 +32,8 @@ class UpdateProjectValidator {
             "longitude": Validator_1.schema.string.optional(),
             "geofence_radius": Validator_1.schema.string.optional(),
             "geocode": Validator_1.schema.string.optional(),
+            'logo': Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
+            'status': Validator_1.schema.enum.optional(['ACTIVE', 'DEACTIVE'])
         });
         this.messages = {
             'name.required': 'Name field is required.',

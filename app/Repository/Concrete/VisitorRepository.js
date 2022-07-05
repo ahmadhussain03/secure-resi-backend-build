@@ -65,6 +65,14 @@ class VisitorRepository {
         const visitors = await visitorsQuery.paginate(page, limit);
         return visitors;
     }
+    async allByProject(request, project) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const visitorsQuery = Visitor_1.default.query().where('project_id', project.id).preload('city').preload('country').preload('state');
+        const visitors = await visitorsQuery.paginate(page, limit);
+        return visitors;
+    }
     async destroyByIdByUnit(id, unit) {
         const visitor = await this.findByIdByUnit(id, unit);
         await visitor.delete();

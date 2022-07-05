@@ -14,6 +14,12 @@ class PanicAlertsController {
         const alert = await PanicAlertRepositoryContract_1.default.all(request, project);
         return response.json(alert);
     }
+    async report({ request, response, auth }) {
+        const authUser = auth.user;
+        const project = authUser?.clientStaff.project;
+        const alert = await PanicAlertRepositoryContract_1.default.all(request, project);
+        return response.json(alert);
+    }
     async store({ response, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;

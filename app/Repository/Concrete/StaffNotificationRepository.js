@@ -63,6 +63,7 @@ class StaffNotificationRepository {
         notification.sendDate = data.send_date ? data.send_date : notification.sendDate;
         notification.subject = data.subject ? data.subject : notification.subject;
         notification.comment = data.comment ? data.comment : notification.comment;
+        notification.image = data.image ? data.image : notification.image;
         await notification.save();
         return notification;
     }
@@ -85,7 +86,8 @@ class StaffNotificationRepository {
             subject: data.subject,
             userId: data.user_id,
             projectId: data.project_id,
-            comment: data.comment
+            comment: data.comment,
+            image: data.image
         });
     }
 }

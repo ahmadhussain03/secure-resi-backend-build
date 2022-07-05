@@ -13,8 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const luxon_1 = require("luxon");
+const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
+const Country_1 = __importDefault(require("./Country"));
+const State_1 = __importDefault(require("./State"));
+const City_1 = __importDefault(require("./City"));
 class Project extends Orm_1.BaseModel {
 }
 __decorate([
@@ -46,17 +50,29 @@ __decorate([
     __metadata("design:type", Number)
 ], Project.prototype, "noOfProjectStaff", void 0);
 __decorate([
-    (0, Orm_1.column)(),
+    (0, Orm_1.column)({ serializeAs: null }),
     __metadata("design:type", String)
 ], Project.prototype, "country", void 0);
 __decorate([
-    (0, Orm_1.column)(),
+    (0, Orm_1.column)({ serializeAs: null }),
     __metadata("design:type", String)
 ], Project.prototype, "state", void 0);
 __decorate([
-    (0, Orm_1.column)(),
+    (0, Orm_1.column)({ serializeAs: null }),
     __metadata("design:type", String)
 ], Project.prototype, "city", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Project.prototype, "cityId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Project.prototype, "stateId", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Number)
+], Project.prototype, "countryId", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
@@ -102,6 +118,14 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "geocode", void 0);
 __decorate([
+    (0, Orm_1.column)({ serialize: (value) => value ? `http://${Env_1.default.get('IMAGE_HOST')}/api/client/uploads/project/${value}` : null }),
+    __metadata("design:type", String)
+], Project.prototype, "logo", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], Project.prototype, "status", void 0);
+__decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
 ], Project.prototype, "userId", void 0);
@@ -117,5 +141,23 @@ __decorate([
     Orm_1.column.dateTime({ autoCreate: true, autoUpdate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], Project.prototype, "updatedAt", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => Country_1.default, {
+        serializeAs: 'country'
+    }),
+    __metadata("design:type", Object)
+], Project.prototype, "countryRelation", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => State_1.default, {
+        serializeAs: 'state'
+    }),
+    __metadata("design:type", Object)
+], Project.prototype, "stateRelation", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => City_1.default, {
+        serializeAs: 'city'
+    }),
+    __metadata("design:type", Object)
+], Project.prototype, "cityRelation", void 0);
 exports.default = Project;
 //# sourceMappingURL=Project.js.map

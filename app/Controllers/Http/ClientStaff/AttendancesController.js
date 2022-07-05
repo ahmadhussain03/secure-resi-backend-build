@@ -14,8 +14,15 @@ const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core
 const Helpers_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Helpers");
 const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
 const fs_1 = __importDefault(require("fs"));
+const luxon_1 = require("luxon");
 class AttendancesController {
     async index({ response, request, auth }) {
+        const authUser = auth.user;
+        const project = authUser?.clientStaff.project;
+        const attendances = await AttendanceRepositoryContract_1.default.all(request, project);
+        return response.json(attendances);
+    }
+    async report({ response, request, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
         const attendances = await AttendanceRepositoryContract_1.default.all(request, project);
@@ -66,21 +73,21 @@ class AttendancesController {
         }
     }
     async markAttendance(userId, projectId, attendance_through) {
-        let type;
-        const lastAttendance = await Attendance_1.default.query().where('user_id', userId).orderBy('created_at', 'desc').first();
-        if (lastAttendance && lastAttendance.type == 'In') {
-            type = 'Out';
+        const lastAttendance = await Attendance_1.default.query().where('user_id', userId).whereNotNull('in_at').whereNull('out_at').orderBy('created_at', 'desc').first();
+        if (lastAttendance) {
+            lastAttendance.outAt = luxon_1.DateTime.now();
+            lastAttendance.outAttendanceThrough = attendance_through;
+            return await lastAttendance.save();
         }
         else {
-            type = 'In';
+            const attendanceData = {
+                projectId: projectId,
+                userId: userId,
+                inAttendanceThrough: attendance_through,
+                inAt: luxon_1.DateTime.now()
+            };
+            return await AttendanceRepositoryContract_1.default.create(attendanceData);
         }
-        const attendanceData = {
-            projectId: projectId,
-            userId: userId,
-            type: type,
-            attendanceThrough: attendance_through
-        };
-        return await AttendanceRepositoryContract_1.default.create(attendanceData);
     }
 }
 exports.default = AttendancesController;

@@ -33,7 +33,12 @@ class EmergencyContactRepository {
         contact.name = data.name ? data.name : contact.name;
         contact.contactNo = data.contactNo ? data.contactNo : contact.contactNo;
         contact.forResident = data.forResident ? data.forResident : contact.forResident;
-        contact.image = data.removeImage ? null : contact.image;
+        if (data.image) {
+            contact.image = data.image;
+        }
+        else if (data.removeImage) {
+            contact.image = null;
+        }
         await contact.save();
         return contact;
     }

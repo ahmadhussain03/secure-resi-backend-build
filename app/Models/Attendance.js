@@ -37,12 +37,28 @@ __decorate([
 ], Attendance.prototype, "userId", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], Attendance.prototype, "type", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], Attendance.prototype, "attendanceThrough", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Object)
+], Attendance.prototype, "inAttendanceThrough", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Object)
+], Attendance.prototype, "outAttendanceThrough", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Object)
+], Attendance.prototype, "inAt", void 0);
+__decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", Object)
+], Attendance.prototype, "outAt", void 0);
 __decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)

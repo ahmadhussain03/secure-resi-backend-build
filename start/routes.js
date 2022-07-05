@@ -9,6 +9,7 @@ require("./routes/client");
 require("./routes/client_staff");
 require("./routes/guard");
 require("./routes/resident");
+require("./routes/visitor");
 Route_1.default.group(() => {
     Route_1.default.get('countries', 'CountriesController.index');
     Route_1.default.get('states/:id', 'StatesController.index');

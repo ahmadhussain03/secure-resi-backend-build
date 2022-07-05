@@ -17,6 +17,12 @@ class ItemsController {
         const items = await ItemRepositoryContract_1.default.all(request, project);
         return response.json(items);
     }
+    async report({ response, request, auth }) {
+        const authUser = auth.user;
+        const project = authUser?.clientStaff.project;
+        const items = await ItemRepositoryContract_1.default.all(request, project);
+        return response.json(items);
+    }
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;

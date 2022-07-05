@@ -5,8 +5,8 @@ class UpdateLevelValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
-            blockId: Validator_1.schema.number.optional([Validator_1.rules.unsigned()]),
-            name: Validator_1.schema.string.optional({ trim: true }),
+            blockId: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            name: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.unique({ table: "levels", column: "name", where: { block_id: this.ctx.request.input('blockId') }, whereNot: { id: this.ctx.params.id } })]),
             status: Validator_1.schema.enum.optional(['Active', 'Inactive'])
         });
         this.messages = {};

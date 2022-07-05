@@ -7,7 +7,13 @@ const ShiftRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')](
 const CreateShiftValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/ClientStaff/CreateShiftValidator"));
 class ShiftsController {
     async index({ request, response, auth }) {
-        const authUser = await auth.user;
+        const authUser = auth.user;
+        const projectId = authUser.clientStaff.projectId;
+        const shifts = await ShiftRepositoryContract_1.default.all(request, projectId);
+        return response.json(shifts);
+    }
+    async report({ request, response, auth }) {
+        const authUser = auth.user;
         const projectId = authUser.clientStaff.projectId;
         const shifts = await ShiftRepositoryContract_1.default.all(request, projectId);
         return response.json(shifts);

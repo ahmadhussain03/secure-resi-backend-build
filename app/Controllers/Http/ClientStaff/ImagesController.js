@@ -70,9 +70,9 @@ class ImagesController {
     async staffNotificationImage({ request, params, response }) {
         const h = request.qs().h;
         const w = request.qs().w;
-        const imgaePath = Application_1.default.tmpPath('satff_notification/images', params.filename);
-        const image = (0, gm_1.default)(imgaePath);
-        const size = (0, image_size_1.default)(imgaePath);
+        const imagePath = Application_1.default.tmpPath('staff_notification/images', params.filename);
+        const image = (0, gm_1.default)(imagePath);
+        const size = (0, image_size_1.default)(imagePath);
         const resizedHeight = h ?? size.height;
         const resizedWidth = w ?? size.width;
         return response.stream(image.resize(resizedWidth, resizedHeight).stream());

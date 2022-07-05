@@ -77,6 +77,35 @@ class DashboardController {
                 patrolScheduleEntryAfterTime: patrolScheduleEntryAfterTime?.total ?? 0
             });
         }
+        else if (filter === 'week') {
+            const weekDate = luxon_1.DateTime.now().minus({ days: 7 }).toSQL();
+            const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();
+            const scheduleRoutineCount = await ScheduleRoutine_1.default.query().whereHas('checkpoint', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).whereHas('schedule', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).where('project_id', project.id)).pojo().count('id', 'total').first();
+            const patrolSchduleCount = await PatrolSchedule_1.default.query().whereNotIn('status', ['SUSPENDED', 'DEACTIVE']).whereHas('checkpoints', q => q.whereNotIn('status', ['SUSPENDED', 'DEACTIVE'])).where('project_id', project.id).pojo().count('id', 'total').first();
+            const patrolCount = await PatrolEntry_1.default.query().where('project_id', project.id).whereRaw(`dated > ?`, [weekDate]).pojo().count('id', 'total').first();
+            const schedulesEntryOnTime = await ScheduleEntry_1.default.query().whereRaw(`dated > ?`, [weekDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'On Time').pojo().count('id', 'total').first();
+            const schedulesEntryAfterTime = await ScheduleEntry_1.default.query().whereRaw(`dated > ?`, [weekDate]).whereHas('schedule', query => query.where('project_id', project.id)).where('status', 'After Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryOnTime = await PatrolScheduleEntry_1.default.query().whereRaw(`dated > ?`, [weekDate]).where('project_id', project.id).where('status', 'On Time').pojo().count('id', 'total').first();
+            const patrolScheduleEntryAfterTime = await PatrolScheduleEntry_1.default.query().whereRaw(`dated > ?`, [weekDate]).where('project_id', project.id).where('status', 'After Time').pojo().count('id', 'total').first();
+            const guardOperationCount = await GuardOperation_1.default.query().where('project_id', project.id).whereRaw(`created_at > ?`, [weekDate]).pojo().count('id', 'total').first();
+            const logBookCount = await LogBook_1.default.query().where('project_id', project.id).whereRaw(`created_at > ?`, [weekDate]).pojo().count('id', 'total').first();
+            const checkInCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`created_at > ?`, [weekDate]).where('type', 'In').pojo().count('id', 'total').first();
+            const checkOutCount = await Attendance_1.default.query().where('project_id', project.id).whereRaw(`created_at > ?`, [weekDate]).where('type', 'Out').pojo().count('id', 'total').first();
+            return response.json({
+                totalCheckpoints: checkpointCount?.total ?? 0,
+                totalPatrol: patrolCount?.total ?? 0,
+                totalScheduleRoutine: scheduleRoutineCount?.total ?? 0,
+                totalPatrolSchdule: patrolSchduleCount?.total ?? 0,
+                totalLogEntries: logBookCount?.total ?? 0,
+                totalOperationEntries: guardOperationCount?.total ?? 0,
+                attendanceIn: checkInCount?.total ?? 0,
+                attendanceOut: checkOutCount?.total ?? 0,
+                scheduleEntriesOnTime: schedulesEntryOnTime?.total ?? 0,
+                schedulesEntryAfterTime: schedulesEntryAfterTime?.total ?? 0,
+                patrolScheduleEntryOnTime: patrolScheduleEntryOnTime?.total ?? 0,
+                patrolScheduleEntryAfterTime: patrolScheduleEntryAfterTime?.total ?? 0
+            });
+        }
         else {
             const monthNumber = luxon_1.DateTime.now().toFormat('MM');
             const checkpointCount = await Checkpoint_1.default.query().where('project_id', project.id).pojo().count('id', 'total').first();

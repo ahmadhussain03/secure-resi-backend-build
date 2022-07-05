@@ -14,6 +14,11 @@ class LogBooksController {
         const logs = await LogBookRepositoryContract_1.default.all(request, project);
         return response.json(logs);
     }
+    async report({ request, response, auth }) {
+        const project = auth.user?.clientStaff.project;
+        const logs = await LogBookRepositoryContract_1.default.all(request, project);
+        return response.json(logs);
+    }
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const projectId = authUser.clientStaff.projectId;

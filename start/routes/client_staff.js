@@ -24,7 +24,7 @@ Route_1.default.group(() => {
     Route_1.default.post('fingerprint_login', 'FingerprintsController.index');
     Route_1.default.group(() => {
         Route_1.default.any('/user', 'UsersController.index');
-        Route_1.default.get('/dashboard', 'DashboardController.index').middleware('can:view-staff');
+        Route_1.default.get('/dashboard', 'DashboardController.index');
         Route_1.default.post('/logout', 'UsersController.logout');
         Route_1.default.get('/client_staff', 'ClientStaffsController.index').middleware('can:view-staff');
         Route_1.default.post('/client_staff', 'ClientStaffsController.create').middleware('can:create-staff');
@@ -83,6 +83,7 @@ Route_1.default.group(() => {
             index: ['can:view-notification'],
             store: ['can:view-notification']
         });
+        Route_1.default.get('log_book/report', 'LogBooksController.report').middleware('can:report-log-book');
         Route_1.default.resource('log_book', 'LogBooksController').apiOnly().middleware({
             store: ['can:create-log-book'],
             index: ['can:view-log-book'],
@@ -90,6 +91,7 @@ Route_1.default.group(() => {
             update: ['can:update-log-book'],
             destroy: ['can:delete-log-book'],
         });
+        Route_1.default.get('guard_operation/report', 'GuardOperationsController.report').middleware('can:report-guard-operation');
         Route_1.default.resource('guard_operation', 'GuardOperationsController').apiOnly().middleware({
             store: ['can:create-guard-operation'],
             index: ['can:view-guard-operation'],
@@ -97,6 +99,7 @@ Route_1.default.group(() => {
             update: ['can:update-guard-operation'],
             destroy: ['can:delete-guard-operation'],
         });
+        Route_1.default.get('panic_alert/report', 'PanicAlertsController.report').middleware('can:report-panic-alert');
         Route_1.default.resource('panic_alert', 'PanicAlertsController').only(['store', 'index', 'destroy']).middleware({
             store: ['can:create-panic-alert'],
             index: ['can:view-panic-alert'],
@@ -125,23 +128,28 @@ Route_1.default.group(() => {
             update: ['can:update-patrol-schedule'],
             destroy: ['can:delete-patrol-schedule'],
         });
+        Route_1.default.get('patrol_entry/report', 'PatrolEntriesController.report').middleware('can:report-patrol-entry');
         Route_1.default.resource('patrol_entry', 'PatrolEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-patrol-entry'],
             index: ['can:view-patrol-entry']
         });
+        Route_1.default.get('patrol_schedule_entry/report', 'PatrolScheduleEntriesController.report').middleware('can:report-patrol-schedule-entry');
         Route_1.default.resource('patrol_schedule_entry', 'PatrolScheduleEntriesController').only(['store', 'index', 'show']).middleware({
             store: ['can:create-patrol-schedule-entry'],
             index: ['can:view-patrol-schedule-entry'],
             show: ['can:view-patrol-schedule-entry']
         });
+        Route_1.default.get('schedule_entry/report', 'ScheduleEntriesController.report').middleware('can:report-schedule-entry');
         Route_1.default.resource('schedule_entry', 'ScheduleEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-schedule-entry'],
             index: ['can:view-schedule-entry']
         });
+        Route_1.default.get('attendance/report', 'AttendancesController.report').middleware('can:report-attendance');
         Route_1.default.resource('attendance', 'AttendancesController').only(['index', 'store']).middleware({
             store: ['can:create-attendance'],
             index: ['can:view-attendance']
         });
+        Route_1.default.get('item/report', 'ItemsController.report').middleware('can:report-guard-item');
         Route_1.default.resource('item', 'ItemsController').apiOnly().middleware({
             store: ['can:create-guard-item'],
             index: ['can:view-guard-item'],
@@ -150,6 +158,7 @@ Route_1.default.group(() => {
             destroy: ['can:delete-guard-item'],
         });
         Route_1.default.post('item/assign', 'ItemsController.assign').middleware('can:assign-guard-item');
+        Route_1.default.get('shift/report', 'ShiftsController.report').middleware('can:report-shift');
         Route_1.default.resource('shift', 'ShiftsController').only(['index', 'show', 'store']).middleware({
             index: ['can:view-shift'],
             show: ['can:view-shift']
@@ -225,11 +234,11 @@ Route_1.default.group(() => {
             destroy: ['can:delete-guide-book']
         });
         Route_1.default.resource('move_term_condition', 'MoveTermConditionsController').apiOnly().middleware({
-            index: ['can:view-guide-book'],
-            show: ['can:view-guide-book'],
-            store: ['can:create-guide-book'],
-            update: ['can:update-guide-book'],
-            destroy: ['can:delete-guide-book']
+            index: ['can:move-tnc'],
+            show: ['can:move-tnc'],
+            store: ['can:move-tnc'],
+            update: ['can:move-tnc'],
+            destroy: ['can:move-tnc']
         });
         Route_1.default.resource('improvement_type', 'ImprovementTypesController').apiOnly().middleware({
             store: ['can:create-operation-type'],

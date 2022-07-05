@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
+const Helpers_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Helpers");
 const InvalidCredentialException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/InvalidCredentialException"));
 const createReadStream = require('fs').createReadStream;
 const msRest = require("@azure/ms-rest-js");
@@ -17,18 +18,10 @@ const client = new Face.FaceClient(credentials, endpoint);
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 class FaceRecognition {
-    static async train(user, project, image) {
-        const personGroupId = "project_" + project.id;
-        try {
-            await client.personGroup.get(personGroupId);
-        }
-        catch (e) {
-            await client.personGroup.create(personGroupId, { name: personGroupId, recognitionModel: "recognition_04" });
-        }
-        let person = user.personId ? await client.personGroupPerson.get(personGroupId, user.personId) : await client.personGroupPerson.create(personGroupId, { name: user.username });
-        await client.personGroupPerson.addFaceFromStream(personGroupId, person.personId, () => createReadStream(image));
-        await client.personGroup.train(personGroupId);
-        return person.personId;
+    static async train(_user, _project, _image) {
+        return new Promise((resolve, _) => {
+            resolve((0, Helpers_1.cuid)());
+        });
     }
     static async recognize(userId, image) {
         const userImagePath = Application_1.default.tmpPath(`profile/images/${userId}`);

@@ -33,6 +33,7 @@ class VisitorsController {
         data.projectId = project.id;
         data.userId = authUser.id;
         data.unitId = unit.id;
+        data.addedBy = 'resident';
         const visitor = await VisitorRepositoryContract_1.default.create(data, request);
         return response.json(visitor);
     }

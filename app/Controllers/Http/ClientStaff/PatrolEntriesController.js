@@ -15,6 +15,12 @@ class PatrolEntriesController {
         const entries = await PatrolEntryRepositoryContract_1.default.all(request, projectId);
         return response.json(entries);
     }
+    async report({ response, auth, request }) {
+        const user = auth.user;
+        const projectId = user.clientStaff.projectId;
+        const entries = await PatrolEntryRepositoryContract_1.default.all(request, projectId);
+        return response.json(entries);
+    }
     async store({ response, request, auth }) {
         const data = await request.validate(CreatePatrolEntryValidator_1.default);
         const user = auth.user;

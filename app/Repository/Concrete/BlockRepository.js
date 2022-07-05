@@ -13,7 +13,11 @@ class BlockRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
+        const search = query.search || "";
         const blockQuery = Block_1.default.query().where('project_id', project.id);
+        if (search) {
+            blockQuery.where("name", "like", `%${search}%`);
+        }
         const items = await blockQuery.orderBy('created_at', 'desc').paginate(page, limit);
         return items;
     }

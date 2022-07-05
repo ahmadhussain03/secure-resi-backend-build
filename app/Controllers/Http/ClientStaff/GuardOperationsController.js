@@ -14,6 +14,11 @@ class GuardOperationsController {
         const operations = await GuardOperationRepositoryContract_1.default.all(request, project);
         return response.json(operations);
     }
+    async report({ request, response, auth }) {
+        const project = auth.user?.clientStaff.project;
+        const operations = await GuardOperationRepositoryContract_1.default.all(request, project);
+        return response.json(operations);
+    }
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const projectId = authUser.clientStaff.projectId;
