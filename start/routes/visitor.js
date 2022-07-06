@@ -26,6 +26,11 @@ Route_1.default.group(() => {
         Route_1.default.resource('attendance', 'AttendancesController').only(['index']).middleware({
             index: ['can:view-attendance']
         }).as('visitor.attendance');
+        Route_1.default.resource('panic_alert', 'PanicAlertsController').only(['store', 'index', 'destroy']).middleware({
+            store: ['can:create-panic-alert'],
+            index: ['can:view-panic-alert'],
+            destroy: ['can:delete-panic-alert'],
+        }).as('visitor.panic.alert');
         Route_1.default.resource('checkpoint', 'CheckpointsController').apiOnly().middleware({
             index: ['can:view-checkpoint'],
         }).as('visitor.checkpoint');
