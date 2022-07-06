@@ -43,7 +43,8 @@
     "@adonisjs/mail",
     "@adonisjs/drive",
     "@adonisjs/view",
-    "./providers/AppProvider"
+    "./providers/AppProvider",
+    "@adonisjs/redis"
   ],
   "aceProviders": [
     "@adonisjs/repl"
