@@ -44,7 +44,8 @@
     "@adonisjs/drive",
     "@adonisjs/view",
     "./providers/AppProvider",
-    "@adonisjs/redis"
+    "@adonisjs/redis",
+    "@rocketseat/adonis-bull"
   ],
   "aceProviders": [
     "@adonisjs/repl"
