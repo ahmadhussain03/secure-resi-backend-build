@@ -27,10 +27,18 @@ class GuideBookRepository {
         return await GuideBook_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        return await GuideBook_1.default.create({
-            description: data.description,
-            projectId: data.projectId
-        });
+        const guideBook = await GuideBook_1.default.first();
+        if (guideBook) {
+            guideBook.description = data.description;
+            await guideBook.save();
+            return guideBook;
+        }
+        else {
+            return await GuideBook_1.default.create({
+                description: data.description,
+                projectId: data.projectId
+            });
+        }
     }
 }
 exports.default = GuideBookRepository;

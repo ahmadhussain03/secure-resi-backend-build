@@ -26,6 +26,18 @@ const FavouriteContactRequest_1 = __importDefault(require("./FavouriteContactReq
 const FavouriteContact_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/FavouriteContact"));
 const ApiToken_1 = __importDefault(require("./ApiToken"));
 const Fingerprint_1 = __importDefault(require("./Fingerprint"));
+const Checkpoint_1 = __importDefault(require("./Checkpoint"));
+const Facility_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Facility"));
+const GuardOperation_1 = __importDefault(require("./GuardOperation"));
+const LogBook_1 = __importDefault(require("./LogBook"));
+const PanicAlert_1 = __importDefault(require("./PanicAlert"));
+const PatrolEntry_1 = __importDefault(require("./PatrolEntry"));
+const PatrolScheduleEntry_1 = __importDefault(require("./PatrolScheduleEntry"));
+const PatrolSchedule_1 = __importDefault(require("./PatrolSchedule"));
+const Project_1 = __importDefault(require("./Project"));
+const CheckIn_1 = __importDefault(require("./CheckIn"));
+const Visitor_1 = __importDefault(require("./Visitor"));
+const VisitorPlan_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/VisitorPlan"));
 class User extends Orm_1.BaseModel {
     static async hashPassword(user) {
         if (user.$dirty.password) {
@@ -164,6 +176,60 @@ __decorate([
     (0, Orm_1.hasMany)(() => Fingerprint_1.default),
     __metadata("design:type", Object)
 ], User.prototype, "fingerprints", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Checkpoint_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "checkpoints", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Facility_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "facilities", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => GuardOperation_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "guardOperations", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => LogBook_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "logBooks", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PanicAlert_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "panicAlerts", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolEntry_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "patrolEntries", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolScheduleEntry_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "patrolScheduleEntries", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolSchedule_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "patrolSchedules", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => User, {
+        foreignKey: 'parentId'
+    }),
+    __metadata("design:type", Object)
+], User.prototype, "children", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Project_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "projects", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => CheckIn_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "checkIns", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Visitor_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "visitors", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => VisitorPlan_1.default),
+    __metadata("design:type", Object)
+], User.prototype, "visitorPlans", void 0);
 __decorate([
     (0, Orm_1.beforeSave)(),
     __metadata("design:type", Function),

@@ -64,6 +64,46 @@ class GuardOperationRepository {
         const operations = await operationQuery.exec();
         return operations;
     }
+    async allPaginated(request, project) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const order = query.order || 'desc';
+        const operationTypeId = query.operationTypeId;
+        const startDate = query.startDate;
+        const endDate = query.endDate;
+        const timezone = query.timezone;
+        const search = query.search;
+        const guard = query.guard;
+        if (startDate || endDate) {
+            if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
+                throw new UserNotFoundException_1.default('Invalid Timezone!');
+            }
+        }
+        const operationQuery = GuardOperation_1.default.query().where('project_id', project.id).whereNotNull('dated').preload('operationType').preload('user', (query) => query.preload('profile'));
+        if (order) {
+            operationQuery.orderBy('created_at', order);
+        }
+        if (search) {
+            operationQuery.where(query => query.where('status', 'like', `%${search}%`).orWhere('operation', 'like', `%${search}%`));
+        }
+        if (guard) {
+            operationQuery.where('user_id', guard);
+        }
+        if (operationTypeId) {
+            operationQuery.where('operation_type_id', operationTypeId);
+        }
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            operationQuery.whereRaw('dated >= ?', [formattedStartDate.toSQL()]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            operationQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
+        }
+        const operations = await operationQuery.paginate(page, limit);
+        return operations;
+    }
     async findById(id, project) {
         const operation = await GuardOperation_1.default.query().where('project_id', project.id).where('id', id).preload('operationType').firstOrFail();
         return operation;

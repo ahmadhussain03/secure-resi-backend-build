@@ -222,30 +222,89 @@ Route_1.default.group(() => {
         });
         Route_1.default.resource('guide_book', 'GuideBooksController').apiOnly().middleware({
             index: ['can:view-guide-book'],
-            show: ['can:view-guide-book'],
             store: ['can:create-guide-book'],
-            update: ['can:update-guide-book'],
-            destroy: ['can:delete-guide-book']
+        });
+        Route_1.default.resource('term_condition', 'TermConditionsController').apiOnly().middleware({
+            index: ['can:view-tnc'],
+            store: ['can:create-tnc'],
         });
         Route_1.default.resource('move_guide_book', 'MoveGuideBooksController').apiOnly().except(['show']).middleware({
-            index: ['can:view-guide-book'],
-            store: ['can:create-guide-book'],
-            update: ['can:update-guide-book'],
-            destroy: ['can:delete-guide-book']
+            index: ['can:view-move-guide-book'],
+            store: ['can:create-move-guide-book'],
         });
         Route_1.default.resource('move_term_condition', 'MoveTermConditionsController').apiOnly().middleware({
-            index: ['can:move-tnc'],
-            show: ['can:move-tnc'],
-            store: ['can:move-tnc'],
-            update: ['can:move-tnc'],
-            destroy: ['can:move-tnc']
+            index: ['can:view-move-tnc'],
+            store: ['can:create-move-tnc'],
         });
         Route_1.default.resource('improvement_type', 'ImprovementTypesController').apiOnly().middleware({
-            store: ['can:create-operation-type'],
-            index: ['can:view-operation-type'],
-            show: ['can:view-operation-type'],
-            update: ['can:update-operation-type'],
-            destroy: ['can:delete-operation-type'],
+            store: ['can:create-improvement-type'],
+            index: ['can:view-improvement-type'],
+            show: ['can:view-improvement-type'],
+            update: ['can:update-improvement-type'],
+            destroy: ['can:delete-improvement-type'],
+        });
+        Route_1.default.resource('parking_type', 'ParkingTypesController').apiOnly().middleware({
+            store: ['can:create-parking-type'],
+            index: ['can:view-parking-type'],
+            show: ['can:view-parking-type'],
+            update: ['can:update-parking-type'],
+            destroy: ['can:delete-parking-type'],
+        });
+        Route_1.default.resource('parking_level', 'ParkingLevelsController').apiOnly().middleware({
+            store: ['can:create-parking-level'],
+            index: ['can:view-parking-level'],
+            show: ['can:view-parking-level'],
+            update: ['can:update-parking-level'],
+            destroy: ['can:delete-parking-level'],
+        });
+        Route_1.default.resource('parking_slot', 'ParkingSlotsController').apiOnly().middleware({
+            store: ['can:create-parking-slot'],
+            index: ['can:view-parking-slot'],
+            show: ['can:view-parking-slot'],
+            update: ['can:update-parking-slot'],
+            destroy: ['can:delete-parking-slot'],
+        });
+        Route_1.default.resource('gate_pass_type', 'GatePassTypesController').apiOnly().middleware({
+            store: ['can:create-gate-pass-type'],
+            index: ['can:view-gate-pass-type'],
+            show: ['can:view-gate-pass-type'],
+            update: ['can:update-gate-pass-type'],
+            destroy: ['can:delete-gate-pass-type'],
+        });
+        Route_1.default.resource('gate_pass', 'GatePassesController').apiOnly().middleware({
+            store: ['can:create-gate-pass'],
+            index: ['can:view-gate-pass'],
+            show: ['can:view-gate-pass'],
+            update: ['can:update-gate-pass'],
+            destroy: ['can:delete-gate-pass'],
+        });
+        Route_1.default.resource('gate_terminal', 'GateTerminalsController').apiOnly().middleware({
+            store: ['can:create-gate-terminal'],
+            index: ['can:view-gate-terminal'],
+            show: ['can:view-gate-terminal'],
+            update: ['can:update-gate-terminal'],
+            destroy: ['can:delete-gate-terminal'],
+        });
+        Route_1.default.resource('race', 'RacesController').apiOnly().middleware({
+            store: ['can:create-race'],
+            index: ['can:view-race'],
+            show: ['can:view-race'],
+            update: ['can:update-race'],
+            destroy: ['can:delete-race'],
+        });
+        Route_1.default.resource('religion', 'ReligionsController').apiOnly().middleware({
+            store: ['can:create-religion'],
+            index: ['can:view-religion'],
+            show: ['can:view-religion'],
+            update: ['can:update-religion'],
+            destroy: ['can:delete-religion'],
+        });
+        Route_1.default.resource('visitor_type', 'VisitorTypesController').apiOnly().middleware({
+            store: ['can:create-visitor-type'],
+            index: ['can:view-visitor-type'],
+            show: ['can:view-visitor-type'],
+            update: ['can:update-visitor-type'],
+            destroy: ['can:delete-visitor-type'],
         });
         Route_1.default.get('guard_supervisor', 'GuardSupervisorsController.index');
         Route_1.default.get('improvement', 'ImprovementsController.index').middleware('can:create-operation-type');

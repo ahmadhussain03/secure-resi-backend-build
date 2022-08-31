@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const luxon_1 = require("luxon");
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const Project_1 = __importDefault(require("./Project"));
+const Level_1 = __importDefault(require("./Level"));
+const ParkingLevel_1 = __importDefault(require("./ParkingLevel"));
 class Block extends Orm_1.BaseModel {
 }
 __decorate([
@@ -45,5 +47,13 @@ __decorate([
     (0, Orm_1.belongsTo)(() => Project_1.default),
     __metadata("design:type", Object)
 ], Block.prototype, "project", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Level_1.default),
+    __metadata("design:type", Object)
+], Block.prototype, "levels", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => ParkingLevel_1.default),
+    __metadata("design:type", Object)
+], Block.prototype, "parkingLevels", void 0);
 exports.default = Block;
 //# sourceMappingURL=Block.js.map

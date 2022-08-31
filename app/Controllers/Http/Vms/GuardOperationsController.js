@@ -7,7 +7,7 @@ const GuardOperationRepositoryContract_1 = __importDefault(global[Symbol.for('io
 class GuardOperationsController {
     async index({ request, response, auth }) {
         const project = auth.user?.clientStaff.project;
-        const operations = await GuardOperationRepositoryContract_1.default.all(request, project);
+        const operations = await GuardOperationRepositoryContract_1.default.allPaginated(request, project);
         return response.json(operations);
     }
 }

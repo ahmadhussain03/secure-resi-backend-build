@@ -17,6 +17,11 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const Project_1 = __importDefault(require("./Project"));
 const User_1 = __importDefault(require("./User"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
+const PatrolEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolEntry"));
+const PatrolSchedule_1 = __importDefault(require("./PatrolSchedule"));
+const PatrolScheduleEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolScheduleEntry"));
+const ScheduleRoutine_1 = __importDefault(require("./ScheduleRoutine"));
+const ScheduleEntry_1 = __importDefault(require("./ScheduleEntry"));
 class Checkpoint extends Orm_1.BaseModel {
     get qrImage() {
         return `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/uploads/qr_code/${this.code}.jpg`;
@@ -130,5 +135,32 @@ __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", String)
 ], Checkpoint.prototype, "pivotPriority", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolEntry_1.default),
+    __metadata("design:type", Object)
+], Checkpoint.prototype, "patrolEntries", void 0);
+__decorate([
+    (0, Orm_1.manyToMany)(() => PatrolSchedule_1.default, {
+        localKey: 'id',
+        relatedKey: 'id',
+        pivotForeignKey: 'checkpoint_id',
+        pivotRelatedForeignKey: 'patrol_schedule_id',
+        pivotTable: 'patrol_schedule_checkpoints',
+        pivotColumns: ['priority', 'estimated_time'],
+    }),
+    __metadata("design:type", Object)
+], Checkpoint.prototype, "patrolSchedules", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolScheduleEntry_1.default),
+    __metadata("design:type", Object)
+], Checkpoint.prototype, "patrolScheduleEntries", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => ScheduleRoutine_1.default),
+    __metadata("design:type", Object)
+], Checkpoint.prototype, "scheduleRoutines", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => ScheduleEntry_1.default),
+    __metadata("design:type", Object)
+], Checkpoint.prototype, "scheduleEntries", void 0);
 exports.default = Checkpoint;
 //# sourceMappingURL=Checkpoint.js.map

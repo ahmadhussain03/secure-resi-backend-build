@@ -18,6 +18,7 @@ const User_1 = __importDefault(require("./User"));
 const Project_1 = __importDefault(require("./Project"));
 const PatrolScheduleRoutine_1 = __importDefault(require("./PatrolScheduleRoutine"));
 const Checkpoint_1 = __importDefault(require("./Checkpoint"));
+const PatrolScheduleEntry_1 = __importDefault(require("./PatrolScheduleEntry"));
 class PatrolSchedule extends Orm_1.BaseModel {
 }
 __decorate([
@@ -79,5 +80,9 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], PatrolSchedule.prototype, "checkpoints", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => PatrolScheduleEntry_1.default),
+    __metadata("design:type", Object)
+], PatrolSchedule.prototype, "patrolScheduleEntries", void 0);
 exports.default = PatrolSchedule;
 //# sourceMappingURL=PatrolSchedule.js.map

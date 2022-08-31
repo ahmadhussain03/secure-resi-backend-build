@@ -8,6 +8,38 @@ const UserNotFoundException_1 = __importDefault(global[Symbol.for('ioc.use')]("A
 const PatrolScheduleEntry_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/PatrolScheduleEntry"));
 const luxon_1 = require("luxon");
 class PatrolScheduleEntryRepository {
+    async allPaginated(request, projectId) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const patrolScheduleId = query.patrolScheduleId;
+        const guard = query.guard;
+        const startDate = query.startDate;
+        const endDate = query.endDate;
+        const timezone = query.timezone;
+        if (startDate || endDate) {
+            if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
+                throw new UserNotFoundException_1.default('Invalid Timezone!');
+            }
+        }
+        const patrolEntryQuery = PatrolScheduleEntry_1.default.query().select('patrol_schedule_id', Database_1.default.raw('DATE(dated) as created_at'), 'userId').where('project_id', projectId).groupBy(['patrol_schedule_id', 'user_id']).whereNotNull('dated').groupByRaw('DATE(dated)').orderByRaw("DATE(dated) DESC").preload('patrolSchedule').preload('user', query => query.preload('profile'));
+        if (patrolScheduleId) {
+            patrolEntryQuery.where('patrol_schedule_id', patrolScheduleId);
+        }
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            patrolEntryQuery.whereRaw('dated >= ?', [formattedStartDate.toSQL()]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            patrolEntryQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
+        }
+        if (guard) {
+            patrolEntryQuery.where('user_id', guard);
+        }
+        const patrolEntries = await patrolEntryQuery.paginate(page, limit);
+        return patrolEntries;
+    }
     async searchByPatrolScheduleId(request, id, projectId) {
         const query = request.qs();
         const checkpointId = query.checkpointId;

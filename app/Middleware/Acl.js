@@ -8,9 +8,6 @@ const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 class Acl {
     async handle({ auth }, next, allowedPermissions) {
         const user = auth.user;
-        await user.load('role', (query) => {
-            query.preload('permissions', (query) => query.select(['slug', 'group']));
-        });
         if (user.role && user.role.permissions) {
             const permissions = user.role.permissions.map(permission => permission.slug);
             const found = permissions.some(permission => allowedPermissions.indexOf(permission) >= 0);

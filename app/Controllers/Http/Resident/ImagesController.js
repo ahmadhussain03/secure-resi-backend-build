@@ -30,6 +30,16 @@ class ImagesController {
         const resizedWidth = w ?? size.width;
         return response.stream(image.resize(resizedWidth, resizedHeight).stream());
     }
+    async visitorImage({ request, params, response }) {
+        const h = request.qs().h;
+        const w = request.qs().w;
+        const imgaePath = Application_1.default.tmpPath('visitor/image', params.filename);
+        const image = (0, gm_1.default)(imgaePath);
+        const size = (0, image_size_1.default)(imgaePath);
+        const resizedHeight = h ?? size.height;
+        const resizedWidth = w ?? size.width;
+        return response.stream(image.resize(resizedWidth, resizedHeight).stream());
+    }
     async improvementAudio({ params, response }) {
         return response.attachment(Application_1.default.tmpPath('improvement/audio', params.filename));
     }

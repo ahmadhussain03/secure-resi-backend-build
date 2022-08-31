@@ -9,6 +9,7 @@ Route_1.default.group(() => {
     Route_1.default.get('upload/comment/audio/:filename', 'ImagesController.commentAudio');
     Route_1.default.get('upload/improvement/images/:filename', 'ImagesController.improvementImage');
     Route_1.default.get('upload/improvement/audio/:filename', 'ImagesController.improvementAudio');
+    Route_1.default.get('upload/profile/images/:filename', 'ImagesController.visitorImage');
     Route_1.default.post('/login', 'AuthController.login');
     Route_1.default.post('/register', 'AuthController.register');
     Route_1.default.post('/project_verification', 'ProjectVerificationsController.index');

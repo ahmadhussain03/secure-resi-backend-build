@@ -10,6 +10,10 @@ class AuthMiddleware {
         for (let guard of guards) {
             guardLastAttempted = guard;
             if (await auth.use(guard).check()) {
+                const user = auth.user;
+                await user.load('role', (query) => {
+                    query.preload('permissions', (query) => query.select(['slug', 'group']));
+                });
                 auth.defaultGuard = guard;
                 return true;
             }

@@ -7,9 +7,9 @@ const Country_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Coun
 class CountriesController {
     async index({ request, response }) {
         const query = request.qs();
-        const page = query.page ?? 1;
-        const limit = query.limit ?? 15;
-        const name = query.name ?? null;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
+        const name = query.name;
         const countryQuery = Country_1.default.query();
         if (name) {
             countryQuery.where('name', 'like', `%${name.toLowerCase()}%`);

@@ -17,6 +17,11 @@ class AddRegistrationColumnInResidents extends Schema_1.default {
         });
     }
     async down() {
+        this.schema.alterTable(this.tableName, (table) => {
+            table.dropForeign(['country_id']);
+            table.dropForeign(['state_id']);
+            table.dropForeign(['city_id']);
+        });
     }
 }
 exports.default = AddRegistrationColumnInResidents;

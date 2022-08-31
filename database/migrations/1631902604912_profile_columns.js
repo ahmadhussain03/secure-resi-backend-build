@@ -18,9 +18,9 @@ class ProfileColumns extends Schema_1.default {
     }
     async down() {
         this.schema.alterTable(this.tableName, (table) => {
-            table.dropColumn('country_id');
-            table.dropColumn('state_id');
-            table.dropColumn('city_id');
+            table.dropForeign(['country_id']);
+            table.dropForeign(['state_id']);
+            table.dropForeign(['city_id']);
         });
     }
 }

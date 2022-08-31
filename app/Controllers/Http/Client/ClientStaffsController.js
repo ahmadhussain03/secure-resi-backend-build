@@ -14,6 +14,7 @@ const qrcode_1 = __importDefault(require("qrcode"));
 const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive"));
 const fs_1 = __importDefault(require("fs"));
 const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
+const ModelRelationExistException_1 = __importDefault(require("./../../../Exceptions/ModelRelationExistException"));
 class ClientStaffsController {
     async index({ request, response, auth }) {
         const authUser = auth.user;
@@ -157,7 +158,10 @@ class ClientStaffsController {
     }
     async destroy({ response, params, auth }) {
         const authUser = auth.user;
-        const user = await User_1.default.query().where('id', params.id).where('parent_id', authUser.id).where('user_type', UserType_1.UserType.client_staff).firstOrFail();
+        const user = await User_1.default.query().where('id', params.id).where('parent_id', authUser.id).where('user_type', UserType_1.UserType.client_staff).doesntHave('checkIns').doesntHave('checkpoints').doesntHave('children').doesntHave('facilities').doesntHave('guardOperations').doesntHave('items').doesntHave('logBooks').doesntHave('panicAlerts').doesntHave('patrolEntries').doesntHave('patrolScheduleEntries').doesntHave('patrolSchedules').doesntHave('projects').doesntHave('roles').doesntHave('visitorPlans').doesntHave('visitors').first();
+        if (!user) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted User. User Relation Data exists!');
+        }
         await user.delete();
         return response.status(200).json({ message: 'Staff Deleted Successfully!' });
     }

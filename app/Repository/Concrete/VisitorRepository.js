@@ -23,7 +23,8 @@ class VisitorRepository {
             stateId: data.state,
             countryId: data.country,
             address: data.address,
-            postCode: data.postCode
+            postCode: data.postCode,
+            addedBy: data.addedBy,
         });
         const idCard = request.file('idCard');
         if (idCard) {
@@ -37,7 +38,7 @@ class VisitorRepository {
         const image = request.file('image');
         if (image) {
             const fileName = `${visitor.id.toString()}.${image.extname}`;
-            await image.move(Application_1.default.tmpPath(`visitor/image/${visitor.id}`), {
+            await image.move(Application_1.default.tmpPath(`visitor/image`), {
                 name: fileName
             });
             visitor.image = fileName;
@@ -69,12 +70,25 @@ class VisitorRepository {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const visitorsQuery = Visitor_1.default.query().where('project_id', project.id).preload('city').preload('country').preload('state');
+        const addedBy = query.addedBy;
+        let unit = query.unit || null;
+        const visitorsQuery = Visitor_1.default.query().where('project_id', project.id).preload('city').preload('country').preload('state').preload('unit');
+        if (unit) {
+            visitorsQuery.where('unit_id', unit);
+        }
+        if (addedBy) {
+            visitorsQuery.where('added_by', addedBy);
+        }
         const visitors = await visitorsQuery.paginate(page, limit);
         return visitors;
     }
     async destroyByIdByUnit(id, unit) {
         const visitor = await this.findByIdByUnit(id, unit);
+        await visitor.delete();
+        return true;
+    }
+    async destroyByIdByProject(id, project) {
+        const visitor = await this.findByIdByProject(id, project);
         await visitor.delete();
         return true;
     }
@@ -99,8 +113,33 @@ class VisitorRepository {
         await visitor.load('state');
         return visitor;
     }
+    async findByIdByProjectAndUpdate(id, project, data) {
+        const visitor = await this.findByIdByProject(id, project);
+        visitor.name = data.name ?? visitor.name;
+        visitor.email = data.email ?? visitor.email;
+        visitor.registrationNo = data.registration_no ?? visitor.registrationNo;
+        visitor.registrationDocument = data.registration_document ?? visitor.registrationDocument;
+        visitor.nationality = data.nationality ?? visitor.nationality;
+        visitor.dob = data.dob ?? visitor.dob;
+        visitor.phone = data.phone ?? visitor.phone;
+        visitor.gender = data.gender ?? visitor.gender;
+        visitor.cityId = data.city ?? visitor.cityId;
+        visitor.stateId = data.state ?? visitor.stateId;
+        visitor.countryId = data.country ?? visitor.countryId;
+        visitor.address = data.address ?? visitor.address;
+        visitor.postCode = data.postCode ?? visitor.postCode;
+        await visitor.save();
+        await visitor.load('city');
+        await visitor.load('country');
+        await visitor.load('state');
+        return visitor;
+    }
     async findByIdByUnit(id, unit) {
         const visitor = await Visitor_1.default.query().where('unit_id', unit.id).where('id', id).firstOrFail();
+        return visitor;
+    }
+    async findByIdByProject(id, project) {
+        const visitor = await Visitor_1.default.query().where('project_id', project.id).where('id', id).firstOrFail();
         return visitor;
     }
 }

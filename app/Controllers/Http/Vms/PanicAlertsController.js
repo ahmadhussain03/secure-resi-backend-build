@@ -11,7 +11,7 @@ class PanicAlertsController {
     async index({ request, response, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
-        const alert = await PanicAlertRepositoryContract_1.default.all(request, project);
+        const alert = await PanicAlertRepositoryContract_1.default.allPaginated(request, project);
         return response.json(alert);
     }
     async store({ response, auth }) {
@@ -38,12 +38,6 @@ class PanicAlertsController {
             }
         });
         return response.json(alert);
-    }
-    async destroy({ response, auth, params }) {
-        const authUser = auth.user;
-        const project = authUser?.clientStaff.project;
-        await PanicAlertRepositoryContract_1.default.destroyById(params.id, project);
-        return response.json({ message: 'Panic Alert Deleted Successfully!' });
     }
 }
 exports.default = PanicAlertsController;

@@ -62,6 +62,48 @@ class ScheduleEntryRepository {
         const entries = await entryQuery.exec();
         return entries;
     }
+    async allPaginated(request, projectId) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const order = query.order || 'desc';
+        const scheduleId = query.scheduleId;
+        const checkpointId = query.checkpointId;
+        const startDate = query.startDate;
+        const endDate = query.endDate;
+        const timezone = query.timezone;
+        const guard = query.guard;
+        if (startDate || endDate) {
+            if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
+                throw new UserNotFoundException_1.default('Invalid Timezone!');
+            }
+        }
+        const entryQuery = ScheduleEntry_1.default.query().where('project_id', projectId).preload('schedule', (query) => {
+            query.preload('scheduleRoutine');
+        }).preload('checkpoint').preload('user', query => query.preload('profile'));
+        if (scheduleId) {
+            entryQuery.where('schedule_id', scheduleId);
+        }
+        if (checkpointId) {
+            entryQuery.where('checkpoint_id', checkpointId);
+        }
+        if (guard) {
+            entryQuery.where('user_id', guard);
+        }
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            entryQuery.whereNotNull('dated').whereRaw('dated >= ?', [formattedStartDate.toSQL()]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
+            entryQuery.whereNotNull('dated').whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
+        }
+        if (order) {
+            entryQuery.orderBy('dated', order);
+        }
+        const entries = await entryQuery.paginate(page, limit);
+        return entries;
+    }
     async findById(id, projectId) {
         const entry = await ScheduleEntry_1.default.query().where('id', id).where('project_id', projectId).preload('schedule', (query) => {
             query.preload('scheduleRoutine');

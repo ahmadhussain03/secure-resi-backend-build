@@ -7,6 +7,7 @@ const Schedule_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Sch
 const ScheduleRoutine_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/ScheduleRoutine"));
 const luxon_1 = require("luxon");
 const Database_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Lucid/Database"));
+const ModelRelationExistException_1 = __importDefault(require("./../../Exceptions/ModelRelationExistException"));
 class ScheduleRepository {
     async list(request, project, userId) {
         const query = request.qs();
@@ -128,7 +129,10 @@ class ScheduleRepository {
         return schedules;
     }
     async destroyById(id, project) {
-        const schedule = await this.findById(id, project);
+        const schedule = await Schedule_1.default.query().where('id', id).where('project_id', project.id).doesntHave('scheduleEntries').first();
+        if (!schedule) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted Schedule. Schedule Relation Data exists!');
+        }
         await schedule.delete();
         return true;
     }

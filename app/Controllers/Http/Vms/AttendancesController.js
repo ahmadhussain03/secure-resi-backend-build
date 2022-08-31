@@ -8,7 +8,7 @@ class AttendancesController {
     async index({ response, request, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
-        const attendances = await AttendanceRepositoryContract_1.default.all(request, project);
+        const attendances = await AttendanceRepositoryContract_1.default.allPaginated(request, project);
         return response.json(attendances);
     }
 }

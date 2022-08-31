@@ -19,6 +19,11 @@ const Project_1 = __importDefault(require("./Project"));
 const Unit_1 = __importDefault(require("./Unit"));
 const Visitor_1 = __importDefault(require("./Visitor"));
 class VisitorPlan extends Orm_1.BaseModel {
+    serializeExtras() {
+        return {
+            visitors_count: parseInt(this.$extras.visitors_count) || 0,
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),

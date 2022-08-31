@@ -8,6 +8,8 @@ const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const Unit_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Unit"));
 const FaceRecognition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Services/FaceRecognition"));
+const Religion_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Religion"));
+const Race_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Race"));
 class ResidentRepository {
     async create(data, request) {
         const user = await User_1.default.create({
@@ -38,6 +40,8 @@ class ResidentRepository {
             cityId: data.city,
             stateId: data.state
         });
+        const religion = await Religion_1.default.query().where('project_id', data.projectId).where('id', data.religion).firstOrFail();
+        const race = await Race_1.default.query().where('project_id', data.projectId).where('id', data.race).firstOrFail();
         const resident = await user.related('resident').create({
             companyEmail: data.companyEmail,
             companyName: data.companyName,
@@ -48,8 +52,8 @@ class ResidentRepository {
             note: data.note,
             gender: data.gender,
             nationality: data.nationality,
-            religion: data.religion,
-            race: data.race,
+            religionId: religion.id,
+            raceId: race.id,
             projectId: data.projectId,
             passport: data.passport,
             phone: data.phone,
@@ -78,7 +82,7 @@ class ResidentRepository {
             await resident.save();
         }
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
-        await user.load('resident', query => query.preload('project'));
+        await user.load('resident', query => query.preload('project').preload('race').preload('religion'));
         await user.load('role');
         if (user.image) {
             const personId = await FaceRecognition_1.default.train(user, user.resident.project, Application_1.default.tmpPath(`profile/images/${user.id}`, user.$original.image));
@@ -114,7 +118,7 @@ class ResidentRepository {
                 query.where('name', role);
             });
         }
-        const users = await usersQuery.preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units')).paginate(page, limit);
+        const users = await usersQuery.preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units').preload('race').preload('religion')).paginate(page, limit);
         return users;
     }
     async destroyById(id, project) {
@@ -148,14 +152,20 @@ class ResidentRepository {
         user.resident.note = data.note ? data.note : user.resident.note;
         user.resident.gender = data.gender ? data.gender : user.resident.gender;
         user.resident.nationality = data.nationality ? data.nationality : user.resident.nationality;
-        user.resident.religion = data.religion ? data.religion : user.resident.religion;
-        user.resident.race = data.race ? data.race : user.resident.race;
         user.resident.passport = data.passport ? data.passport : user.resident.passport;
         user.resident.phone = data.phone ? data.phone : user.resident.phone;
         user.resident.status = data.status ? data.status : user.resident.status;
         user.resident.type = data.type ? data.type : user.resident.type;
         user.resident.registrationDocument = data.registration_document ? data.registration_document : user.resident.registrationDocument;
         user.resident.registrationNo = data.registration_no ? data.registration_no : user.resident.registrationNo;
+        if (data.religion) {
+            const religion = await Religion_1.default.query().where('id', data.religion).where('project_id', project.id).firstOrFail();
+            user.resident.religionId = religion.id;
+        }
+        if (data.race) {
+            const race = await Race_1.default.query().where('id', data.race).where('project_id', project.id).firstOrFail();
+            user.resident.raceId = race.id;
+        }
         await user.resident.save();
         const image = request.file('image');
         if (image) {
@@ -172,13 +182,21 @@ class ResidentRepository {
             await unit.related('residents').save(user.resident, true);
         }
         await user.load('resident', (query) => {
-            query.preload('units');
+            query.preload('units').preload('race').preload('religion');
         });
         await user.load('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation'));
         return user;
     }
     async findById(id, project) {
-        return User_1.default.query().preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident').whereHas('resident', (query) => query.where('project_id', project.id)).where('user_type', UserType_1.UserType.resident).where('id', id).firstOrFail();
+        return User_1.default.query().preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', query => query.preload('race').preload('religion')).whereHas('resident', (query) => query.where('project_id', project.id)).where('user_type', UserType_1.UserType.resident).where('id', id).firstOrFail();
+    }
+    async findByIdByUnit(id, unitId) {
+        const resident = await User_1.default.query().where('id', id).whereHas('resident', (query) => {
+            query.whereHas('units', (q) => q.where('id', unitId));
+        }).whereHas('resident', (query) => {
+            query.where('is_approved', true);
+        }).preload('resident', (query) => query.preload('units')).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).firstOrFail();
+        return resident;
     }
     async findByOwnerId(id, project) {
         return User_1.default.query().preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident').whereHas('resident', (query) => query.where('project_id', project.id).where('type', 'owner')).where('user_type', UserType_1.UserType.resident).where('id', id).firstOrFail();
@@ -192,6 +210,39 @@ class ResidentRepository {
         }).whereHas('resident', (query) => {
             query.whereIn('type', ['resident', 'member']).where('is_approved', true);
         }).preload('resident', (query) => query.preload('units')).preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).paginate(page, limit);
+        return members;
+    }
+    async allByUnitId(id, request) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const members = await User_1.default.query().whereHas('resident', (query) => {
+            query.whereHas('units', (q) => q.where('id', id));
+        }).whereHas('resident', (query) => {
+            query.where('is_approved', true);
+        }).preload('profile').paginate(page, limit);
+        return members;
+    }
+    async allMemberByUnitId(id, request) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const members = await User_1.default.query().whereHas('resident', (query) => {
+            query.whereHas('units', (q) => q.where('id', id));
+        }).whereHas('resident', (query) => {
+            query.whereIn('type', ['resident', 'member']).where('is_approved', true);
+        }).preload('profile').paginate(page, limit);
+        return members;
+    }
+    async allOwnerByUnitId(id, request) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const members = await User_1.default.query().whereHas('resident', (query) => {
+            query.whereHas('units', (q) => q.where('id', id));
+        }).whereHas('resident', (query) => {
+            query.whereIn('type', ['owner']).where('is_approved', true);
+        }).preload('profile').paginate(page, limit);
         return members;
     }
     async requestByUnitIds(ids, request) {

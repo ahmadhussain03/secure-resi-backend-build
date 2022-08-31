@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Block_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Block"));
+const ModelRelationExistException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/ModelRelationExistException"));
 class BlockRepository {
     async create(data) {
         const block = await Block_1.default.create(data);
@@ -22,8 +23,11 @@ class BlockRepository {
         return items;
     }
     async destroyById(id, project) {
-        const item = await this.findById(id, project);
-        await item.delete();
+        const block = await Block_1.default.query().where('project_id', project.id).where('id', id).doesntHave('levels').doesntHave('parkingLevels').first();
+        if (!block) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted Block. Block Relation Data exists!');
+        }
+        await block.delete();
         return true;
     }
     async findByIdAndUpdate(id, project, data) {

@@ -12,7 +12,7 @@ class PanicAlertRepository {
             projectId: data.projectId
         });
         await alert.load('project');
-        await alert.load('user');
+        await alert.load('user', query => query.preload('profile'));
         return alert;
     }
     async all(request, project) {
@@ -63,6 +63,50 @@ class PanicAlertRepository {
         else {
             return await alertQuery.exec();
         }
+    }
+    async allPaginated(request, project) {
+        const query = request.qs();
+        let page = query.page ? parseInt(query.page) : 1;
+        let limit = query.limit ? parseInt(query.limit) : 15;
+        const startDate = query.startDate;
+        const endDate = query.endDate;
+        const filter = query.filter;
+        const sort = query.sort || 'desc';
+        const guard = query.guard;
+        const alertQuery = PanicAlert_1.default.query().where('project_id', project.id);
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd', { zone: 'UTC' }).toFormat('yyyy-MM-dd');
+            alertQuery.whereRaw('DATE(created_at) >= ?', [formattedStartDate]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd', { zone: 'UTC' }).toFormat('yyyy-MM-dd');
+            alertQuery.whereRaw('DATE(created_at) <= ?', [formattedEndDate]);
+        }
+        if (filter) {
+            if (filter == 'today') {
+                const todayDateNumber = luxon_1.DateTime.now().toFormat('dd');
+                alertQuery.whereRaw('EXTRACT(DAY FROM created_at) = ?', [todayDateNumber]);
+            }
+            else if (filter == 'yesterday') {
+                const yesterdayDateNumber = luxon_1.DateTime.now().minus({ days: 1 }).toFormat('dd');
+                alertQuery.whereRaw('EXTRACT(DAY FROM created_at) = ?', [yesterdayDateNumber]);
+            }
+            else if (filter == 'week') {
+                const weekDay = luxon_1.DateTime.now().weekday;
+                const weekStartDate = luxon_1.DateTime.now().minus({ days: weekDay });
+                const weekEndDate = weekStartDate.plus({ days: 7 });
+                alertQuery.whereRaw('DATE(created_at) >= ?', [weekStartDate.toFormat('yyyy-MM-dd')]);
+                alertQuery.whereRaw('DATE(created_at) <= ?', [weekEndDate.toFormat('yyyy-MM-dd')]);
+            }
+        }
+        if (guard) {
+            alertQuery.where('user_id', guard);
+        }
+        if (sort == 'desc') {
+            alertQuery.orderBy('created_at', sort);
+        }
+        alertQuery.preload('user', (query) => query.preload('profile').preload('clientStaff').preload('role')).preload('project');
+        return await alertQuery.paginate(page, limit);
     }
     async destroyById(id, project) {
         const alert = await this.findById(id, project);

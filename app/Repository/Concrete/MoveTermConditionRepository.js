@@ -27,10 +27,18 @@ class MoveTermConditionRepository {
         return await MoveTermCondition_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        return await MoveTermCondition_1.default.create({
-            description: data.description,
-            projectId: data.projectId
-        });
+        const terms = await MoveTermCondition_1.default.first();
+        if (terms) {
+            terms.description = data.description;
+            await terms.save();
+            return terms;
+        }
+        else {
+            return await MoveTermCondition_1.default.create({
+                description: data.description,
+                projectId: data.projectId
+            });
+        }
     }
 }
 exports.default = MoveTermConditionRepository;

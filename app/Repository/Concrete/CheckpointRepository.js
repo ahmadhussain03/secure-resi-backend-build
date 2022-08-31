@@ -10,6 +10,7 @@ const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive
 const jimp_1 = __importDefault(require("jimp"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
+const ModelRelationExistException_1 = __importDefault(require("./../../Exceptions/ModelRelationExistException"));
 class CheckpointRepository {
     async findByLatLong(latitude, longitude, project) {
         const checkpoint = Database_1.default
@@ -74,7 +75,10 @@ class CheckpointRepository {
         }
     }
     async destroyById(id, project) {
-        const checkpoint = await this.findById(id, project);
+        const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where('id', id).doesntHave('patrolEntries').doesntHave('patrolScheduleEntries').doesntHave('patrolSchedules').doesntHave('scheduleEntries').doesntHave('scheduleRoutines').first();
+        if (!checkpoint) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted Checkpoint. Checkpoint Relation Data exists!');
+        }
         await checkpoint.delete();
         return true;
     }

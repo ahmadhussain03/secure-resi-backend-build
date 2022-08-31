@@ -5,26 +5,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Unit_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Unit"));
 const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
+const Database_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Lucid/Database"));
+const ModelRelationExistException_1 = __importDefault(require("./../../Exceptions/ModelRelationExistException"));
 class UnitRepository {
     async create(data, project) {
-        let unitsArray = data.units.map(unit => {
-            return {
-                projectId: data.projectId,
-                status: data.status,
-                blockId: data.blockId,
-                name: unit,
-                levelId: data.levelId
-            };
-        });
-        const units = await Unit_1.default.createMany(unitsArray);
-        if (units.length == 1 && data.ownerId) {
-            let user = await ResidentRepositoryContract_1.default.findById(data.ownerId, project);
-            units.forEach(async (unit) => {
-                await unit.related('owner').save(user.resident, true);
+        const units = await Database_1.default.transaction(async (trx) => {
+            let unitsArray = data.units.map(unit => {
+                return {
+                    projectId: data.projectId,
+                    status: data.status,
+                    blockId: data.blockId,
+                    name: unit,
+                    levelId: data.levelId
+                };
             });
-        }
-        units.forEach(async (unit) => {
-            await unit.related('setting').create({ seekPermission: false });
+            const units = await Unit_1.default.createMany(unitsArray, {
+                client: trx
+            });
+            if (units.length == 1 && data.ownerId) {
+                let user = await ResidentRepositoryContract_1.default.findById(data.ownerId, project);
+                const unit = units[0];
+                await unit.related('allOwners').create(user.resident, undefined, { client: trx });
+            }
+            for (let index = 0; index < units.length; index++) {
+                await units[index].related('setting').create({ seekPermission: false }, { client: trx });
+            }
+            return units;
         });
         return units;
     }
@@ -45,7 +51,10 @@ class UnitRepository {
         return units;
     }
     async destroyById(id, project) {
-        const unit = await this.findById(id, project);
+        const unit = await Unit_1.default.query().where('project_id', project.id).where('id', id).doesntHave('residents').first();
+        if (!unit) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted Unit. Unit Relation Data exists!');
+        }
         await unit.delete();
         return true;
     }

@@ -18,6 +18,8 @@ const Project_1 = __importDefault(require("./Project"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const User_1 = __importDefault(require("./User"));
 const Unit_1 = __importDefault(require("./Unit"));
+const Race_1 = __importDefault(require("./Race"));
+const Religion_1 = __importDefault(require("./Religion"));
 class Resident extends Orm_1.BaseModel {
     static async createUniqueCode(resident) {
         if (resident.code == null) {
@@ -52,12 +54,12 @@ __decorate([
 ], Resident.prototype, "nationality", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
-], Resident.prototype, "race", void 0);
+    __metadata("design:type", Object)
+], Resident.prototype, "raceId", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
-], Resident.prototype, "religion", void 0);
+    __metadata("design:type", Object)
+], Resident.prototype, "religionId", void 0);
 __decorate([
     Orm_1.column.date(),
     __metadata("design:type", luxon_1.DateTime)
@@ -142,6 +144,14 @@ __decorate([
     (0, Orm_1.belongsTo)(() => User_1.default),
     __metadata("design:type", Object)
 ], Resident.prototype, "user", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => Race_1.default),
+    __metadata("design:type", Object)
+], Resident.prototype, "race", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => Religion_1.default),
+    __metadata("design:type", Object)
+], Resident.prototype, "religion", void 0);
 __decorate([
     (0, Orm_1.manyToMany)(() => Unit_1.default, {
         pivotTable: 'resident_units',

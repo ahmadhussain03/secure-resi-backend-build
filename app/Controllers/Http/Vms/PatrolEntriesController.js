@@ -8,7 +8,7 @@ class PatrolEntriesController {
     async index({ response, auth, request }) {
         const user = auth.user;
         const projectId = user.clientStaff.projectId;
-        const entries = await PatrolEntryRepositoryContract_1.default.all(request, projectId);
+        const entries = await PatrolEntryRepositoryContract_1.default.allPaginated(request, projectId);
         return response.json(entries);
     }
 }

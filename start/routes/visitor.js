@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route"));
 Route_1.default.group(() => {
+    Route_1.default.get('gate_terminal', 'GateTerminalsController.index');
+    Route_1.default.post('/login/:id', 'LoginController.codeLogin');
     Route_1.default.post('/login', 'LoginController.index');
     Route_1.default.post('face_recognition', 'FaceRecognitionsController.index');
     Route_1.default.post('fingerprint_login', 'FingerprintsController.index');
@@ -17,6 +19,10 @@ Route_1.default.group(() => {
         Route_1.default.resource('patrol_entry', 'PatrolEntriesController').only(['index']).middleware({
             index: ['can:view-patrol-entry']
         }).as('visitor.patrol.entry');
+        Route_1.default.resource('patrol_schedule_entry', 'PatrolScheduleEntriesController').only(['index', 'show']).middleware({
+            index: ['can:view-patrol-schedule-entry'],
+            show: ['can:view-patrol-schedule-entry']
+        }).as('visitor.patrol.schedule.entry');
         Route_1.default.resource('schedule', 'SchedulesController').apiOnly().middleware({
             index: ['can:view-schedule'],
         }).as('visitor.schedule');
@@ -39,14 +45,49 @@ Route_1.default.group(() => {
         Route_1.default.resource('operation_type', 'OperationTypesController').apiOnly().middleware({
             index: ['can:view-operation-type'],
         }).as('visitor.operation.type');
+        Route_1.default.resource('unit', 'UnitsController').only(['index']).middleware({
+            index: ['can:view-unit']
+        }).as('visitor.unit');
+        Route_1.default.resource('notification', 'NotificationsController').only(['index', 'store']).middleware({
+            index: ['can:view-notification'],
+            store: ['can:view-notification']
+        }).as('visitor.notification');
         Route_1.default.resource('visitor', 'VisitorsController').apiOnly()
             .middleware({
             store: ['can:create-visitor'],
-            index: ['can:view-visitor'],
+            index: ['can:create-visitor'],
             show: ['can:view-visitor'],
             update: ['can:update-visitor'],
             destroy: ['can:update-visitor'],
         }).as('visitor.visitors');
+        Route_1.default.resource('visitor_plan', 'VisitorPlansController').apiOnly().middleware({
+            index: ['can:view-visitor'],
+            show: ['can:view-visitor'],
+            store: ['can:create-visitor'],
+            update: ['can:update-visitor'],
+            destroy: ['can:view-visitor']
+        }).as('visitor.visitor.plan');
+        Route_1.default.resource('resident_panic_alert', 'ResidentPanicAlertsController').only(['update', 'index', 'show'])
+            .middleware({
+            index: ['can:view-panic-alert'],
+            show: ['can:view-panic-alert'],
+            update: ['can:view-panic-alert'],
+        }).as('visitor.resident_panic_alert');
+        Route_1.default.resource('parking_slot', 'ParkingSlotsController').only(['index']).middleware({
+            index: ['can:view-parking-slot'],
+        }).as('visitor.parking.slot');
+        Route_1.default.resource('check_in', 'CheckInsController').only(['index', 'store']).middleware({
+            index: ['can:view-visitor'],
+            store: ['can:create-visitor'],
+        }).as('visitor.check.in');
+        Route_1.default.resource('check_out', 'CheckOutsController').only(['index', 'store']).middleware({
+            index: ['can:view-visitor'],
+            store: ['can:create-visitor'],
+        }).as('visitor.check.out');
+        Route_1.default.resource('members', 'MembersController').only(['index', 'show']).middleware({
+            index: ['can:view-visitor'],
+            show: ['can:view-visitor'],
+        }).as('visitor.members');
         Route_1.default.post('fingerprint', 'FingerprintsController.create');
     }).middleware('auth');
 }).namespace('App/Controllers/Http/Vms').prefix('api/vms');

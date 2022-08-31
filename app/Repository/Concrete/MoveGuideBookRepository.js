@@ -27,10 +27,18 @@ class MoveGuideBookRepository {
         return await MoveGuideBook_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        return await MoveGuideBook_1.default.create({
-            description: data.description,
-            projectId: data.projectId
-        });
+        const moveGuideBook = await MoveGuideBook_1.default.first();
+        if (moveGuideBook) {
+            moveGuideBook.description = data.description;
+            await moveGuideBook.save();
+            return moveGuideBook;
+        }
+        else {
+            return await MoveGuideBook_1.default.create({
+                description: data.description,
+                projectId: data.projectId
+            });
+        }
     }
 }
 exports.default = MoveGuideBookRepository;

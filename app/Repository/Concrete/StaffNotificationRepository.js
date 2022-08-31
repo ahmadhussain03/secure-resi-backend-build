@@ -21,7 +21,7 @@ class StaffNotificationRepository {
         const limit = query.limit || 15;
         const notifications = await StaffNotification_1.default.query().where((query) => {
             query.where('role_id', recipientId).orWhereNull('role_id');
-        }).where('project_id', projectId).preload('user', (query) => query.preload('profile')).preload('read', query => query.select(['created_at']).where('user_id', userId)).paginate(page, limit);
+        }).where('project_id', projectId).preload('user', (query) => query.preload('profile')).preload('read', query => query.select(['created_at']).where('user_id', userId)).orderBy('send_date', 'desc').paginate(page, limit);
         const unreadCount = await Database_1.default.from('staff_notifications').where((query) => {
             query.where('role_id', recipientId).orWhereNull('role_id');
         }).where('project_id', projectId).whereNotExists(Database_1.default.raw('select * from staff_notification_reads where staff_notification_reads.user_id = ' + userId + ' AND staff_notifications.id = staff_notification_reads.staff_notification_id')).count("* as total").first();

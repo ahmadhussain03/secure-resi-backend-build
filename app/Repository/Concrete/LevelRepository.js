@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Level_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Level"));
+const ModelRelationExistException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/ModelRelationExistException"));
 class LevelRepository {
     async create(data) {
         let levelsArray = data.levels.map(level => {
@@ -34,8 +35,11 @@ class LevelRepository {
         return levels;
     }
     async destroyById(id, project) {
-        const item = await this.findById(id, project);
-        await item.delete();
+        const level = await Level_1.default.query().where('project_id', project.id).where('id', id).doesntHave('units').first();
+        if (!level) {
+            throw new ModelRelationExistException_1.default('Cannot Deleted Level. Level Relation Data exists!');
+        }
+        await level.delete();
         return true;
     }
     async findByIdAndUpdate(id, project, data) {

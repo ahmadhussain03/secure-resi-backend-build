@@ -26,23 +26,25 @@ class PanicAlertsController {
         const data = { userId: authUser?.id, projectId: project.id };
         const alert = await PanicAlertRepositoryContract_1.default.create(data);
         WebSocket_1.default.io.emit(`panic-alert:created:${project.id}`, alert);
-        const guards = await User_1.default.query().select(['id', 'device_token']).whereNot('id', authUser.id).whereNotNull('device_token').whereHas('clientStaff', (query) => {
+        const guards = await User_1.default.query().select(['id', 'device_token']).whereNotNull('device_token').whereHas('clientStaff', (query) => {
             query.where('project_id', project.id);
         }).whereHas('role', (query) => {
             query.where('name', 'guard');
         }).preload('clientStaff');
         const deviceIds = guards.map(guard => guard.deviceToken);
-        Fcm_1.default.sendNotifications(deviceIds, {
-            payload: {
-                notification: {
-                    title: 'Panic Alert',
-                    body: `${authUser?.username} has generated a panic alert`
-                },
-                data: {
-                    type: 'panic_alert'
+        if (deviceIds.length) {
+            Fcm_1.default.sendNotifications(deviceIds, {
+                payload: {
+                    notification: {
+                        title: 'Panic Alert',
+                        body: `${authUser?.username} has generated a panic alert`
+                    },
+                    data: {
+                        type: 'panic_alert'
+                    }
                 }
-            }
-        });
+            });
+        }
         return response.json(alert);
     }
     async destroy({ response, auth, params }) {

@@ -6,7 +6,8 @@
     "@adonisjs/repl/build/commands",
     "@adonisjs/lucid/build/commands",
     "adonis5-swagger/build/commands",
-    "@adonisjs/mail/build/commands"
+    "@adonisjs/mail/build/commands",
+    "@rocketseat/adonis-bull/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
@@ -31,6 +32,12 @@
       "environment": [
         "web"
       ]
+    },
+    {
+      "file": "./start/scheduler",
+      "environment": [
+        "web"
+      ]
     }
   ],
   "providers": [
@@ -39,7 +46,6 @@
     "@adonisjs/auth",
     "adonis5-swagger",
     "./providers/RespositoryProvider",
-    "./providers/CacheProvider",
     "@adonisjs/mail",
     "@adonisjs/drive",
     "@adonisjs/view",
@@ -54,7 +60,15 @@
     {
       "pattern": "resources/views/**/*.edge",
       "reloadServer": false
+    },
+    {
+      "pattern": "config/secrue-resi-firebase-adminsdk-crzj9-1f35c9c612.json",
+      "reloadServer": false
+    },
+    {
+      "pattern": "uploads/default/*",
+      "reloadServer": false
     }
   ],
-  "lastCompiledAt": "2022-01-02T15:52:24.439Z"
+  "lastCompiledAt": "2022-08-31T06:35:24.221Z"
 }

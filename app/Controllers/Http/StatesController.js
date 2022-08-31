@@ -7,9 +7,9 @@ const State_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/State"
 class StatesController {
     async index({ request, response }) {
         const query = request.qs();
-        const page = query.page ?? 1;
-        const limit = query.limit ?? 15;
-        const name = query.name ?? null;
+        const page = query.page || 1;
+        const limit = query.limit || 15;
+        const name = query.name || null;
         const { id } = request.params();
         const stateQuery = State_1.default.query().where('country_id', id);
         if (name) {

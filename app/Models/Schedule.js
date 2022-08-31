@@ -17,6 +17,7 @@ const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
 const User_1 = __importDefault(require("./User"));
 const Project_1 = __importDefault(require("./Project"));
 const ScheduleRoutine_1 = __importDefault(require("./ScheduleRoutine"));
+const ScheduleEntry_1 = __importDefault(require("./ScheduleEntry"));
 class Schedule extends Orm_1.BaseModel {
 }
 __decorate([
@@ -67,5 +68,9 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], Schedule.prototype, "scheduleRoutine", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => ScheduleEntry_1.default),
+    __metadata("design:type", Object)
+], Schedule.prototype, "scheduleEntries", void 0);
 exports.default = Schedule;
 //# sourceMappingURL=Schedule.js.map
