@@ -6,8 +6,8 @@ class CreateVisitorPlanValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             visitorEntry: Validator_1.schema.enum(['single', 'multi', 'multi_vehicle', 'single_vehicle']),
-            resident: Validator_1.schema.number([]),
-            visitorType: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)]),
+            resident: Validator_1.schema.number([Validator_1.rules.unsigned(), Validator_1.rules.exists({ table: 'residents', column: 'user_id', where: { project_id: this.ctx.auth.user?.clientStaff.projectId } })]),
+            visitorType: Validator_1.schema.number([Validator_1.rules.unsigned(), Validator_1.rules.exists({ table: 'visitor_types', column: 'id', where: { project_id: this.ctx.auth.user?.clientStaff.projectId } })]),
             seniors: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             adults: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             children: Validator_1.schema.number([Validator_1.rules.unsigned()]),

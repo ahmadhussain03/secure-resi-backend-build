@@ -94,6 +94,9 @@ Route_1.default.group(() => {
             update: ['can:update-panic-alert'],
             destroy: ['can:view-panic-alert']
         });
+        Route_1.default.get('visitor_plan_request', 'VisitorPlanRequestsController.index').middleware('can:view-panic-alert');
+        Route_1.default.post('visitor_plan_request/:id', 'VisitorPlanRequestsController.approve').middleware('can:view-panic-alert');
+        Route_1.default.delete('visitor_plan_request/:id', 'VisitorPlanRequestsController.reject').middleware('can:view-panic-alert');
         Route_1.default.put('settings', 'SettingsController.update').middleware('can:view-panic-alert');
     }).middleware('auth');
 }).namespace('App/Controllers/Http/Resident').prefix('api/resident');

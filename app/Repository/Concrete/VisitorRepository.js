@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Visitor_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Visitor"));
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
+const qrcode_1 = __importDefault(require("qrcode"));
+const Drive_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Drive"));
 class VisitorRepository {
     async create(data, request) {
         const visitor = await Visitor_1.default.create({
@@ -53,6 +55,8 @@ class VisitorRepository {
             visitor.document = fileName;
             await visitor.save();
         }
+        const qrBuffer = await qrcode_1.default.toBuffer(visitor.id.toString());
+        await Drive_1.default.put(`visitor_qr/${visitor.id}.jpg`, qrBuffer);
         await visitor.load('city');
         await visitor.load('country');
         await visitor.load('state');
@@ -71,8 +75,9 @@ class VisitorRepository {
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
         const addedBy = query.addedBy;
+        const loadPlans = query.loadPlans;
         let unit = query.unit || null;
-        const visitorsQuery = Visitor_1.default.query().where('project_id', project.id).preload('city').preload('country').preload('state').preload('unit');
+        const visitorsQuery = Visitor_1.default.query().where('project_id', project.id);
         if (unit) {
             visitorsQuery.where('unit_id', unit);
         }
@@ -80,6 +85,11 @@ class VisitorRepository {
             visitorsQuery.where('added_by', addedBy);
         }
         const visitors = await visitorsQuery.paginate(page, limit);
+        if (loadPlans) {
+            for (let i = 0; i < visitors.length; i++) {
+                await visitors[i].load('visitorPlans', query => query.orderBy('created_at', 'desc').preload('visitorType').preload('visitors').preload('checkIn').first());
+            }
+        }
         return visitors;
     }
     async destroyByIdByUnit(id, unit) {
@@ -140,6 +150,7 @@ class VisitorRepository {
     }
     async findByIdByProject(id, project) {
         const visitor = await Visitor_1.default.query().where('project_id', project.id).where('id', id).firstOrFail();
+        await visitor.load('visitorPlans', query => query.orderBy('created_at', 'desc').preload('visitorType').preload('visitors').preload('checkIn').first());
         return visitor;
     }
 }

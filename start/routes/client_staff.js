@@ -33,10 +33,7 @@ Route_1.default.group(() => {
         Route_1.default.delete('/client_staff/:id', 'ClientStaffsController.destroy').middleware('can:delete-staff');
         Route_1.default.get('/permissions', 'PermissionsController.index').middleware('can:view-role');
         Route_1.default.get('/role', 'RolesController.index').middleware('can:view-role');
-        Route_1.default.post('/role', 'RolesController.store').middleware('can:create-role');
         Route_1.default.get('/role/:id', 'RolesController.show').middleware('can:view-role');
-        Route_1.default.put('/role/:id', 'RolesController.update').middleware('can:update-role');
-        Route_1.default.delete('/role/:id', 'RolesController.destroy').middleware('can:delete-role');
         Route_1.default.resource('log_type', 'LogTypesController').apiOnly().middleware({
             store: ['can:create-log-type'],
             index: ['can:view-log-type'],
@@ -136,6 +133,12 @@ Route_1.default.group(() => {
         Route_1.default.get('patrol_schedule_entry/report', 'PatrolScheduleEntriesController.report').middleware('can:report-patrol-schedule-entry');
         Route_1.default.resource('patrol_schedule_entry', 'PatrolScheduleEntriesController').only(['store', 'index', 'show']).middleware({
             store: ['can:create-patrol-schedule-entry'],
+            index: ['can:view-patrol-schedule-entry'],
+            show: ['can:view-patrol-schedule-entry']
+        });
+        Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'show', 'update']).middleware({
+            store: ['can:create-patrol-schedule-entry'],
+            update: ['can:update-patrol-schedule-entry'],
             index: ['can:view-patrol-schedule-entry'],
             show: ['can:view-patrol-schedule-entry']
         });

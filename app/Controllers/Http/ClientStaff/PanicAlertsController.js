@@ -17,7 +17,7 @@ class PanicAlertsController {
     async report({ request, response, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
-        const alert = await PanicAlertRepositoryContract_1.default.all(request, project);
+        const alert = await PanicAlertRepositoryContract_1.default.allPaginated(request, project);
         return response.json(alert);
     }
     async store({ response, auth }) {

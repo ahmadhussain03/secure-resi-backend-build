@@ -101,6 +101,8 @@ class ResidentRepository {
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
         let role = query.role ? query.role.toLowerCase() : null;
+        let search = query.search ? query.search : null;
+        let unit = query.unit ? query.unit : null;
         const usersQuery = User_1.default.query().where('user_type', UserType_1.UserType.resident).whereHas('resident', (query) => {
             query.where('project_id', project.id);
             if (residentType == 'owner') {
@@ -116,6 +118,18 @@ class ResidentRepository {
         if (role) {
             usersQuery.whereHas('role', (query) => {
                 query.where('name', role);
+            });
+        }
+        if (search) {
+            usersQuery.where(query => {
+                query.whereILike('username', `%${search}%`);
+            }).orWhereHas('profile', query => {
+                query.whereILike('name', `%${search}%`).orWhereILike('email', `%${search}%`);
+            });
+        }
+        if (unit) {
+            usersQuery.whereHas('resident', query => {
+                query.whereHas('units', q => q.where('id', unit));
             });
         }
         const users = await usersQuery.preload('profile', query => query.preload('cityRelation').preload('countryRelation').preload('stateRelation')).preload('resident', (query) => query.preload('units').preload('race').preload('religion')).paginate(page, limit);

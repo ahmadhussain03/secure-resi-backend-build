@@ -27,7 +27,7 @@ class GuideBookRepository {
         return await GuideBook_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        const guideBook = await GuideBook_1.default.first();
+        const guideBook = await GuideBook_1.default.query().where('project_id', data.projectId).first();
         if (guideBook) {
             guideBook.description = data.description;
             await guideBook.save();

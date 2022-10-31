@@ -38,8 +38,15 @@ class CheckInsController {
         if (data.planId) {
             const visitorPlan = await VisitorPlanRepositoryContract_1.default.findByIdByProject(data.planId, project);
             checkInData.visitorPlanId = visitorPlan.id;
+            if (visitorPlan.unit.setting.seekPermission) {
+                visitorPlan.status = 'Waiting';
+                await visitorPlan.save();
+                return response.json({ visitorPlan });
+            }
             const checkIn = await CheckInRepositoryContract_1.default.create(checkInData);
-            return response.json(checkIn);
+            visitorPlan.status = 'Checked-In';
+            await visitorPlan.save();
+            return response.json({ checkIn });
         }
         else {
             const planData = data;
@@ -48,9 +55,16 @@ class CheckInsController {
             planData.userId = authUser.id;
             planData.unitId = unit.id;
             const visitorPlan = await VisitorPlanRepositoryContract_1.default.create(planData);
+            if (visitorPlan.unit.setting.seekPermission) {
+                visitorPlan.status = 'Waiting';
+                await visitorPlan.save();
+                return response.json({ visitorPlan });
+            }
             checkInData.visitorPlanId = visitorPlan.id;
             const checkIn = await CheckInRepositoryContract_1.default.create(checkInData);
-            return response.json(checkIn);
+            visitorPlan.status = 'Checked-In';
+            await visitorPlan.save();
+            return response.json({ checkIn });
         }
     }
 }

@@ -50,11 +50,12 @@ class ClientStaffsController {
             device_token: Validator_1.schema.string()
         });
         const data = await request.validate({ schema: verificationSchema });
+        const roles = await Role_1.default.query().whereIn('name', ['guard', 'guard-supervisor']).whereNull('user_id');
         const user = await User_1.default.query().whereHas('clientStaff', (query) => {
             query.where('project_id', data.project).where(query => {
                 query.where('staff_code', params.id).orWhere('nfc_code', params.id);
             });
-        }).where('user_type', UserType_1.UserType.client_staff).preload('profile', query => query.preload('countryRelation').preload('stateRelation').preload('cityRelation')).preload('clientStaff').preload('role').firstOrFail();
+        }).whereIn('role_id', roles.map(role => role.id)).where('user_type', UserType_1.UserType.client_staff).preload('profile', query => query.preload('countryRelation').preload('stateRelation').preload('cityRelation')).preload('clientStaff').preload('role').firstOrFail();
         user.deviceToken = data.device_token;
         await user.save();
         const token = await auth.use('api').login(user);

@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Validator_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Validator");
+const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
 const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
 const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 class FingerprintsController {
@@ -12,9 +13,10 @@ class FingerprintsController {
             userId: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)])
         });
         const data = await request.validate({ schema: fingerSchema });
+        const roles = await Role_1.default.query().whereIn('name', ['guard', 'guard-supervisor']).whereNull('user_id');
         const user = await User_1.default.query().whereHas('clientStaff', (query) => {
             query.where('staff_code', data.userId).orWhere('nfc_code', data.userId);
-        }).where('user_type', UserType_1.UserType.client_staff).firstOrFail();
+        }).whereIn('role_id', roles.map(role => role.id)).where('user_type', UserType_1.UserType.client_staff).firstOrFail();
         await user.load('clientStaff', (query) => query.preload('project'));
         await user.load('items');
         await user.load('fingerprints');

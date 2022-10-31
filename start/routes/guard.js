@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route"));
 Route_1.default.group(() => {
-    Route_1.default.post('/login', 'LoginController.index');
+    Route_1.default.post('/login', 'LoginController.guard');
     Route_1.default.post('/project_verification', 'ProjectVerificationsController.index');
     Route_1.default.post('/client_staff/:id/search', 'ClientStaffsController.search').as('client.staff.search');
     Route_1.default.post('face_recognition', 'FaceRecognitionsController').as('guard.face.recognition');
@@ -90,7 +90,7 @@ Route_1.default.group(() => {
         }).as('guard.checkpoint');
         Route_1.default.get('schedule/list', 'SchedulesController.list').middleware('can:view-schedule').as('guard.schedule.list');
         Route_1.default.resource('schedule', 'SchedulesController').apiOnly().middleware({
-            store: ['can:view-schedule'],
+            store: ['can:create-schedule'],
             index: ['can:view-schedule'],
             show: ['can:view-schedule'],
             update: ['can:update-schedule'],
@@ -104,6 +104,12 @@ Route_1.default.group(() => {
             update: ['can:update-patrol-schedule'],
             destroy: ['can:delete-patrol-schedule'],
         }).as('guard.patrol.schedule');
+        Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'show', 'update']).middleware({
+            store: ['can:create-patrol-schedule-entry'],
+            update: ['can:update-patrol-schedule-entry'],
+            index: ['can:view-patrol-schedule-entry'],
+            show: ['can:view-patrol-schedule-entry']
+        }).as('guard.quick.schedule.patrol');
         Route_1.default.resource('patrol_entry', 'PatrolEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-patrol-entry'],
             index: ['can:view-patrol-entry']

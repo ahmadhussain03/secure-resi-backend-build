@@ -6,13 +6,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
 const UpdateRoleValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Client/UpdateRoleValidator"));
 const CreateRoleValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Client/CreateRoleValidator"));
+const Helpers_1 = global[Symbol.for('ioc.use')]("Adonis/Core/Helpers");
 class RolesController {
     async index({ response, request, auth }) {
-        const user = auth.user;
+        const authUser = auth.user;
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const roles = await Role_1.default.query().where('user_id', user.id).orWhereNull('user_id').paginate(page, limit);
+        const search = query.search;
+        const roleQuery = Role_1.default.query().where(query => {
+            query.where('user_id', authUser.id).orWhereHas('user', query => {
+                query.where('parent_id', authUser.id);
+            }).orWhereNull('user_id');
+        });
+        if (search) {
+            roleQuery.where('name', 'like', `%${query.search}%`);
+        }
+        const roles = await roleQuery.paginate(page, limit);
         return response.json(roles);
     }
     async store({ request, response, auth }) {
@@ -34,8 +44,13 @@ class RolesController {
         const role = await Role_1.default.query().where('id', params.id).where('user_id', userId).firstOrFail();
         role.name = data.name ? data.name : role.name;
         const permissions = data.permissions;
-        if (permissions && permissions.length) {
-            await role.related('permissions').sync(permissions);
+        if (Helpers_1.types.isArray(permissions)) {
+            if (permissions.length) {
+                await role.related('permissions').sync(permissions);
+            }
+            else {
+                await role.related('permissions').detach();
+            }
         }
         await role.load('permissions', (query) => {
             query.select(['id', 'name', 'slug', 'group']);

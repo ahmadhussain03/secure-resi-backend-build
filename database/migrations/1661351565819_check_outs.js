@@ -14,7 +14,7 @@ class default_1 extends Schema_1.default {
             table.increments('id');
             table.time('stay_duration').notNullable();
             table.time('overstay_time').nullable();
-            table.double('overstay_penalty').notNullable();
+            table.double('overstay_penalty').nullable();
             table.double('paid').defaultTo(0);
             table.double('discount').defaultTo(0);
             table.double('balance').defaultTo(0);

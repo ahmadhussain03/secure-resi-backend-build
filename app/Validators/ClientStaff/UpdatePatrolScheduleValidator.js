@@ -6,7 +6,7 @@ class UpdatePatrolScheduleValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             status: Validator_1.schema.enum.optional(['ACTIVE', 'SUSPENDED', 'DEACTIVE', 'APPROVE']),
-            name: Validator_1.schema.string.optional({ trim: true, escape: true }),
+            name: Validator_1.schema.string.optional({ trim: true, escape: true }, []),
             description: Validator_1.schema.string.optional({ trim: true, escape: true }),
             routine: Validator_1.schema.object.optional().members({
                 checkDate: Validator_1.schema.date.optional({ format: 'yyyy-MM-dd' }, [Validator_1.rules.shouldNullWhen('repeat', '=', 'Daily'), Validator_1.rules.requiredWhen('repeat', 'in', ['Monthly', 'Yearly'])]),

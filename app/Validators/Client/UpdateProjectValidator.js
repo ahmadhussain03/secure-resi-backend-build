@@ -7,7 +7,8 @@ class UpdateProjectValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             "name": Validator_1.schema.string.optional({}, [
-                Rules_1.rules.maxLength(255)
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'projects', column: 'name', whereNot: { id: this.ctx.params.id } })
             ]),
             "code": Validator_1.schema.string.optional({}, [
                 Rules_1.rules.maxLength(255)

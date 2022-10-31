@@ -28,6 +28,8 @@ class LogBookRepository {
     }
     async all(request, project) {
         const query = request.qs();
+        const page = query.page || 1;
+        const limit = query.limit || 15;
         const order = query.order || 'desc';
         const logTypeId = query.logTypeId;
         const startDate = query.startDate;
@@ -61,7 +63,7 @@ class LogBookRepository {
             const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: timezone }).toUTC();
             logQuery.whereRaw('dated <= ?', [formattedEndDate.toSQL()]);
         }
-        const logs = await logQuery.exec();
+        const logs = await logQuery.paginate(page, limit);
         return logs;
     }
     async findById(id, project) {

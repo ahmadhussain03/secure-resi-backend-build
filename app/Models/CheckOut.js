@@ -25,11 +25,17 @@ __decorate([
     __metadata("design:type", Number)
 ], CheckOut.prototype, "id", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.dateTime({
+        prepare: (value) => value ? luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'UTC' }).setZone('UTC').toFormat('HH:mm:ss') : null,
+        serialize: (value) => value ? value.toFormat('HH:mm:ss') : null
+    }),
     __metadata("design:type", luxon_1.DateTime)
 ], CheckOut.prototype, "stayDuration", void 0);
 __decorate([
-    Orm_1.column.dateTime(),
+    Orm_1.column.dateTime({
+        prepare: (value) => value ? luxon_1.DateTime.fromFormat(value.toFormat('HH:mm:ss'), 'HH:mm:ss', { zone: 'UTC' }).setZone('UTC').toFormat('HH:mm:ss') : null,
+        serialize: (value) => value ? value.toFormat('HH:mm:ss') : null
+    }),
     __metadata("design:type", Object)
 ], CheckOut.prototype, "overstayTime", void 0);
 __decorate([

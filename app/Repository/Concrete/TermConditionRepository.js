@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const TermCondition_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/TermCondition"));
 class TermConditionRepository {
     async create(data) {
-        const terms = await TermCondition_1.default.first();
+        const terms = await TermCondition_1.default.query().where('project_id', data.projectId).first();
         if (terms) {
             terms.description = data.description;
             await terms.save();

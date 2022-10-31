@@ -9,16 +9,16 @@ class CreateCheckpointValidator {
         });
         this.schema = Validator_1.schema.create({
             status: Validator_1.schema.enum(['ACTIVE', 'SUSPENDED', 'DEACTIVE', 'APPROVE']),
-            name: Validator_1.schema.string({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
+            name: Validator_1.schema.string({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.alpha()]),
             nfcCode: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.unique({
                     column: 'nfc_code',
                     table: 'checkpoints',
                     where: { project_id: this.refs.projectId }
                 })]),
-            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.unique({ table: 'checkpoints', column: 'phone_number' })]),
+            phoneNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255), Validator_1.rules.unique({ table: 'checkpoints', column: 'phone_number' }), Validator_1.rules.alphaNum()]),
             note: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
-            latitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
-            longitude: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
+            latitude: Validator_1.schema.number.optional([]),
+            longitude: Validator_1.schema.number.optional([]),
             geofenceRadius: Validator_1.schema.number.optional([]),
             geocode: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.minLength(1), Validator_1.rules.maxLength(255)]),
             notificationAction: Validator_1.schema.enum.optional(['On Time', 'Before Time', 'Before Custom Time', 'After Custom Time']),

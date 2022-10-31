@@ -7,7 +7,7 @@ const Seeder_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Lucid/See
 const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
 const Permission_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Permission"));
 const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
-const User_1 = __importDefault(require("../../app/Models/User"));
+const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"));
 const Project_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Project"));
 const LogTypeRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/LogTypeRepositoryContract"));
 const OperationTypeRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/OperationTypeRepositoryContract"));
@@ -19,24 +19,19 @@ class RolePermissionSeeder extends Seeder_1.default {
         await Permission_1.default.query().delete();
         await Project_1.default.query().delete();
         const role = await Role_1.default.create({
-            name: 'Default Client',
-            userId: 1
+            name: 'Default Client'
         });
         const roleManager = await Role_1.default.create({
-            name: 'Project Manager',
-            userId: 1
+            name: 'Project Manager'
         });
         const roleClientStaff = await Role_1.default.create({
             name: 'guard',
-            userId: 3
         });
         const roleOwner = await Role_1.default.create({
             name: 'owner',
-            userId: 3
         });
         const roleResident = await Role_1.default.create({
             name: 'resident',
-            userId: 3
         });
         const permissions = await Permission_1.default.createMany([
             {

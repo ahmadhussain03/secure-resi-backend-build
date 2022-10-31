@@ -26,6 +26,12 @@ class VisitorsController {
         const visitor = await VisitorRepositoryContract_1.default.create(data, request);
         return response.json(visitor);
     }
+    async show({ response, auth, params }) {
+        const authUser = auth.user;
+        const project = authUser?.clientStaff.project;
+        const visitor = await VisitorRepositoryContract_1.default.findByIdByProject(params.id, project);
+        return response.json(visitor);
+    }
     async update({ request, response, auth, params }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;

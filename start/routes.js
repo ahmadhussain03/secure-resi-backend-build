@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route"));
 const HealthCheck_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/HealthCheck"));
+require("./routes/super_admin");
+require("./routes/reseller");
+require("./routes/subscriber");
 require("./routes/client");
 require("./routes/client_staff");
 require("./routes/guard");

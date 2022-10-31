@@ -5,7 +5,7 @@ class UpdateParkingTypeValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
-            customParkingType: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
+            customParkingType: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255), Validator_1.rules.unique({ table: 'parking_types', column: 'custom_parking_type', whereNot: { id: this.ctx.params.id } })]),
             availableInVisitor: Validator_1.schema.boolean.optional(),
             startTime: Validator_1.schema.date.optional({ format: 'hh:mm a' }),
             endTime: Validator_1.schema.date.optional({ format: 'hh:mm a' }),

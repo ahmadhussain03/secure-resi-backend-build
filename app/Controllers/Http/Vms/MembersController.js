@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
 class MembersController {
-    async index({ request, response, }) {
+    async index({ request, response }) {
         const query = request.qs();
         if (query?.type === 'member') {
             const members = await ResidentRepositoryContract_1.default.allMemberByUnitId(query.unit, request);

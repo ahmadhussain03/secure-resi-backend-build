@@ -61,7 +61,7 @@ class CheckpointRepository {
         const getAll = query.all || false;
         const checkpointQuery = Checkpoint_1.default.query().where('project_id', project.id);
         if (search) {
-            checkpointQuery.where('name', 'like', `%${search}%`).orWhere('nfc_code', 'like', `%${search}%`).orWhere('phone_number', 'like', `%${search}%`).orWhere('code', 'like', `%${search}%`).orWhere('status', 'like', `%${search}%`);
+            checkpointQuery.where(query => query.whereILike('name', `%${search}%`).orWhereILike('nfc_code', `%${search}%`).orWhereILike('phone_number', `%${search}%`).orWhereILike('code', `%${search}%`).orWhereILike('status', `%${search}%`));
         }
         const isGuardRequest = request.parsedUrl.path?.split('/')[2] === 'guard';
         if (isGuardRequest) {
@@ -122,7 +122,7 @@ class CheckpointRepository {
             return checkpoint;
         }
         else {
-            const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where('id', id).orWhere('code', id).orWhere('nfc_code', id).firstOrFail();
+            const checkpoint = await Checkpoint_1.default.query().where(query => query.where('project_id', project.id).where('status', 'ACTIVE')).where('id', id).where(query => query.where('code', id).orWhere('nfc_code', id)).firstOrFail();
             return checkpoint;
         }
     }

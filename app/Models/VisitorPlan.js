@@ -18,6 +18,8 @@ const User_1 = __importDefault(require("./User"));
 const Project_1 = __importDefault(require("./Project"));
 const Unit_1 = __importDefault(require("./Unit"));
 const Visitor_1 = __importDefault(require("./Visitor"));
+const VisitorType_1 = __importDefault(require("./VisitorType"));
+const CheckIn_1 = __importDefault(require("./CheckIn"));
 class VisitorPlan extends Orm_1.BaseModel {
     serializeExtras() {
         return {
@@ -35,8 +37,8 @@ __decorate([
 ], VisitorPlan.prototype, "visitorEntry", void 0);
 __decorate([
     (0, Orm_1.column)(),
-    __metadata("design:type", String)
-], VisitorPlan.prototype, "visitorType", void 0);
+    __metadata("design:type", Number)
+], VisitorPlan.prototype, "visitorTypeId", void 0);
 __decorate([
     (0, Orm_1.column)(),
     __metadata("design:type", Number)
@@ -94,6 +96,10 @@ __decorate([
     __metadata("design:type", Number)
 ], VisitorPlan.prototype, "unitId", void 0);
 __decorate([
+    (0, Orm_1.column)(),
+    __metadata("design:type", String)
+], VisitorPlan.prototype, "status", void 0);
+__decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], VisitorPlan.prototype, "createdAt", void 0);
@@ -120,9 +126,17 @@ __decorate([
         relatedKey: 'id',
         pivotForeignKey: 'visitor_plan_id',
         pivotRelatedForeignKey: 'visitor_id',
-        pivotTimestamps: false
+        pivotTimestamps: false,
     }),
     __metadata("design:type", Object)
 ], VisitorPlan.prototype, "visitors", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => VisitorType_1.default),
+    __metadata("design:type", Object)
+], VisitorPlan.prototype, "visitorType", void 0);
+__decorate([
+    (0, Orm_1.hasOne)(() => CheckIn_1.default),
+    __metadata("design:type", Object)
+], VisitorPlan.prototype, "checkIn", void 0);
 exports.default = VisitorPlan;
 //# sourceMappingURL=VisitorPlan.js.map

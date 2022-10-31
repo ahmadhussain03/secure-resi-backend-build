@@ -101,9 +101,9 @@ __decorate([
         relatedKey: 'id',
         onQuery: (query) => {
             if (!query.isRelatedSubQuery) {
-                query.preload('user').where('type', 'owner').limit(1);
+                query.preload('user');
             }
-            query.where('is_approved', true);
+            query.where('is_approved', true).where('type', 'owner').limit(1);
         }
     }),
     __metadata("design:type", Object)
@@ -116,8 +116,9 @@ __decorate([
         relatedKey: 'id',
         onQuery: (query) => {
             if (!query.isRelatedSubQuery) {
-                query.preload('user').where('type', 'owner').limit(1);
+                query.preload('user');
             }
+            query.where('type', 'owner');
         }
     }),
     __metadata("design:type", Object)

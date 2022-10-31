@@ -27,7 +27,7 @@ class MoveGuideBookRepository {
         return await MoveGuideBook_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        const moveGuideBook = await MoveGuideBook_1.default.first();
+        const moveGuideBook = await MoveGuideBook_1.default.query().where('project_id', data.projectId).first();
         if (moveGuideBook) {
             moveGuideBook.description = data.description;
             await moveGuideBook.save();

@@ -27,7 +27,7 @@ class MoveTermConditionRepository {
         return await MoveTermCondition_1.default.query().where('project_id', project.id).paginate(page, limit);
     }
     async create(data) {
-        const terms = await MoveTermCondition_1.default.first();
+        const terms = await MoveTermCondition_1.default.query().where('project_id', data.projectId).first();
         if (terms) {
             terms.description = data.description;
             await terms.save();

@@ -7,8 +7,8 @@ const Mail_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/Mail
 const ResidentRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/ResidentRepositoryContract"));
 const UnitRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/UnitRepositoryContract"));
 const VisitorPlanRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/VisitorPlanRepositoryContract"));
-const CreateVisitorPlanValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/CreateVisitorPlanValidator"));
-const UpdateVisitorPlanValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Resident/UpdateVisitorPlanValidator"));
+const CreateVisitorPlanValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Vms/CreateVisitorPlanValidator"));
+const UpdateVisitorPlanValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Vms/UpdateVisitorPlanValidator"));
 class VisitorPlansController {
     async index({ request, response, auth }) {
         const authUser = auth.user;
@@ -18,7 +18,7 @@ class VisitorPlansController {
     }
     async show({ response, auth, params }) {
         const authUser = auth.user;
-        const project = authUser?.resident.project;
+        const project = authUser?.clientStaff.project;
         const id = params.id;
         const visitor = await VisitorPlanRepositoryContract_1.default.findByIdByProject(id, project);
         return response.json(visitor);

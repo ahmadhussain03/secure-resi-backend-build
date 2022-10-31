@@ -21,7 +21,7 @@ class CheckInRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
-        const checkInQuery = CheckIn_1.default.query().where('project_id', project.id).preload('visitorPlan', query => query.withCount('visitors'));
+        const checkInQuery = CheckIn_1.default.query().where('project_id', project.id).preload('parkingSlot').preload('visitorPlan', query => query.preload('visitorType').preload('user', q => q.preload('profile')).preload('unit').preload('visitors'));
         return checkInQuery.paginate(page, limit);
     }
     async findById(id, project) {

@@ -10,7 +10,7 @@ class UsersController {
             });
         });
         await user?.load('clientStaff', (query) => {
-            query.preload('project');
+            query.preload('project', projectQuery => projectQuery.preload('user', userQuery => userQuery.preload('profile')));
         });
         await user?.load('items');
         return response.json(user);

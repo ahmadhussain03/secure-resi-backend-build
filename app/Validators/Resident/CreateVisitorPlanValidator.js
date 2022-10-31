@@ -6,7 +6,7 @@ class CreateVisitorPlanValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             visitorEntry: Validator_1.schema.enum(['single', 'multi', 'multi_vehicle', 'single_vehicle']),
-            visitorType: Validator_1.schema.string({ trim: true }, [Validator_1.rules.maxLength(255)]),
+            visitorType: Validator_1.schema.number([Validator_1.rules.unsigned(), Validator_1.rules.exists({ table: 'visitor_types', column: 'id', where: { project_id: this.ctx.auth.user?.resident.projectId } })]),
             seniors: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             adults: Validator_1.schema.number([Validator_1.rules.unsigned()]),
             children: Validator_1.schema.number([Validator_1.rules.unsigned()]),
@@ -18,7 +18,8 @@ class CreateVisitorPlanValidator {
             vehicleType: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
             vehiclePlateNumber: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255)]),
             visitors: Validator_1.schema.array().members(Validator_1.schema.number([Validator_1.rules.unsigned()])),
-            unitId: Validator_1.schema.number([Validator_1.rules.unsigned()])
+            unitId: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+            resident: Validator_1.schema.number([Validator_1.rules.unsigned()])
         });
         this.messages = {};
     }

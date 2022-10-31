@@ -11,7 +11,7 @@ class ProjectVerificationsController {
             project: Validator_1.schema.string({ trim: true, escape: true })
         });
         const data = await request.validate({ schema: verificationSchema });
-        const project = await Project_1.default.query().where('code', data.project).firstOrFail();
+        const project = await Project_1.default.query().where('code', data.project).preload('user', userQuery => userQuery.preload('profile')).firstOrFail();
         return response.json(project);
     }
 }

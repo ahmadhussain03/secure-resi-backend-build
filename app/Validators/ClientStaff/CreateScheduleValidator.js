@@ -20,7 +20,7 @@ class CreateScheduleValidator {
                 thursday: Validator_1.schema.boolean.optional(),
                 friday: Validator_1.schema.boolean.optional(),
                 repeat: Validator_1.schema.enum(['Daily', 'Monthly', 'Yearly']),
-                checkpointId: Validator_1.schema.number([Validator_1.rules.unsigned()]),
+                checkpointId: Validator_1.schema.number([Validator_1.rules.unsigned(), Validator_1.rules.exists({ table: 'checkpoints', column: 'id', where: { 'project_id': this.ctx.auth.user?.clientStaff.projectId } })]),
                 lockTime: Validator_1.schema.boolean.optional()
             }))
         });

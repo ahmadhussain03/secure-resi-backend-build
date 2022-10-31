@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route"));
 Route_1.default.group(() => {
+    Route_1.default.post('/project_verification', 'ProjectVerificationsController.index');
     Route_1.default.get('gate_terminal', 'GateTerminalsController.index');
     Route_1.default.post('/login/:id', 'LoginController.codeLogin');
     Route_1.default.post('/login', 'LoginController.index');
@@ -88,6 +89,10 @@ Route_1.default.group(() => {
             index: ['can:view-visitor'],
             show: ['can:view-visitor'],
         }).as('visitor.members');
+        Route_1.default.resource('visitor_type', 'VisitorTypesController').only(['index']).middleware({
+            index: ['can:view-visitor'],
+        }).as('visitor.visitor_type');
+        Route_1.default.get('visitor_overstay', 'VisitorOverstaysController.index').middleware('can:view-visitor');
         Route_1.default.post('fingerprint', 'FingerprintsController.create');
     }).middleware('auth');
 }).namespace('App/Controllers/Http/Vms').prefix('api/vms');

@@ -7,10 +7,10 @@ class UpdateLogTypeValidator {
         this.schema = Validator_1.schema.create({
             name: Validator_1.schema.string.optional({
                 trim: true
-            }),
-            status: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255)]),
-            statusOne: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255)]),
-            statusTwo: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255)])
+            }, [Validator_1.rules.alpha()]),
+            status: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255), Validator_1.rules.alpha()]),
+            statusOne: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255), Validator_1.rules.alpha()]),
+            statusTwo: Validator_1.schema.string.optional({}, [Validator_1.rules.maxLength(255), Validator_1.rules.alpha()])
         });
         this.messages = {};
     }

@@ -10,7 +10,7 @@ class VisitorPlanRepository {
     async create(data) {
         const planVisit = await VisitorPlan_1.default.create({
             visitorEntry: data.visitorEntry,
-            visitorType: data.visitorType,
+            visitorTypeId: data.visitorType,
             seniors: data.seniors,
             adults: data.adults,
             children: data.children,
@@ -23,11 +23,14 @@ class VisitorPlanRepository {
             vehiclePlateNumber: data.vehiclePlateNumber,
             userId: data.userId,
             projectId: data.projectId,
-            unitId: data.unitId
+            unitId: data.unitId,
+            status: 'Planned'
         });
         await planVisit.related('visitors').attach(data.visitors);
         await Visitor_1.default.query().whereIn('id', data.visitors).update({ status: 'Planned' });
         await planVisit.load('visitors');
+        await planVisit.load('visitorType');
+        await planVisit.load('unit', unitQuery => unitQuery.preload('setting'));
         return planVisit;
     }
     async allByUnit(request, unit) {
@@ -42,7 +45,7 @@ class VisitorPlanRepository {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const visitorsQuery = VisitorPlan_1.default.query().preload('visitors').preload('unit').preload('user', query => query.preload('profile')).where('project_id', project.id);
+        const visitorsQuery = VisitorPlan_1.default.query().preload('visitors').preload('visitorType').preload('unit').preload('user', query => query.preload('profile')).where('project_id', project.id);
         const visitors = await visitorsQuery.paginate(page, limit);
         return visitors;
     }
@@ -59,7 +62,7 @@ class VisitorPlanRepository {
     async findByIdByUnitAndUpdate(id, unit, data) {
         const visitorPlan = await this.findByIdByUnit(id, unit);
         visitorPlan.visitorEntry = data.visitorEntry ?? visitorPlan.visitorEntry;
-        visitorPlan.visitorType = data.visitorType ?? visitorPlan.visitorType;
+        visitorPlan.visitorTypeId = data.visitorType ?? visitorPlan.visitorTypeId;
         visitorPlan.seniors = data.seniors ?? visitorPlan.seniors;
         visitorPlan.adults = data.adults ?? visitorPlan.adults;
         visitorPlan.children = data.children ?? visitorPlan.children;
@@ -82,7 +85,7 @@ class VisitorPlanRepository {
     async findByIdByProjectAndUpdate(id, project, data) {
         const visitorPlan = await this.findByIdByProject(id, project);
         visitorPlan.visitorEntry = data.visitorEntry ?? visitorPlan.visitorEntry;
-        visitorPlan.visitorType = data.visitorType ?? visitorPlan.visitorType;
+        visitorPlan.visitorTypeId = data.visitorType ?? visitorPlan.visitorTypeId;
         visitorPlan.seniors = data.seniors ?? visitorPlan.seniors;
         visitorPlan.adults = data.adults ?? visitorPlan.adults;
         visitorPlan.children = data.children ?? visitorPlan.children;
@@ -103,7 +106,7 @@ class VisitorPlanRepository {
         return visitorPlan;
     }
     async findByIdByProject(id, project) {
-        const visitorPlan = await VisitorPlan_1.default.query().preload('visitors').where('project_id', project.id).where('id', id).firstOrFail();
+        const visitorPlan = await VisitorPlan_1.default.query().preload('visitors').preload('unit', unitQuery => unitQuery.preload('setting')).where('project_id', project.id).where('id', id).firstOrFail();
         return visitorPlan;
     }
 }

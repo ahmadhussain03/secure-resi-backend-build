@@ -21,7 +21,11 @@ const Unit_1 = __importDefault(require("./Unit"));
 const Country_1 = __importDefault(require("./Country"));
 const State_1 = __importDefault(require("./State"));
 const City_1 = __importDefault(require("./City"));
+const VisitorPlan_1 = __importDefault(require("./VisitorPlan"));
 class Visitor extends Orm_1.BaseModel {
+    get qrImage() {
+        return `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/uploads/visitor_qr/${this.id}.jpg`;
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
@@ -118,6 +122,11 @@ __decorate([
     __metadata("design:type", String)
 ], Visitor.prototype, "addedBy", void 0);
 __decorate([
+    (0, Orm_1.computed)(),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [])
+], Visitor.prototype, "qrImage", null);
+__decorate([
     Orm_1.column.dateTime({ autoCreate: true }),
     __metadata("design:type", luxon_1.DateTime)
 ], Visitor.prototype, "createdAt", void 0);
@@ -155,5 +164,17 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], Visitor.prototype, "city", void 0);
+__decorate([
+    (0, Orm_1.manyToMany)(() => VisitorPlan_1.default, {
+        localKey: 'id',
+        pivotTable: 'visitor_plan_visitors',
+        relatedKey: 'id',
+        pivotForeignKey: 'visitor_id',
+        pivotRelatedForeignKey: 'visitor_plan_id',
+        pivotTimestamps: false,
+        serializeAs: 'visitorPlans'
+    }),
+    __metadata("design:type", Object)
+], Visitor.prototype, "visitorPlans", void 0);
 exports.default = Visitor;
 //# sourceMappingURL=Visitor.js.map

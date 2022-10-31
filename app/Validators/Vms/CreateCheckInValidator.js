@@ -6,8 +6,8 @@ class CreateCheckInValidator {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
             planId: Validator_1.schema.number.optional([Validator_1.rules.exists({ table: 'visitor_plans', column: 'id', where: { project_id: this.ctx.auth.user?.clientStaff.projectId } })]),
+            visitorType: Validator_1.schema.number.optional([Validator_1.rules.unsigned(), Validator_1.rules.exists({ table: 'visitor_types', column: 'id', where: { project_id: this.ctx.auth.user?.clientStaff.projectId } }), Validator_1.rules.requiredIfNotExists('planId')]),
             visitorEntry: Validator_1.schema.enum.optional(['single', 'multi', 'multi_vehicle', 'single_vehicle'], [Validator_1.rules.requiredIfNotExists('planId')]),
-            visitorType: Validator_1.schema.string.optional({ trim: true }, [Validator_1.rules.maxLength(255), Validator_1.rules.requiredIfNotExists('planId')]),
             seniors: Validator_1.schema.number.optional([Validator_1.rules.unsigned(), Validator_1.rules.requiredIfNotExists('planId')]),
             adults: Validator_1.schema.number.optional([Validator_1.rules.unsigned(), Validator_1.rules.requiredIfNotExists('planId')]),
             children: Validator_1.schema.number.optional([Validator_1.rules.unsigned(), Validator_1.rules.requiredIfNotExists('planId')]),

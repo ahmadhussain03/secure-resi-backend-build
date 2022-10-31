@@ -6,8 +6,9 @@ class CreateProjectValidator {
     constructor(ctx) {
         this.ctx = ctx;
         this.schema = Validator_1.schema.create({
-            "name": Validator_1.schema.string({}, [
-                Rules_1.rules.maxLength(255)
+            "name": Validator_1.schema.string({ trim: true }, [
+                Rules_1.rules.maxLength(255),
+                Rules_1.rules.unique({ table: 'projects', column: 'name' })
             ]),
             "code": Validator_1.schema.string({}, [
                 Rules_1.rules.maxLength(255)
