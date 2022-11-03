@@ -11,17 +11,20 @@ class QuickSchedulePatrolRepository {
             patrolScheduleId: data.patrolSchedule,
             projectId: data.projectId,
             userId: data.userId,
-            startAt: data.startAt,
-            endAt: data.endAt,
+            startAt: data.startAt.toUTC(),
+            endAt: data.endAt?.toUTC(),
             status: data.status,
         });
-        await quickSchedulePatrol.related('checkpoints').createMany(data.checkpoints.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status })));
+        await quickSchedulePatrol.related('checkpoints').createMany(data.checkpoints.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: checkpoint.createdAt })));
         await quickSchedulePatrol.load('checkpoints');
         return quickSchedulePatrol;
     }
     async update(data, quickSchedulePatrol) {
         await QuickSchedulePatrolCheckpoint_1.default.query().where('quick_schedule_patrol_id', quickSchedulePatrol.id).delete();
-        await quickSchedulePatrol.related('checkpoints').createMany(data?.checkpoints?.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status })) || []);
+        quickSchedulePatrol.status = data.status;
+        quickSchedulePatrol.endAt = data.endAt;
+        await quickSchedulePatrol.save();
+        await quickSchedulePatrol.related('checkpoints').createMany(data?.checkpoints?.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: checkpoint.createdAt })) || []);
         await quickSchedulePatrol.load('checkpoints');
         return quickSchedulePatrol;
     }

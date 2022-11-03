@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const QuickSchedulePatrolRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/QuickSchedulePatrolRepositoryContract"));
 const QuickSchedulePatrol_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/QuickSchedulePatrol"));
 const CreateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/ClientStaff/CreateQuickSchedulePatrolValidator"));
-const UpdateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/UpdateQuickSchedulePatrolValidator"));
+const UpdateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/ClientStaff/UpdateQuickSchedulePatrolValidator"));
 class QuickSchedulePatrolsController {
     async index({ request, response, auth }) {
         const authUser = auth.user;

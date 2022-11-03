@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", Number)
 ], QuickSchedulePatrolCheckpoint.prototype, "checkpointId", void 0);
 __decorate([
-    Orm_1.column.dateTime({ autoCreate: true }),
+    Orm_1.column.dateTime({ autoCreate: false }),
     __metadata("design:type", luxon_1.DateTime)
 ], QuickSchedulePatrolCheckpoint.prototype, "createdAt", void 0);
 __decorate([

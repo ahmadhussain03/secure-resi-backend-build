@@ -106,7 +106,7 @@ Route_1.default.group(() => {
         }).as('guard.patrol.schedule');
         Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'show', 'update']).middleware({
             store: ['can:create-patrol-schedule-entry'],
-            update: ['can:update-patrol-schedule-entry'],
+            update: ['can:create-patrol-schedule-entry'],
             index: ['can:view-patrol-schedule-entry'],
             show: ['can:view-patrol-schedule-entry']
         }).as('guard.quick.schedule.patrol');
