@@ -14,6 +14,7 @@ class AuthMiddleware {
                 await user.load('role', (query) => {
                     query.preload('permissions', (query) => query.select(['slug', 'group']));
                 });
+                await user.load('clientStaff', clientStaff => clientStaff.preload('project'));
                 auth.defaultGuard = guard;
                 return true;
             }

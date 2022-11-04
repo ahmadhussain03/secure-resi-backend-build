@@ -104,12 +104,7 @@ Route_1.default.group(() => {
             update: ['can:update-patrol-schedule'],
             destroy: ['can:delete-patrol-schedule'],
         }).as('guard.patrol.schedule');
-        Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'show', 'update']).middleware({
-            store: ['can:create-patrol-schedule-entry'],
-            update: ['can:create-patrol-schedule-entry'],
-            index: ['can:view-patrol-schedule-entry'],
-            show: ['can:view-patrol-schedule-entry']
-        }).as('guard.quick.schedule.patrol');
+        Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'update']).as('guard.quick.schedule.patrol');
         Route_1.default.resource('patrol_entry', 'PatrolEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-patrol-entry'],
             index: ['can:view-patrol-entry']

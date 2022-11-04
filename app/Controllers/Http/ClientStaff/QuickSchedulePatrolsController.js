@@ -14,6 +14,12 @@ class QuickSchedulePatrolsController {
         const schedules = await QuickSchedulePatrolRepositoryContract_1.default.all(request, project);
         return response.json(schedules);
     }
+    async list({ request, response, auth }) {
+        const authUser = auth.user;
+        const project = authUser.clientStaff.project;
+        const schedules = await QuickSchedulePatrolRepositoryContract_1.default.all(request, project);
+        return response.json(schedules);
+    }
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;

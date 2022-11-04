@@ -136,12 +136,7 @@ Route_1.default.group(() => {
             index: ['can:view-patrol-schedule-entry'],
             show: ['can:view-patrol-schedule-entry']
         });
-        Route_1.default.resource('quick_schedule_patrol', 'QuickSchedulePatrolsController').only(['store', 'index', 'show', 'update']).middleware({
-            store: ['can:create-patrol-schedule-entry'],
-            update: ['can:create-patrol-schedule-entry'],
-            index: ['can:view-patrol-schedule-entry'],
-            show: ['can:view-patrol-schedule-entry']
-        });
+        Route_1.default.get('quick_schedule_patrol/list', 'QuickSchedulePatrolsController.list').middleware('can:report-quick-schedule-patrol');
         Route_1.default.get('schedule_entry/report', 'ScheduleEntriesController.report').middleware('can:report-schedule-entry');
         Route_1.default.resource('schedule_entry', 'ScheduleEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-schedule-entry'],
