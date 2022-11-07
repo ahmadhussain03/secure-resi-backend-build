@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Schedule Patrol Summary</title>
+</head>
+<body>
+    <center><h1>Quick Patrol Summary</h1></center>
+    <br>
+    <table style="width: 100%">
+      <tr>
+        <td><b>Location Name</b></td>
+        <td>{{ location }}</td>
+        <td><b>Staff</b></td>
+        <td>{{ staff }}</td>
+      </tr>
+      <tr>
+        <td><b>Total Checkpoints</b></td>
+        <td>{{ totalCheckpoints }}</td>
+        <td><b>Start Date</b></td>
+        <td>{{ startDate ?? '' }}</td>
+      </tr>
+      <tr>
+        <td><b>Total Visited</b></td>
+        <td>{{ totalVisited }}</td>
+        <td><b>End Date</b></td>
+        <td>{{ endDate ?? '' }}</td>
+      </tr>
+      <tr>
+        <td><b>Total Missed</b></td>
+        <td>{{ totalCheckpoints - totalVisited }}</td>
+        <td><b>Status</b></td>
+        <td>{{ status ?? '' }}</td>
+      </tr>
+      <tr>
+        <td><b>Patrol Schedule</b></td>
+        <td>{{ patrol }}</td>
+        <td><b>Total Patrol Schedules</b></td>
+        <td>{{ totalPatrolSchedule }}</td>
+      </tr>
+    </table>
+    <br>
+    <br>
+    @each(quickSchedulePatrol in quickSchedulePatrols)
+      <br>
+      <hr>
+      <table style="width: 100%">
+        <tr>
+          <td><b>Patrol Schedule</b></td>
+          <td>{{  quickSchedulePatrol.patrolSchedule ? quickSchedulePatrol.patrolSchedule.name : '' }}</td>
+          <td><b>Staff</b></td>
+          <td>{{ quickSchedulePatrol.user.profile.name }}</td>
+        </tr>
+        <tr>
+          <td><b>Total Checkpoints</b></td>
+          <td>{{ quickSchedulePatrol.checkpoints.length }}</td>
+          <td><b>Start Date</b></td>
+          <td>{{ quickSchedulePatrol.startAt.toFormat('yyyy-MM-dd HH:mm') }}</td>
+        </tr>
+        <tr>
+          <td><b>Total Visited</b></td>
+          <td>{{ quickSchedulePatrol.checkpoints.filter(checkpoint => checkpoint.createdAt).length }}</td>
+          <td><b>End Date</b></td>
+          <td>{{ quickSchedulePatrol.endAt ? quickSchedulePatrol.endAt.toFormat('yyyy-MM-dd HH:mm') : '' }}</td>
+        </tr>
+        <tr>
+          <td><b>Total Missed</b></td>
+          <td>{{ quickSchedulePatrol.checkpoints.length - quickSchedulePatrol.checkpoints.filter(checkpoint => checkpoint.createdAt).length }}</td>
+          <td><b>Status</b></td>
+          <td>{{ quickSchedulePatrol.status }}</td>
+        </tr>
+      </table>
+      <center><h3>Checkpoints</h3></center>
+      <table style="width: 100%" border="1">
+        <tr>
+          <th>No</th>
+          <th>Checkpoint No</th>
+          <th>Checkpoint Name</th>
+          <th>Status</th>
+        </tr>
+        @each((checkpoint, index) in quickSchedulePatrol.checkpoints)
+          <tr>
+            <td>{{ index + 1 }}</td>
+            <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
+            <td>{{ checkpoint.checkpoint.name }}</td>
+            <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm') : 'Missed'  }}</td>
+          </tr>
+        @end
+      </table>
+      <hr>
+      <br>
+    @end
+</body>
+</html>

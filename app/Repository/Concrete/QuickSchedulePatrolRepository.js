@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const QuickSchedulePatrol_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/QuickSchedulePatrol"));
 const QuickSchedulePatrolCheckpoint_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/QuickSchedulePatrolCheckpoint"));
+const luxon_1 = require("luxon");
 class QuickSchedulePatrolRepository {
     async create(data) {
         const quickSchedulePatrol = await QuickSchedulePatrol_1.default.create({
@@ -37,6 +38,36 @@ class QuickSchedulePatrolRepository {
             .preload('patrolSchedule')
             .withCount('checkpoints', query => query.where('status', true).as('visited'));
         return quickSchedulePatrolQuery.orderBy('created_at', 'desc').orderBy('id', 'desc').paginate(page, limit);
+    }
+    async list(request, project) {
+        const query = request.qs();
+        const startDate = query.startDate;
+        const endDate = query.endDate;
+        const guard = query.guard;
+        const patrolSchedule = query.patrolSchedule;
+        const status = query.status;
+        const quickSchedulePatrolQuery = QuickSchedulePatrol_1.default.query().where('project_id', project.id).preload('project', projectQuery => projectQuery.preload('user', userQuery => userQuery.preload('profile')))
+            .preload('user', query => query.preload('profile').preload('clientStaff')).preload('checkpoints', cQuery => cQuery.preload('checkpoint'))
+            .preload('patrolSchedule')
+            .withCount('checkpoints', query => query.where('status', true).as('visited'));
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: 'UTC' });
+            quickSchedulePatrolQuery.whereRaw('start_at >= ?', [formattedStartDate.toSQL()]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: 'UTC' });
+            quickSchedulePatrolQuery.whereRaw('start_at <= ?', [formattedEndDate.toSQL()]);
+        }
+        if (guard) {
+            quickSchedulePatrolQuery.where('user_id', guard);
+        }
+        if (patrolSchedule) {
+            quickSchedulePatrolQuery.where('patrol_schedule_id', patrolSchedule);
+        }
+        if (status && status !== 'ALL') {
+            quickSchedulePatrolQuery.where('status', status);
+        }
+        return quickSchedulePatrolQuery.orderBy('created_at', 'desc').orderBy('id', 'desc').exec();
     }
 }
 exports.default = QuickSchedulePatrolRepository;

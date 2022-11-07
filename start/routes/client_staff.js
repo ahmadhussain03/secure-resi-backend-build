@@ -19,6 +19,7 @@ Route_1.default.group(() => {
     Route_1.default.get('upload/profile/images/:filename', 'ImagesController.profileImage');
     Route_1.default.get('upload/emergency_contact/images/:filename', 'ImagesController.emergencyContactImage');
     Route_1.default.get('upload/qr_code/images/:filename', 'ImagesController.qrCodeImage');
+    Route_1.default.get('upload/quick_schedule_patrol/:filename', 'ImagesController.quickSchedulePatrolPdf');
     Route_1.default.post('/login', 'LoginController.index');
     Route_1.default.post('face_recognition', 'FaceRecognitionsController.index');
     Route_1.default.post('fingerprint_login', 'FingerprintsController.index');
@@ -137,6 +138,7 @@ Route_1.default.group(() => {
             show: ['can:view-patrol-schedule-entry']
         });
         Route_1.default.get('quick_schedule_patrol/list', 'QuickSchedulePatrolsController.list').middleware('can:report-quick-schedule-patrol');
+        Route_1.default.get('quick_schedule_patrol/pdf', 'QuickSchedulePatrolsController.pdf').middleware('can:report-quick-schedule-patrol');
         Route_1.default.get('schedule_entry/report', 'ScheduleEntriesController.report').middleware('can:report-schedule-entry');
         Route_1.default.resource('schedule_entry', 'ScheduleEntriesController').only(['store', 'index']).middleware({
             store: ['can:create-schedule-entry'],
