@@ -33,10 +33,20 @@ class QuickSchedulePatrolRepository {
         const query = request.qs();
         const page = query.page || 1;
         const limit = query.limit || 15;
+        const startDate = query.startDate;
+        const endDate = query.endDate;
         const quickSchedulePatrolQuery = QuickSchedulePatrol_1.default.query().where('project_id', project.id).preload('project', projectQuery => projectQuery.preload('user', userQuery => userQuery.preload('profile')))
             .preload('user', query => query.preload('profile').preload('clientStaff')).preload('checkpoints', cQuery => cQuery.preload('checkpoint'))
             .preload('patrolSchedule')
             .withCount('checkpoints', query => query.where('status', true).as('visited'));
+        if (startDate) {
+            const formattedStartDate = luxon_1.DateTime.fromFormat(query.startDate, 'yyyy-MM-dd HH:mm', { zone: 'UTC' });
+            quickSchedulePatrolQuery.whereRaw('start_at >= ?', [formattedStartDate.toSQL()]);
+        }
+        if (endDate) {
+            const formattedEndDate = luxon_1.DateTime.fromFormat(query.endDate, 'yyyy-MM-dd HH:mm', { zone: 'UTC' });
+            quickSchedulePatrolQuery.whereRaw('start_at <= ?', [formattedEndDate.toSQL()]);
+        }
         return quickSchedulePatrolQuery.orderBy('created_at', 'desc').orderBy('id', 'desc').paginate(page, limit);
     }
     async list(request, project) {
@@ -62,7 +72,12 @@ class QuickSchedulePatrolRepository {
             quickSchedulePatrolQuery.where('user_id', guard);
         }
         if (patrolSchedule) {
-            quickSchedulePatrolQuery.where('patrol_schedule_id', patrolSchedule);
+            if (parseInt(patrolSchedule) === -1) {
+                quickSchedulePatrolQuery.whereNull('patrol_schedule_id');
+            }
+            else {
+                quickSchedulePatrolQuery.where('patrol_schedule_id', patrolSchedule);
+            }
         }
         if (status && status !== 'ALL') {
             quickSchedulePatrolQuery.where('status', status);
