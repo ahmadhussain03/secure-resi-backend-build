@@ -83,7 +83,7 @@ class CheckpointRepository {
         return true;
     }
     async findByIdAndUpdate(id, project, data) {
-        const checkpoint = await this.findById(id, project);
+        const checkpoint = await this.findByIdAll(id, project);
         checkpoint.status = data.status ? data.status : checkpoint.status;
         checkpoint.name = data.name ? data.name : checkpoint.name;
         checkpoint.nfcCode = data.nfcCode ? data.nfcCode : checkpoint.nfcCode;
@@ -122,7 +122,17 @@ class CheckpointRepository {
             return checkpoint;
         }
         else {
-            const checkpoint = await Checkpoint_1.default.query().where(query => query.where('project_id', project.id).where('status', 'ACTIVE')).where('id', id).where(query => query.where('code', id).orWhere('nfc_code', id)).firstOrFail();
+            const checkpoint = await Checkpoint_1.default.query().where(query => query.where('project_id', project.id).where('status', 'ACTIVE')).where(query => query.where('id', id).orWhere('code', id).orWhere('nfc_code', id)).firstOrFail();
+            return checkpoint;
+        }
+    }
+    async findByIdAll(id, project) {
+        if (isNaN(Number(id))) {
+            const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where(query => query.where('code', decodeURI(id)).orWhere('nfc_code', decodeURI(id))).firstOrFail();
+            return checkpoint;
+        }
+        else {
+            const checkpoint = await Checkpoint_1.default.query().where('project_id', project.id).where(query => query.where('id', id).orWhere('code', id).orWhere('nfc_code', id)).firstOrFail();
             return checkpoint;
         }
     }

@@ -33,7 +33,7 @@ class CheckpointsController {
     async show({ response, auth, params }) {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;
-        const checkpoint = await CheckpointRepositoryContract_1.default.findById(params.id, project);
+        const checkpoint = await CheckpointRepositoryContract_1.default.findByIdAll(params.id, project);
         return response.json(checkpoint);
     }
     async destroy({ response, auth, params }) {
