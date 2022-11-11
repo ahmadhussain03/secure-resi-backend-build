@@ -80,7 +80,7 @@ class QuickSchedulePatrolsController {
                     OPENSSL_CONF: '/dev/null',
                 },
             },
-            format: 'A3'
+            format: 'A4'
         });
         return response.attachment(Application_1.default.tmpPath(`pdf`, `${fileName}.pdf`));
     }
@@ -106,7 +106,7 @@ class QuickSchedulePatrolsController {
                     OPENSSL_CONF: '/dev/null',
                 },
             },
-            format: 'A3'
+            format: 'A4'
         });
         return response.attachment(Application_1.default.tmpPath(`pdf`, `${fileName}.pdf`));
     }
