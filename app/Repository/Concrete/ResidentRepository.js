@@ -191,6 +191,24 @@ class ResidentRepository {
             await user.save();
             await user.refresh();
         }
+        const idCard = request.file('idCard');
+        if (idCard) {
+            const fileName = `${user.id.toString()}.${idCard.extname}`;
+            await idCard.move(Application_1.default.tmpPath(`profile/idCard/${user.id}`), {
+                name: fileName
+            });
+            user.resident.idCard = fileName;
+            await user.resident.save();
+        }
+        const sign = request.file('sign');
+        if (sign) {
+            const fileName = `${user.id.toString()}.${sign.extname}`;
+            await sign.move(Application_1.default.tmpPath(`profile/sign/${user.id}`), {
+                name: fileName
+            });
+            user.resident.sign = fileName;
+            await user.resident.save();
+        }
         if (data.unitId) {
             let unit = await Unit_1.default.query().where('project_id', user.resident.projectId).preload('setting').where('id', data.unitId).firstOrFail();
             await unit.related('residents').save(user.resident, true);

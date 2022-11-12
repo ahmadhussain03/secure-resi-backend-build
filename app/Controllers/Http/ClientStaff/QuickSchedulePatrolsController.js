@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CalculateTime = void 0;
 const PatrolScheduleRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/PatrolScheduleRepositoryContract"));
 const QuickSchedulePatrolRepositoryContract_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/QuickSchedulePatrolRepositoryContract"));
 const View_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/View"));
@@ -13,6 +14,24 @@ const CreateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('
 const UpdateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/ClientStaff/UpdateQuickSchedulePatrolValidator"));
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const luxon_1 = require("luxon");
+const moment_1 = __importDefault(require("moment"));
+const CalculateTime = (start_date, end_date) => {
+    if (!end_date)
+        return null;
+    const startTime = (0, moment_1.default)(start_date.toFormat('yyyy-MM-dd HH:mm:ss'));
+    const endTime = (0, moment_1.default)(end_date.toFormat('yyyy-MM-dd HH:mm:ss'));
+    var duration = moment_1.default.duration(endTime.diff(startTime));
+    var total_hours = parseInt(duration.asHours());
+    if (total_hours < 10) {
+        total_hours = "0" + total_hours;
+    }
+    var total_minutes = parseInt(duration.asMinutes()) % 60;
+    if (total_minutes < 10) {
+        total_minutes = "0" + total_minutes;
+    }
+    return total_hours + ":" + total_minutes;
+};
+exports.CalculateTime = CalculateTime;
 class QuickSchedulePatrolsController {
     async index({ request, response, auth }) {
         const authUser = auth.user;
@@ -40,13 +59,15 @@ class QuickSchedulePatrolsController {
         let totalCheckpoints = 0;
         let totalVisited = 0;
         let totalPatrolSchedule = 0;
-        const quickSchedulePatrols = await QuickSchedulePatrolRepositoryContract_1.default.list(request, project);
-        quickSchedulePatrols.map(quickSchedulePatrol => {
+        let quickSchedulePatrols = await QuickSchedulePatrolRepositoryContract_1.default.list(request, project);
+        quickSchedulePatrols = quickSchedulePatrols.map(quickSchedulePatrol => {
             totalCheckpoints += quickSchedulePatrol.checkpoints.length;
             totalVisited += parseInt(quickSchedulePatrol.$extras.visited);
             if (quickSchedulePatrol.patrolScheduleId) {
                 totalPatrolSchedule++;
             }
+            quickSchedulePatrol.$extras.duration = (0, exports.CalculateTime)(quickSchedulePatrol.startAt, quickSchedulePatrol.endAt);
+            return quickSchedulePatrol;
         });
         if (guard) {
             const user = await User_1.default.query().where('id', guard).preload('profile').firstOrFail();
@@ -91,8 +112,11 @@ class QuickSchedulePatrolsController {
             .preload('user', query => query.preload('profile').preload('clientStaff')).preload('checkpoints', cQuery => cQuery.preload('checkpoint'))
             .preload('patrolSchedule')
             .withCount('checkpoints', query => query.where('status', true).as('visited')).firstOrFail();
+        const duration = (0, exports.CalculateTime)(quickSchedulePatrol.startAt, quickSchedulePatrol.endAt);
         const html = await View_1.default.render('quickSchedulePatrol/summary-single', {
-            quickSchedulePatrol
+            quickSchedulePatrol,
+            project,
+            duration
         });
         const fileName = luxon_1.DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss');
         await pdf_creator_node_1.default.create({

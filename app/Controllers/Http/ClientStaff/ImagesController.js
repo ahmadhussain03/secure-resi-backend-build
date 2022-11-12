@@ -88,6 +88,28 @@ class ImagesController {
         const resizedWidth = w ?? size.width;
         return response.stream(image.resize(resizedWidth, resizedHeight).stream());
     }
+    async signImage({ request, params, response }) {
+        const h = request.qs().h;
+        const w = request.qs().w;
+        const directoryName = params.filename.split(".")[0];
+        const imgaePath = Application_1.default.tmpPath(`profile/sign/${directoryName}`, params.filename);
+        const image = (0, gm_1.default)(imgaePath);
+        const size = (0, image_size_1.default)(imgaePath);
+        const resizedHeight = h ?? size.height;
+        const resizedWidth = w ?? size.width;
+        return response.stream(image.resize(resizedWidth, resizedHeight).stream());
+    }
+    async idCardImage({ request, params, response }) {
+        const h = request.qs().h;
+        const w = request.qs().w;
+        const directoryName = params.filename.split(".")[0];
+        const imgaePath = Application_1.default.tmpPath(`profile/idCard/${directoryName}`, params.filename);
+        const image = (0, gm_1.default)(imgaePath);
+        const size = (0, image_size_1.default)(imgaePath);
+        const resizedHeight = h ?? size.height;
+        const resizedWidth = w ?? size.width;
+        return response.stream(image.resize(resizedWidth, resizedHeight).stream());
+    }
     async emergencyContactImage({ request, params, response }) {
         const h = request.qs().h;
         const w = request.qs().w;

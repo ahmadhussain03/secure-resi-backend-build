@@ -66,13 +66,13 @@ __decorate([
 ], Resident.prototype, "dob", void 0);
 __decorate([
     (0, Orm_1.column)({
-        consume: (image) => image ? `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/upload/profile/images/${image}` : null
+        consume: (image) => image ? `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/upload/profile/idCard/${image}` : null
     }),
     __metadata("design:type", Object)
 ], Resident.prototype, "idCard", void 0);
 __decorate([
     (0, Orm_1.column)({
-        consume: (image) => image ? `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/upload/profile/images/${image}` : null
+        consume: (image) => image ? `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/upload/profile/sign/${image}` : null
     }),
     __metadata("design:type", Object)
 ], Resident.prototype, "sign", void 0);

@@ -17,6 +17,8 @@ Route_1.default.group(() => {
     Route_1.default.get('upload/guard_item/images/:filename', 'ImagesController.guardItemImage');
     Route_1.default.get('upload/staff_notification/images/:filename', 'ImagesController.staffNotificationImage');
     Route_1.default.get('upload/profile/images/:filename', 'ImagesController.profileImage');
+    Route_1.default.get('upload/profile/idCard/:filename', 'ImagesController.idCardImage');
+    Route_1.default.get('upload/profile/sign/:filename', 'ImagesController.signImage');
     Route_1.default.get('upload/emergency_contact/images/:filename', 'ImagesController.emergencyContactImage');
     Route_1.default.get('upload/qr_code/images/:filename', 'ImagesController.qrCodeImage');
     Route_1.default.get('upload/quick_schedule_patrol/:filename', 'ImagesController.quickSchedulePatrolPdf');

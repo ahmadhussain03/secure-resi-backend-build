@@ -57,17 +57,23 @@
           <td><b>Total Checkpoints</b></td>
           <td>{{ quickSchedulePatrol.checkpoints.length }}</td>
           <td><b>Start Date</b></td>
-          <td>{{ quickSchedulePatrol.startAt.toFormat('yyyy-MM-dd HH:mm') }}</td>
+          <td>{{ quickSchedulePatrol.startAt.toFormat('dd-MM-yyyy HH:mm') }}</td>
         </tr>
         <tr>
           <td><b>Total Visited</b></td>
           <td>{{ quickSchedulePatrol.checkpoints.filter(checkpoint => checkpoint.createdAt).length }}</td>
           <td><b>End Date</b></td>
-          <td>{{ quickSchedulePatrol.endAt ? quickSchedulePatrol.endAt.toFormat('yyyy-MM-dd HH:mm') : '' }}</td>
+          <td>{{ quickSchedulePatrol.endAt ? quickSchedulePatrol.endAt.toFormat('dd-MM-yyyy HH:mm') : 'PENDING' }}</td>
         </tr>
         <tr>
           <td><b>Total Missed</b></td>
           <td>{{ quickSchedulePatrol.checkpoints.length - quickSchedulePatrol.checkpoints.filter(checkpoint => checkpoint.createdAt).length }}</td>
+          <td><b>Duration</b></td>
+          <td>{{ quickSchedulePatrol.$extras.duration || 'PENDING' }}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
           <td><b>Status</b></td>
           <td>{{ quickSchedulePatrol.status }}</td>
         </tr>
@@ -81,12 +87,21 @@
           <th>Status</th>
         </tr>
         @each((checkpoint, index) in quickSchedulePatrol.checkpoints)
-          <tr>
-            <td>{{ index + 1 }}</td>
-            <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
-            <td>{{ checkpoint.checkpoint.name }}</td>
-            <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm') : 'Missed'  }}</td>
-          </tr>
+          @if(!checkpoint.status)
+            <tr style="color: red;">
+              <td>{{ index + 1 }}</td>
+              <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
+              <td>{{ checkpoint.checkpoint.name }}</td>
+              <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('dd-MM-yyyy HH:mm') : 'MISSED'  }}</td>
+            </tr>
+          @else
+            <tr>
+              <td>{{ index + 1 }}</td>
+              <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
+              <td>{{ checkpoint.checkpoint.name }}</td>
+              <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('dd-MM-yyyy HH:mm') : 'MISSED'  }}</td>
+            </tr>
+          @end
         @end
       </table>
       <hr>

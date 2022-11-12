@@ -73,7 +73,7 @@ class AttendancesController {
         }
     }
     async markAttendance(userId, projectId, attendance_through) {
-        const lastAttendance = await Attendance_1.default.query().where('user_id', userId).whereNotNull('in_at').whereNull('out_at').orderBy('created_at', 'desc').first();
+        const lastAttendance = await Attendance_1.default.query().preload('user', query => query.preload('clientStaff').preload('profile')).where('user_id', userId).whereNotNull('in_at').whereNull('out_at').orderBy('created_at', 'desc').first();
         if (lastAttendance) {
             lastAttendance.outAt = luxon_1.DateTime.now();
             lastAttendance.outAttendanceThrough = attendance_through;
