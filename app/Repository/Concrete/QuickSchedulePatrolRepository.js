@@ -8,24 +8,33 @@ const QuickSchedulePatrolCheckpoint_1 = __importDefault(global[Symbol.for('ioc.u
 const luxon_1 = require("luxon");
 class QuickSchedulePatrolRepository {
     async create(data) {
+        const startTime = luxon_1.DateTime.fromFormat(data.startAt.toFormat('yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' });
+        const endTime = data.endAt ? luxon_1.DateTime.fromFormat(data.endAt.toFormat('yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' }) : null;
         const quickSchedulePatrol = await QuickSchedulePatrol_1.default.create({
             patrolScheduleId: data.patrolSchedule,
             projectId: data.projectId,
             userId: data.userId,
-            startAt: data.startAt.toUTC(),
-            endAt: data.endAt?.toUTC(),
+            startAt: startTime,
+            endAt: endTime,
             status: data.status,
         });
-        await quickSchedulePatrol.related('checkpoints').createMany(data.checkpoints.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: checkpoint.createdAt })));
+        await quickSchedulePatrol.related('checkpoints').createMany(data.checkpoints.map(checkpoint => {
+            const createdAtTime = checkpoint.createdAt ? luxon_1.DateTime.fromFormat(checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' }) : null;
+            return { checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: createdAtTime };
+        }));
         await quickSchedulePatrol.load('checkpoints');
         return quickSchedulePatrol;
     }
     async update(data, quickSchedulePatrol) {
         await QuickSchedulePatrolCheckpoint_1.default.query().where('quick_schedule_patrol_id', quickSchedulePatrol.id).delete();
         quickSchedulePatrol.status = data.status;
-        quickSchedulePatrol.endAt = data.endAt;
+        const endTime = data.endAt ? luxon_1.DateTime.fromFormat(data.endAt.toFormat('yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' }) : null;
+        quickSchedulePatrol.endAt = endTime;
         await quickSchedulePatrol.save();
-        await quickSchedulePatrol.related('checkpoints').createMany(data?.checkpoints?.map(checkpoint => ({ checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: checkpoint.createdAt })) || []);
+        await quickSchedulePatrol.related('checkpoints').createMany(data?.checkpoints?.map(checkpoint => {
+            const createdAtTime = checkpoint.createdAt ? luxon_1.DateTime.fromFormat(checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss', { zone: 'UTC' }) : null;
+            return { checkpointId: checkpoint.checkpoint, status: checkpoint.status, createdAt: createdAtTime };
+        }) || []);
         await quickSchedulePatrol.load('checkpoints');
         return quickSchedulePatrol;
     }

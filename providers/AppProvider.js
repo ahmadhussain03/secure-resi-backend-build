@@ -27,7 +27,7 @@ class AppProvider {
     register() {
     }
     async boot() {
-        luxon_1.Settings.defaultZone = 'UTC';
+        luxon_1.Settings.defaultZone = luxon_1.IANAZone.create("UTC");
     }
     async ready() {
         this.initializeWebSocketServer();

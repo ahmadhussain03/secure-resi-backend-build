@@ -15,6 +15,8 @@ const UpdateQuickSchedulePatrolValidator_1 = __importDefault(global[Symbol.for('
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const luxon_1 = require("luxon");
 const moment_1 = __importDefault(require("moment"));
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
+const UserNotFoundException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/UserNotFoundException"));
 const CalculateTime = (start_date, end_date) => {
     if (!end_date)
         return null;
@@ -49,6 +51,10 @@ class QuickSchedulePatrolsController {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;
         const query = request.qs();
+        const timezone = query.timezone;
+        if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
+            throw new UserNotFoundException_1.default('Invalid Timezone!');
+        }
         const startDate = query.startDate;
         const endDate = query.endDate;
         let guard = query.guard;
@@ -87,7 +93,9 @@ class QuickSchedulePatrolsController {
             patrol,
             status,
             totalPatrolSchedule,
-            quickSchedulePatrols
+            quickSchedulePatrols,
+            timezone,
+            momentTz: moment_timezone_1.default
         });
         const fileName = luxon_1.DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss');
         await pdf_creator_node_1.default.create({
@@ -105,9 +113,14 @@ class QuickSchedulePatrolsController {
         });
         return response.attachment(Application_1.default.tmpPath(`pdf`, `${fileName}.pdf`));
     }
-    async pdfSingle({ response, auth, params }) {
+    async pdfSingle({ request, response, auth, params }) {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;
+        const query = request.qs();
+        const timezone = query.timezone;
+        if (!timezone || !(new luxon_1.IANAZone(timezone).isValid)) {
+            throw new UserNotFoundException_1.default('Invalid Timezone!');
+        }
         const quickSchedulePatrol = await QuickSchedulePatrol_1.default.query().where('id', params.id).where('project_id', project.id).preload('project', projectQuery => projectQuery.preload('user', userQuery => userQuery.preload('profile')))
             .preload('user', query => query.preload('profile').preload('clientStaff')).preload('checkpoints', cQuery => cQuery.preload('checkpoint'))
             .preload('patrolSchedule')
@@ -116,7 +129,9 @@ class QuickSchedulePatrolsController {
         const html = await View_1.default.render('quickSchedulePatrol/summary-single', {
             quickSchedulePatrol,
             project,
-            duration
+            duration,
+            timezone,
+            momentTz: moment_timezone_1.default
         });
         const fileName = luxon_1.DateTime.now().toFormat('yyyy_MM_dd_HH_mm_ss');
         await pdf_creator_node_1.default.create({
@@ -137,6 +152,7 @@ class QuickSchedulePatrolsController {
     async store({ request, response, auth }) {
         const authUser = auth.user;
         const project = authUser.clientStaff.project;
+        luxon_1.Settings.defaultZone = luxon_1.IANAZone.create("UTC");
         const data = await request.validate(CreateQuickSchedulePatrolValidator_1.default);
         data.userId = authUser.id;
         data.projectId = project.id;

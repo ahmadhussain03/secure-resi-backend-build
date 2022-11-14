@@ -21,13 +21,13 @@
           <td><b>Patrol Schedule</b></td>
           <td>{{  quickSchedulePatrol.patrolSchedule ? quickSchedulePatrol.patrolSchedule.name : '' }}</td>
           <td><b>Start Date</b></td>
-          <td>{{ quickSchedulePatrol.startAt.toFormat('dd-MM-yyyy HH:mm') }}</td>
+          <td>{{ momentTz.utc(quickSchedulePatrol.startAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') }}</td>
         </tr>
         <tr>
           <td><b>Total Checkpoints</b></td>
           <td>{{ quickSchedulePatrol.checkpoints.length }}</td>
           <td><b>End Date</b></td>
-          <td>{{ quickSchedulePatrol.endAt ? quickSchedulePatrol.endAt.toFormat('dd-MM-yyyy HH:mm') : 'PENDING' }}</td>
+          <td>{{ quickSchedulePatrol.endAt ? momentTz.utc(quickSchedulePatrol.startAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') : 'PENDING' }}</td>
         </tr>
         <tr>
           <td><b>Total Visited</b></td>
@@ -56,14 +56,14 @@
               <td>{{ index + 1 }}</td>
               <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
               <td>{{ checkpoint.checkpoint.name }}</td>
-              <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('dd-MM-yyyy HH:mm') : 'MISSED'  }}</td>
+              <td>{{ checkpoint.createdAt ? momentTz.utc(checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') : 'MISSED'  }}</td>
             </tr>
           @else
             <tr>
               <td>{{ index + 1 }}</td>
               <td>{{ checkpoint.checkpoint.phoneNumber }}</td>
               <td>{{ checkpoint.checkpoint.name }}</td>
-              <td>{{ checkpoint.createdAt ? checkpoint.createdAt.toFormat('dd-MM-yyyy HH:mm') : 'MISSED'  }}</td>
+              <td>{{ checkpoint.createdAt ? momentTz.utc(checkpoint.createdAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') : 'MISSED'  }}</td>
             </tr>
           @end
         @end
