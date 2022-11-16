@@ -16,6 +16,7 @@ const luxon_1 = require("luxon");
 const Project_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Project"));
 const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 const Orm_1 = global[Symbol.for('ioc.use')]("Adonis/Lucid/Orm");
+const User_1 = __importDefault(require("./User"));
 class ClientStaff extends Orm_1.BaseModel {
     get qrImage() {
         return `http://${Env_1.default.get('IMAGE_HOST')}/api/staff/uploads/staff_code/${this.staffCode}.jpg`;
@@ -62,5 +63,9 @@ __decorate([
     (0, Orm_1.belongsTo)(() => Project_1.default),
     __metadata("design:type", Object)
 ], ClientStaff.prototype, "project", void 0);
+__decorate([
+    (0, Orm_1.belongsTo)(() => User_1.default),
+    __metadata("design:type", Object)
+], ClientStaff.prototype, "user", void 0);
 exports.default = ClientStaff;
 //# sourceMappingURL=ClientStaff.js.map

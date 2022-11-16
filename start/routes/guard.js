@@ -10,6 +10,7 @@ Route_1.default.group(() => {
     Route_1.default.post('/client_staff/:id/search', 'ClientStaffsController.search').as('client.staff.search');
     Route_1.default.post('face_recognition', 'FaceRecognitionsController').as('guard.face.recognition');
     Route_1.default.group(() => {
+        Route_1.default.get('apk', 'ApksController.index');
         Route_1.default.get('/dashboard', 'DashboardController.index').middleware('can:view-staff');
         Route_1.default.any('/user', 'UsersController.index');
         Route_1.default.get('/client_staff', 'ClientStaffsController.index').middleware('can:view-staff');

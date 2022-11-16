@@ -19,7 +19,15 @@ const User_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/User"))
 const Country_1 = __importDefault(require("./Country"));
 const State_1 = __importDefault(require("./State"));
 const City_1 = __importDefault(require("./City"));
+const Checkpoint_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Checkpoint"));
+const ClientStaff_1 = __importDefault(require("./ClientStaff"));
 class Project extends Orm_1.BaseModel {
+    serializeExtras() {
+        return {
+            total_checkpoints: parseInt(this.$extras.total_checkpoints) || 0,
+            total_guards: parseInt(this.$extras.total_guards) || 0,
+        };
+    }
 }
 __decorate([
     (0, Orm_1.column)({ isPrimary: true }),
@@ -159,5 +167,13 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], Project.prototype, "cityRelation", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => Checkpoint_1.default),
+    __metadata("design:type", Object)
+], Project.prototype, "checkpoints", void 0);
+__decorate([
+    (0, Orm_1.hasMany)(() => ClientStaff_1.default),
+    __metadata("design:type", Object)
+], Project.prototype, "guards", void 0);
 exports.default = Project;
 //# sourceMappingURL=Project.js.map

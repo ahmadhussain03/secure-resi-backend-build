@@ -21,7 +21,7 @@ class ClientStaffsController {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
-        const users = await User_1.default.query().where('user_type', UserType_1.UserType.client_staff).where('parent_id', authUser.id).preload('profile').preload('clientStaff').preload('role').paginate(page, limit);
+        const users = await User_1.default.query().where('user_type', UserType_1.UserType.client_staff).where('parent_id', authUser.id).preload('profile').preload('clientStaff', query => query.preload('project')).preload('role').paginate(page, limit);
         return response.json(users);
     }
     async show({ response, params, auth }) {

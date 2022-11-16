@@ -17,6 +17,7 @@ Route_1.default.group(() => {
     Route_1.default.get('countries', 'CountriesController.index');
     Route_1.default.get('states/:id', 'StatesController.index');
     Route_1.default.get('cities/:id', 'CitiesController.index');
+    Route_1.default.post('apk', 'ApksController.store');
 }).prefix('api');
 Route_1.default.any('/health', async ({ response }) => {
     const report = await HealthCheck_1.default.getReport();

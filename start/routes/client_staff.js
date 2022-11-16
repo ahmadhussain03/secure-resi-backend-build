@@ -26,6 +26,7 @@ Route_1.default.group(() => {
     Route_1.default.post('face_recognition', 'FaceRecognitionsController.index');
     Route_1.default.post('fingerprint_login', 'FingerprintsController.index');
     Route_1.default.group(() => {
+        Route_1.default.get('apk', 'ApksController.index');
         Route_1.default.any('/user', 'UsersController.index');
         Route_1.default.get('/dashboard', 'DashboardController.index');
         Route_1.default.post('/logout', 'UsersController.logout');

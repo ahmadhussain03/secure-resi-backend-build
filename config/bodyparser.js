@@ -35,7 +35,7 @@ const bodyParserConfig = {
         processManually: [],
         encoding: 'utf-8',
         maxFields: 1000,
-        limit: '20mb',
+        limit: '150mb',
         types: [
             'multipart/form-data',
         ],

@@ -6,13 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Project_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Project"));
 const CreateProjectValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Client/CreateProjectValidator"));
 const UpdateProjectValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/Client/UpdateProjectValidator"));
+const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
 class ProjectsController {
     async index({ request, response, auth }) {
         const query = request.qs();
         let page = query.page ? parseInt(query.page) : 1;
         let limit = query.limit ? parseInt(query.limit) : 15;
+        const role = await Role_1.default.query().where('name', 'guard').firstOrFail();
         const userId = auth.user?.id;
-        const projects = await Project_1.default.query().preload('cityRelation').preload('countryRelation').preload('stateRelation').where('user_id', userId).paginate(page, limit);
+        const projects = await Project_1.default.query()
+            .withCount('checkpoints', query => query.as('total_checkpoints'))
+            .withCount('guards', query => query.whereHas('user', q => q.where('role_id', role.id)).as('total_guards'))
+            .preload('cityRelation')
+            .preload('countryRelation')
+            .preload('stateRelation')
+            .where('user_id', userId).paginate(page, limit);
         return response.json(projects);
     }
     async store({ request, response, auth }) {
