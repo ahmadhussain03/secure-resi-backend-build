@@ -17,7 +17,11 @@ class ProfilesController {
                 Validator_1.rules.regex(/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,255}$/)
             ]),
             password_old: Validator_1.schema.string.optional({}, [Validator_1.rules.requiredIfExists('password')]),
-            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' })
+            image: Validator_1.schema.file.optional({ extnames: ['jpg', 'jpeg', 'png', 'bmp'], size: '16mb' }),
+            address: Validator_1.schema.string.optional(),
+            'mobile_no': Validator_1.schema.string.optional({ trim: true }, [
+                Validator_1.rules.maxLength(255)
+            ]),
         });
         const data = await request.validate({ schema: verificationSchema, messages: { 'password.regex': 'Password must contain atleast 1 Uppercase, 1 Lowercase, 1 numeric & 1 special character.', 'password_old.requiredIfExists': 'Old Password is required.' } });
         const authUser = auth.user;
@@ -54,6 +58,13 @@ class ProfilesController {
         if (data.password) {
             await ApiToken_1.default.query().whereNot('id', auth.use('api').token?.meta?.id).where('user_id', authUser.id).delete();
         }
+        if (data.mobile_no) {
+            authUser.profile.mobileNo = data.mobile_no;
+        }
+        if (data.address) {
+            authUser.profile.address = data.address;
+        }
+        await authUser.profile.save();
         await authUser.refresh();
         return response.json(authUser);
     }

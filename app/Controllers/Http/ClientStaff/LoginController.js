@@ -9,7 +9,6 @@ const UserType_1 = global[Symbol.for('ioc.use')]("App/types/UserType");
 const LoginValidator_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Validators/LoginValidator"));
 const InvalidCredentialException_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Exceptions/InvalidCredentialException"));
 const Role_1 = __importDefault(global[Symbol.for('ioc.use')]("App/Models/Role"));
-const luxon_1 = require("luxon");
 class LoginController {
     async index({ request, response, auth }) {
         const data = await request.validate(LoginValidator_1.default);
@@ -48,7 +47,6 @@ class LoginController {
         const data = await request.validate(LoginValidator_1.default);
         const query = User_1.default.query();
         let user;
-        console.log(luxon_1.Settings.defaultZone);
         const roles = await Role_1.default.query().whereIn('name', ['guard', 'guard-supervisor']).whereNull('user_id');
         if (data.project) {
             user = await query.where('username', data.username).where('user_type', UserType_1.UserType.client_staff).whereHas('clientStaff', (query) => {

@@ -101,10 +101,8 @@ Route_1.default.group(() => {
             destroy: ['can:delete-guard-operation'],
         });
         Route_1.default.get('panic_alert/report', 'PanicAlertsController.report').middleware('can:report-panic-alert');
-        Route_1.default.resource('panic_alert', 'PanicAlertsController').only(['store', 'index', 'destroy']).middleware({
+        Route_1.default.resource('panic_alert', 'PanicAlertsController').only(['store']).middleware({
             store: ['can:create-panic-alert'],
-            index: ['can:view-panic-alert'],
-            destroy: ['can:delete-panic-alert'],
         });
         Route_1.default.resource('checkpoint', 'CheckpointsController').apiOnly().middleware({
             store: ['can:create-checkpoint'],
@@ -130,28 +128,11 @@ Route_1.default.group(() => {
             destroy: ['can:delete-patrol-schedule'],
         });
         Route_1.default.get('patrol_entry/report', 'PatrolEntriesController.report').middleware('can:report-patrol-entry');
-        Route_1.default.resource('patrol_entry', 'PatrolEntriesController').only(['store', 'index']).middleware({
-            store: ['can:create-patrol-entry'],
-            index: ['can:view-patrol-entry']
-        });
         Route_1.default.get('patrol_schedule_entry/report', 'PatrolScheduleEntriesController.report').middleware('can:report-patrol-schedule-entry');
-        Route_1.default.resource('patrol_schedule_entry', 'PatrolScheduleEntriesController').only(['store', 'index', 'show']).middleware({
-            store: ['can:create-patrol-schedule-entry'],
-            index: ['can:view-patrol-schedule-entry'],
-            show: ['can:view-patrol-schedule-entry']
-        });
         Route_1.default.get('quick_schedule_patrol/list', 'QuickSchedulePatrolsController.list').middleware('can:report-quick-schedule-patrol');
         Route_1.default.get('quick_schedule_patrol/pdf', 'QuickSchedulePatrolsController.pdf').middleware('can:report-quick-schedule-patrol');
         Route_1.default.get('schedule_entry/report', 'ScheduleEntriesController.report').middleware('can:report-schedule-entry');
-        Route_1.default.resource('schedule_entry', 'ScheduleEntriesController').only(['store', 'index']).middleware({
-            store: ['can:create-schedule-entry'],
-            index: ['can:view-schedule-entry']
-        });
         Route_1.default.get('attendance/report', 'AttendancesController.report').middleware('can:report-attendance');
-        Route_1.default.resource('attendance', 'AttendancesController').only(['index', 'store']).middleware({
-            store: ['can:create-attendance'],
-            index: ['can:view-attendance']
-        });
         Route_1.default.get('item/report', 'ItemsController.report').middleware('can:report-guard-item');
         Route_1.default.resource('item', 'ItemsController').apiOnly().middleware({
             store: ['can:create-guard-item'],
@@ -162,10 +143,6 @@ Route_1.default.group(() => {
         });
         Route_1.default.post('item/assign', 'ItemsController.assign').middleware('can:assign-guard-item');
         Route_1.default.get('shift/report', 'ShiftsController.report').middleware('can:report-shift');
-        Route_1.default.resource('shift', 'ShiftsController').only(['index', 'show', 'store']).middleware({
-            index: ['can:view-shift'],
-            show: ['can:view-shift']
-        });
         Route_1.default.resource('emergency_contact', 'EmergencyContactsController').apiOnly().middleware({
             index: ['can:view-emergency-contact'],
             show: ['can:view-emergency-contact'],

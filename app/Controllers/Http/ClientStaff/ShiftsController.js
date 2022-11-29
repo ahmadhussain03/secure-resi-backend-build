@@ -15,7 +15,7 @@ class ShiftsController {
     async report({ request, response, auth }) {
         const authUser = auth.user;
         const projectId = authUser.clientStaff.projectId;
-        const shifts = await ShiftRepositoryContract_1.default.allPaginated(request, projectId);
+        const shifts = await ShiftRepositoryContract_1.default.all(request, projectId);
         return response.json(shifts);
     }
     async show({ response, auth, params }) {

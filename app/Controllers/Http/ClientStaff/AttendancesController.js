@@ -25,7 +25,7 @@ class AttendancesController {
     async report({ response, request, auth }) {
         const authUser = auth.user;
         const project = authUser?.clientStaff.project;
-        const attendances = await AttendanceRepositoryContract_1.default.allPaginated(request, project);
+        const attendances = await AttendanceRepositoryContract_1.default.all(request, project);
         return response.json(attendances);
     }
     async store({ response, request, auth }) {
