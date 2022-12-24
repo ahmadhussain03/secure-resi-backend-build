@@ -27,7 +27,7 @@
           <td><b>Total Checkpoints</b></td>
           <td>{{ quickSchedulePatrol.checkpoints.length }}</td>
           <td><b>End Date</b></td>
-          <td>{{ quickSchedulePatrol.endAt ? momentTz.utc(quickSchedulePatrol.startAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') : 'PENDING' }}</td>
+          <td>{{ quickSchedulePatrol.endAt ? momentTz.utc(quickSchedulePatrol.endAt.toFormat('yyyy-MM-dd HH:mm:ss')).tz(timezone).format('YYYY-MM-DD HH:mm') : 'PENDING' }}</td>
         </tr>
         <tr>
           <td><b>Total Visited</b></td>
